@@ -266,6 +266,18 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+// Load tea machine image
+const teaMachineImage = new Image();
+teaMachineImage.src = 'tea_brewing_machine.png';
+let teaMachineLoaded = false;
+teaMachineImage.onload = () => {
+    teaMachineLoaded = true;
+    console.log('Tea machine image loaded successfully');
+};
+teaMachineImage.onerror = () => {
+    console.error('Failed to load tea machine image');
+};
+
 const game = {
     money: 100,
     reputation: 0,
@@ -468,42 +480,54 @@ function drawTeaMachine() {
     // Tea brewing machine on the left side of work area (moved forward)
     const x = 100;
     const y = 500;
+    const width = 120;
+    const height = 180;
 
-    // Machine body
-    ctx.fillStyle = '#C0C0C0';
-    ctx.fillRect(x, y, 120, 180);
+    if (teaMachineLoaded) {
+        // Draw the tea machine image
+        ctx.drawImage(teaMachineImage, x, y, width, height);
 
-    // Machine top
-    ctx.fillStyle = '#808080';
-    ctx.fillRect(x, y, 120, 25);
-
-    // Display screen
-    ctx.fillStyle = '#000';
-    ctx.fillRect(x + 15, y + 40, 90, 50);
-
-    // Status on screen
-    if (game.currentDrink.base) {
-        ctx.fillStyle = '#0F0';
-        ctx.font = '14px monospace';
-        ctx.fillText('BREWING', x + 22, y + 70);
-        // Steam effect
-        ctx.font = '24px Arial';
-        ctx.fillText('💨', x + 45, y + 25);
+        // Add steam effect when brewing
+        if (game.currentDrink.base) {
+            ctx.font = '32px Arial';
+            ctx.fillText('💨', x + 40, y - 10);
+        }
     } else {
+        // Fallback: Draw simple machine if image not loaded
+        ctx.fillStyle = '#C0C0C0';
+        ctx.fillRect(x, y, width, height);
+
+        // Machine top
+        ctx.fillStyle = '#808080';
+        ctx.fillRect(x, y, width, 25);
+
+        // Display screen
+        ctx.fillStyle = '#000';
+        ctx.fillRect(x + 15, y + 40, 90, 50);
+
+        // Status on screen
+        if (game.currentDrink.base) {
+            ctx.fillStyle = '#0F0';
+            ctx.font = '14px monospace';
+            ctx.fillText('BREWING', x + 22, y + 70);
+            ctx.font = '24px Arial';
+            ctx.fillText('💨', x + 45, y + 25);
+        } else {
+            ctx.fillStyle = '#666';
+            ctx.font = '14px monospace';
+            ctx.fillText('READY', x + 32, y + 70);
+        }
+
+        // Buttons
+        for (let i = 0; i < 3; i++) {
+            ctx.fillStyle = '#444';
+            ctx.fillRect(x + 20 + i * 30, y + 110, 25, 15);
+        }
+
+        // Dispenser nozzle
         ctx.fillStyle = '#666';
-        ctx.font = '14px monospace';
-        ctx.fillText('READY', x + 32, y + 70);
+        ctx.fillRect(x + 45, y + 150, 30, 30);
     }
-
-    // Buttons
-    for (let i = 0; i < 3; i++) {
-        ctx.fillStyle = '#444';
-        ctx.fillRect(x + 20 + i * 30, y + 110, 25, 15);
-    }
-
-    // Dispenser nozzle
-    ctx.fillStyle = '#666';
-    ctx.fillRect(x + 45, y + 150, 30, 30);
 }
 
 function drawIngredients() {
