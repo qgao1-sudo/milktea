@@ -298,25 +298,35 @@ const game = {
 const customers = [
     { name: "Sarah", sprite: "👩", color: "#FFB6C1", order: { text: "I want milk tea with pearls!", base: "black-tea", milk: "fresh-milk", toppings: ["pearl"] } },
     { name: "Mike", sprite: "👨", color: "#87CEEB", order: { text: "Green tea with oat milk please!", base: "green-tea", milk: "oat-milk", toppings: [] } },
-    { name: "Emma", sprite: "👧", color: "#FFD700", order: { text: "Something fruity and sweet!", base: "jasmine-tea", milk: "fresh-milk", toppings: ["fruit"] } },
-    { name: "Lisa", sprite: "👱‍♀️", color: "#FF69B4", order: { text: "Classic milk tea, extra pearls!", base: "black-tea", milk: "fresh-milk", toppings: ["pearl", "pearl"] } }
+    { name: "Emma", sprite: "👧", color: "#FFD700", order: { text: "Mango milk tea sounds amazing!", base: "jasmine-tea", milk: "fresh-milk", toppings: ["mango"] } },
+    { name: "Lisa", sprite: "👱‍♀️", color: "#FF69B4", order: { text: "Classic milk tea, extra pearls!", base: "black-tea", milk: "fresh-milk", toppings: ["pearl", "pearl"] } },
+    { name: "Tom", sprite: "👦", color: "#98D8C8", order: { text: "Strawberry tea with lychee!", base: "green-tea", milk: "fresh-milk", toppings: ["strawberry", "lychee"] } },
+    { name: "Anna", sprite: "👸", color: "#FFE4E1", order: { text: "Blueberry and kiwi tea!", base: "jasmine-tea", milk: "oat-milk", toppings: ["blueberry", "kiwi"] } },
+    { name: "Jack", sprite: "🧑", color: "#B0E0E6", order: { text: "Passion fruit paradise!", base: "black-tea", milk: "fresh-milk", toppings: ["passion-fruit"] } }
 ];
 
 const ingredientDB = {
-    // Tea bases - positioned in work area (moved forward)
-    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 650, y: 500, type: "base" },
-    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 750, y: 500, type: "base" },
-    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 850, y: 500, type: "base" },
+    // Tea bases - positioned in work area (moved forward, larger size)
+    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 650, y: 480, type: "base" },
+    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 750, y: 480, type: "base" },
+    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 850, y: 480, type: "base" },
     // Milk options - positioned in work area
-    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 650, y: 600, type: "milk" },
-    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 750, y: 600, type: "milk" },
-    // Toppings - positioned in work area
-    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 950, y: 500, type: "topping" },
-    "fruit": { name: "Fruit", color: "#FF69B4", emoji: "🍓", x: 950, y: 600, type: "topping" }
+    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 950, y: 480, type: "milk" },
+    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 1050, y: 480, type: "milk" },
+    // Original toppings
+    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 650, y: 580, type: "topping" },
+    "pudding": { name: "Pudding", color: "#FFE4B5", emoji: "🍮", x: 750, y: 580, type: "topping" },
+    // Fruit boxes (square shaped) - new row
+    "strawberry": { name: "Strawberry", color: "#FF6B6B", emoji: "🍓", x: 400, y: 580, type: "fruit", shape: "square" },
+    "mango": { name: "Mango", color: "#FFA500", emoji: "🥭", x: 500, y: 580, type: "fruit", shape: "square" },
+    "lychee": { name: "Lychee", color: "#FFB6C1", emoji: "🍈", x: 850, y: 580, type: "fruit", shape: "square" },
+    "passion-fruit": { name: "Passion", color: "#9370DB", emoji: "🟣", x: 950, y: 580, type: "fruit", shape: "square" },
+    "blueberry": { name: "Blueberry", color: "#4169E1", emoji: "🫐", x: 1050, y: 580, type: "fruit", shape: "square" },
+    "kiwi": { name: "Kiwi", color: "#9ACD32", emoji: "🥝", x: 300, y: 580, type: "fruit", shape: "square" }
 };
 
 for (let key in ingredientDB) {
-    game.ingredients.push({ id: key, ...ingredientDB[key], width: 60, height: 60 });
+    game.ingredients.push({ id: key, ...ingredientDB[key], width: 80, height: 80 });
 }
 
 class Animation {
@@ -479,7 +489,7 @@ function drawDrinkCup() {
 function drawTeaMachine() {
     // Tea brewing machine on the left side of work area (moved forward)
     const x = 100;
-    const y = 500;
+    const y = 540; // Moved more forward
     const width = 120;
     const height = 180;
 
@@ -532,18 +542,71 @@ function drawTeaMachine() {
 
 function drawIngredients() {
     game.ingredients.forEach(ing => {
-        const jarX = ing.x, jarY = ing.y, jarWidth = ing.width, jarHeight = ing.height + 20;
-        const gradient = ctx.createLinearGradient(jarX, jarY, jarX + jarWidth, jarY);
-        gradient.addColorStop(0, 'rgba(200, 230, 255, 0.8)'); gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.9)'); gradient.addColorStop(1, 'rgba(200, 230, 255, 0.8)');
-        ctx.fillStyle = gradient; ctx.fillRect(jarX + 5, jarY + 10, jarWidth - 10, jarHeight - 15);
-        ctx.strokeStyle = 'rgba(100, 150, 200, 0.6)'; ctx.lineWidth = 2; ctx.strokeRect(jarX + 5, jarY + 10, jarWidth - 10, jarHeight - 15);
-        const lidGradient = ctx.createLinearGradient(jarX, jarY, jarX + jarWidth, jarY);
-        lidGradient.addColorStop(0, '#8B7355'); lidGradient.addColorStop(0.5, '#D4A76A'); lidGradient.addColorStop(1, '#8B7355');
-        ctx.fillStyle = lidGradient; ctx.fillRect(jarX, jarY, jarWidth, 12);
-        ctx.fillStyle = ing.color; ctx.globalAlpha = 0.7; ctx.fillRect(jarX + 10, jarY + 40, jarWidth - 20, jarHeight - 50); ctx.globalAlpha = 1.0;
-        ctx.font = '32px Arial'; ctx.fillText(ing.emoji, jarX + 15, jarY + 35);
-        ctx.fillStyle = 'rgba(255, 248, 220, 0.9)'; ctx.fillRect(jarX + 8, jarY + 60, jarWidth - 16, 18);
-        ctx.fillStyle = '#2c3e50'; ctx.font = 'bold 9px Arial'; ctx.fillText(ing.name, jarX + (jarWidth - ctx.measureText(ing.name).width) / 2, jarY + 72);
+        const jarX = ing.x, jarY = ing.y, jarWidth = ing.width, jarHeight = ing.height;
+
+        if (ing.shape === 'square') {
+            // Draw square fruit box
+            // Box shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(jarX + 3, jarY + 3, jarWidth, jarHeight);
+
+            // Main box with border
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(jarX, jarY, jarWidth, jarHeight);
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(jarX, jarY, jarWidth, jarHeight);
+
+            // Fruit color background (semi-transparent)
+            ctx.fillStyle = ing.color;
+            ctx.globalAlpha = 0.3;
+            ctx.fillRect(jarX + 5, jarY + 5, jarWidth - 10, jarHeight - 10);
+            ctx.globalAlpha = 1.0;
+
+            // Fruit emoji
+            ctx.font = '40px Arial';
+            ctx.fillText(ing.emoji, jarX + jarWidth/2 - 20, jarY + jarHeight/2 + 10);
+
+            // Name label at bottom
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 10px Arial';
+            const nameWidth = ctx.measureText(ing.name).width;
+            ctx.fillText(ing.name, jarX + (jarWidth - nameWidth) / 2, jarY + jarHeight - 10);
+        } else {
+            // Draw glass jar (original style)
+            const jarHeightExt = jarHeight + 20;
+            const gradient = ctx.createLinearGradient(jarX, jarY, jarX + jarWidth, jarY);
+            gradient.addColorStop(0, 'rgba(200, 230, 255, 0.8)');
+            gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.9)');
+            gradient.addColorStop(1, 'rgba(200, 230, 255, 0.8)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(jarX + 5, jarY + 10, jarWidth - 10, jarHeightExt - 15);
+            ctx.strokeStyle = 'rgba(100, 150, 200, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(jarX + 5, jarY + 10, jarWidth - 10, jarHeightExt - 15);
+
+            const lidGradient = ctx.createLinearGradient(jarX, jarY, jarX + jarWidth, jarY);
+            lidGradient.addColorStop(0, '#8B7355');
+            lidGradient.addColorStop(0.5, '#D4A76A');
+            lidGradient.addColorStop(1, '#8B7355');
+            ctx.fillStyle = lidGradient;
+            ctx.fillRect(jarX, jarY, jarWidth, 12);
+
+            ctx.fillStyle = ing.color;
+            ctx.globalAlpha = 0.7;
+            ctx.fillRect(jarX + 10, jarY + 40, jarWidth - 20, jarHeightExt - 50);
+            ctx.globalAlpha = 1.0;
+
+            ctx.font = '40px Arial';
+            ctx.fillText(ing.emoji, jarX + 15, jarY + 40);
+
+            ctx.fillStyle = 'rgba(255, 248, 220, 0.9)';
+            ctx.fillRect(jarX + 8, jarY + 70, jarWidth - 16, 20);
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 11px Arial';
+            const nameWidth = ctx.measureText(ing.name).width;
+            ctx.fillText(ing.name, jarX + (jarWidth - nameWidth) / 2, jarY + 84);
+        }
     });
 }
 
@@ -700,7 +763,7 @@ canvas.addEventListener('click', (e) => {
 
     if (game.mode === 'serving') {
         // Check if clicked on tea machine
-        if (x >= 100 && x <= 220 && y >= 500 && y <= 680) {
+        if (x >= 100 && x <= 220 && y >= 540 && y <= 720) {
             game.mode = 'making';
             canvas.style.cursor = 'grab';
             return;
@@ -716,7 +779,7 @@ canvas.addEventListener('click', (e) => {
                 } else if (ingData.type === 'milk' && !game.currentDrink.milk) {
                     game.currentDrink.milk = ing.id;
                     game.animations.push(new Animation(ingData.emoji, ing.x, ing.y, 450, 510));
-                } else if (ingData.type === 'topping' && game.currentDrink.toppings.length < 3) {
+                } else if ((ingData.type === 'topping' || ingData.type === 'fruit') && game.currentDrink.toppings.length < 3) {
                     game.currentDrink.toppings.push(ing.id);
                     game.animations.push(new Animation(ingData.emoji, ing.x, ing.y, 450, 570));
                 }
@@ -749,7 +812,7 @@ canvas.addEventListener('click', (e) => {
                     game.currentDrink.base = ing.id;
                 } else if (ingData.type === 'milk' && !game.currentDrink.milk) {
                     game.currentDrink.milk = ing.id;
-                } else if (ingData.type === 'topping' && game.currentDrink.toppings.length < 3) {
+                } else if ((ingData.type === 'topping' || ingData.type === 'fruit') && game.currentDrink.toppings.length < 3) {
                     game.currentDrink.toppings.push(ing.id);
                 }
             }
