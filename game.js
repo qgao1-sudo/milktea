@@ -4,6 +4,20 @@ const ctx = canvas.getContext('2d');
 
 console.log('Game initializing...', canvas, ctx);
 
+// Load Background Image
+const bgImage = new Image();
+bgImage.src = 'tea_shop_interior_bg.png';
+let bgImageLoaded = false;
+
+bgImage.onload = function() {
+    bgImageLoaded = true;
+    console.log('Background image loaded!');
+};
+
+bgImage.onerror = function() {
+    console.error('Failed to load background image');
+};
+
 // Game State
 const game = {
     money: 100,
@@ -131,54 +145,65 @@ class Animation {
 
 // Draw Functions
 function drawFloor() {
-    const floorPattern = ctx.createLinearGradient(0, 500, 0, 700);
-    floorPattern.addColorStop(0, '#E8D5B7');
-    floorPattern.addColorStop(1, '#C4A77D');
+    // Only draw floor if background image hasn't loaded
+    if (!bgImageLoaded) {
+        const floorPattern = ctx.createLinearGradient(0, 500, 0, 700);
+        floorPattern.addColorStop(0, '#E8D5B7');
+        floorPattern.addColorStop(1, '#C4A77D');
 
-    ctx.fillStyle = floorPattern;
-    ctx.fillRect(0, 500, 1200, 200);
+        ctx.fillStyle = floorPattern;
+        ctx.fillRect(0, 500, 1200, 200);
 
-    // Floor tiles
-    ctx.strokeStyle = '#A0826D';
-    ctx.lineWidth = 2;
-    for (let i = 0; i < 10; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * 120, 500);
-        ctx.lineTo(i * 120, 700);
-        ctx.stroke();
+        // Floor tiles
+        ctx.strokeStyle = '#A0826D';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 10; i++) {
+            ctx.beginPath();
+            ctx.moveTo(i * 120, 500);
+            ctx.lineTo(i * 120, 700);
+            ctx.stroke();
+        }
     }
 }
 
 function drawBackground() {
-    // Wall
-    const wallGradient = ctx.createLinearGradient(0, 0, 0, 500);
-    wallGradient.addColorStop(0, '#FFE5CC');
-    wallGradient.addColorStop(1, '#FFD4A3');
+    if (bgImageLoaded) {
+        // Draw the background image
+        ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+    } else {
+        // Fallback: draw gradient background while image loads
+        const wallGradient = ctx.createLinearGradient(0, 0, 0, 500);
+        wallGradient.addColorStop(0, '#FFE5CC');
+        wallGradient.addColorStop(1, '#FFD4A3');
 
-    ctx.fillStyle = wallGradient;
-    ctx.fillRect(0, 0, 1200, 500);
+        ctx.fillStyle = wallGradient;
+        ctx.fillRect(0, 0, 1200, 500);
 
-    // Back shelf
-    ctx.fillStyle = '#8B4513';
-    ctx.fillRect(850, 150, 350, 200);
-    ctx.fillStyle = 'rgba(0,0,0,0.2)';
-    ctx.fillRect(850, 340, 350, 10);
+        // Back shelf
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(850, 150, 350, 200);
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.fillRect(850, 340, 350, 10);
 
-    // Menu board
-    ctx.fillStyle = '#2c3e50';
-    ctx.fillRect(50, 100, 300, 250);
-    ctx.fillStyle = '#f39c12';
-    ctx.font = 'bold 24px Arial';
-    ctx.fillText('🧋 MENU', 120, 140);
-    ctx.fillStyle = '#fff';
-    ctx.font = '16px Arial';
-    ctx.fillText('Milk Tea ......... $4.5', 70, 180);
-    ctx.fillText('Fruit Tea ........ $5.0', 70, 210);
-    ctx.fillText('Special ......... $6.0', 70, 240);
-    ctx.fillText('+ Toppings ...... $0.5', 70, 280);
+        // Menu board
+        ctx.fillStyle = '#2c3e50';
+        ctx.fillRect(50, 100, 300, 250);
+        ctx.fillStyle = '#f39c12';
+        ctx.font = 'bold 24px Arial';
+        ctx.fillText('🧋 MENU', 120, 140);
+        ctx.fillStyle = '#fff';
+        ctx.font = '16px Arial';
+        ctx.fillText('Milk Tea ......... $4.5', 70, 180);
+        ctx.fillText('Fruit Tea ........ $5.0', 70, 210);
+        ctx.fillText('Special ......... $6.0', 70, 240);
+        ctx.fillText('+ Toppings ...... $0.5', 70, 280);
+    }
 }
 
 function drawCounter() {
+    // Skip drawing counter if background image is loaded
+    if (bgImageLoaded) return;
+
     // Counter top
     ctx.fillStyle = '#D2691E';
     ctx.fillRect(400, 400, 700, 150);
@@ -203,6 +228,9 @@ function drawCounter() {
 }
 
 function drawTeaBrewer() {
+    // Skip drawing tea brewer if background image is loaded
+    if (bgImageLoaded) return;
+
     const x = 950;
     const y = 300;
 
@@ -355,6 +383,9 @@ function drawIngredients() {
 }
 
 function drawCashRegister() {
+    // Skip drawing cash register if background image is loaded
+    if (bgImageLoaded) return;
+
     const x = 280;
     const y = 450;
 
