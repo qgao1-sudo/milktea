@@ -83,24 +83,20 @@ const customers = [
     }
 ];
 
-// Ingredient Definitions
+// Ingredient Definitions - All jars positioned on the large table
 const ingredientDB = {
-    // Tea bases (back shelf)
-    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 920, y: 200, type: "base" },
-    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 1000, y: 200, type: "base" },
-    "oolong-tea": { name: "Oolong Tea", color: "#CD853F", emoji: "🫖", x: 1080, y: 200, type: "base" },
-    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 920, y: 270, type: "base" },
+    // Tea bases (back row on table)
+    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 200, y: 320, type: "base" },
+    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 320, y: 320, type: "base" },
+    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 440, y: 320, type: "base" },
 
-    // Milk options (middle counter)
-    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 700, y: 350, type: "milk" },
-    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 790, y: 350, type: "milk" },
-    "soy-milk": { name: "Soy Milk", color: "#FFFACD", emoji: "🫘", x: 880, y: 350, type: "milk" },
+    // Milk options (middle row on table)
+    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 200, y: 410, type: "milk" },
+    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 320, y: 410, type: "milk" },
 
-    // Toppings (front counter)
-    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 700, y: 480, type: "topping" },
-    "jelly": { name: "Jelly", color: "#90EE90", emoji: "🟢", x: 790, y: 480, type: "topping" },
-    "fruit": { name: "Fruit", color: "#FF69B4", emoji: "🍓", x: 880, y: 480, type: "topping" },
-    "pudding": { name: "Pudding", color: "#FFE4B5", emoji: "🍮", x: 970, y: 480, type: "topping" }
+    // Toppings (front row on table)
+    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 200, y: 500, type: "topping" },
+    "fruit": { name: "Fruit", color: "#FF69B4", emoji: "🍓", x: 320, y: 500, type: "topping" }
 };
 
 // Initialize ingredients array
@@ -171,7 +167,7 @@ function drawBackground() {
         // Draw the background image
         ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
     } else {
-        // Fallback: draw gradient background while image loads
+        // Fallback: draw gradient background
         const wallGradient = ctx.createLinearGradient(0, 0, 0, 500);
         wallGradient.addColorStop(0, '#FFE5CC');
         wallGradient.addColorStop(1, '#FFD4A3');
@@ -179,24 +175,17 @@ function drawBackground() {
         ctx.fillStyle = wallGradient;
         ctx.fillRect(0, 0, 1200, 500);
 
-        // Back shelf
-        ctx.fillStyle = '#8B4513';
-        ctx.fillRect(850, 150, 350, 200);
-        ctx.fillStyle = 'rgba(0,0,0,0.2)';
-        ctx.fillRect(850, 340, 350, 10);
-
-        // Menu board
+        // Menu board on left wall
         ctx.fillStyle = '#2c3e50';
-        ctx.fillRect(50, 100, 300, 250);
+        ctx.fillRect(50, 80, 250, 200);
         ctx.fillStyle = '#f39c12';
         ctx.font = 'bold 24px Arial';
-        ctx.fillText('🧋 MENU', 120, 140);
+        ctx.fillText('🧋 MENU', 100, 120);
         ctx.fillStyle = '#fff';
         ctx.font = '16px Arial';
-        ctx.fillText('Milk Tea ......... $4.5', 70, 180);
-        ctx.fillText('Fruit Tea ........ $5.0', 70, 210);
-        ctx.fillText('Special ......... $6.0', 70, 240);
-        ctx.fillText('+ Toppings ...... $0.5', 70, 280);
+        ctx.fillText('Milk Tea ..... $4.5', 70, 160);
+        ctx.fillText('Fruit Tea .... $5.0', 70, 190);
+        ctx.fillText('Special ..... $6.0', 70, 220);
     }
 }
 
@@ -204,27 +193,22 @@ function drawCounter() {
     // Skip drawing counter if background image is loaded
     if (bgImageLoaded) return;
 
-    // Counter top
+    // Large work table in center
     ctx.fillStyle = '#D2691E';
-    ctx.fillRect(400, 400, 700, 150);
+    ctx.fillRect(150, 300, 900, 280);
 
-    // Counter edge
+    // Table edge highlight
     ctx.fillStyle = '#A0522D';
-    ctx.fillRect(400, 550, 700, 20);
+    ctx.fillRect(150, 300, 900, 15);
 
-    // Counter front
+    // Table shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.fillRect(155, 585, 890, 10);
+
+    // Table legs
     ctx.fillStyle = '#8B4513';
-    ctx.fillRect(400, 570, 700, 80);
-
-    // Drawers
-    ctx.strokeStyle = '#654321';
-    ctx.lineWidth = 3;
-    for (let i = 0; i < 5; i++) {
-        const x = 450 + i * 140;
-        ctx.strokeRect(x, 590, 120, 50);
-        ctx.fillStyle = '#FFD700';
-        ctx.fillRect(x + 50, 610, 20, 10);
-    }
+    ctx.fillRect(180, 580, 40, 70);
+    ctx.fillRect(1000, 580, 40, 70);
 }
 
 function drawTeaBrewer() {
@@ -265,8 +249,9 @@ function drawTeaBrewer() {
 }
 
 function drawDrinkCup() {
-    const x = 500;
-    const y = 420;
+    // Cup positioned on the right side of the table
+    const x = 700;
+    const y = 370;
 
     // Cup body
     ctx.fillStyle = '#FFFFFF';
@@ -333,32 +318,33 @@ function drawDrinkCup() {
 function drawCustomer() {
     if (!game.currentCustomer) return;
 
-    const x = 150;
-    const y = 350;
+    // Customer positioned behind the table - larger size
+    const x = 600;
+    const y = 180;
 
     // Body
     ctx.fillStyle = game.currentCustomer.color;
-    ctx.fillRect(x - 30, y + 40, 60, 100);
+    ctx.fillRect(x - 50, y + 60, 100, 150);
 
     // Head
     ctx.beginPath();
-    ctx.arc(x, y, 35, 0, Math.PI * 2);
+    ctx.arc(x, y, 55, 0, Math.PI * 2);
     ctx.fill();
 
-    // Face
-    ctx.font = '50px Arial';
-    ctx.fillText(game.currentCustomer.sprite, x - 25, y + 15);
+    // Face sprite - much larger
+    ctx.font = '80px Arial';
+    ctx.fillText(game.currentCustomer.sprite, x - 40, y + 25);
 
-    // Name
+    // Name label
     ctx.fillStyle = '#2c3e50';
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText(game.currentCustomer.name, x - 40, y + 170);
+    ctx.font = 'bold 20px Arial';
+    ctx.fillText(game.currentCustomer.name, x - ctx.measureText(game.currentCustomer.name).width / 2, y + 235);
 
-    // Patience bar
+    // Patience bar (optional - larger)
     ctx.fillStyle = '#e74c3c';
-    ctx.fillRect(x - 40, y + 180, 80, 8);
+    ctx.fillRect(x - 50, y + 245, 100, 10);
     ctx.fillStyle = '#2ecc71';
-    ctx.fillRect(x - 40, y + 180, 64, 8);
+    ctx.fillRect(x - 50, y + 245, 80, 10);
 }
 
 function drawIngredients() {
@@ -513,8 +499,8 @@ canvas.addEventListener('click', (e) => {
         }
     });
 
-    // Check cup (shake)
-    if (x >= 500 && x <= 580 && y >= 420 && y <= 540) {
+    // Check cup (shake) - new position: x=700, y=370, width=80, height=120
+    if (x >= 700 && x <= 780 && y >= 370 && y <= 490) {
         shakeCup();
     }
 });
@@ -526,13 +512,13 @@ function addIngredient(id) {
 
     if (ing.type === 'base' && !game.currentDrink.base) {
         game.currentDrink.base = id;
-        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 540, 480));
+        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 740, 430));
     } else if (ing.type === 'milk' && !game.currentDrink.milk) {
         game.currentDrink.milk = id;
-        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 540, 460));
+        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 740, 410));
     } else if (ing.type === 'topping' && game.currentDrink.toppings.length < 3) {
         game.currentDrink.toppings.push(id);
-        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 540, 520));
+        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 740, 470));
     }
 }
 
@@ -659,8 +645,8 @@ function showThoughtBubble() {
 
     const bubble = document.getElementById('thoughtBubble');
     bubble.style.display = 'block';
-    bubble.style.left = '200px';
-    bubble.style.top = '200px';
+    bubble.style.left = '700px';
+    bubble.style.top = '80px';
     bubble.innerHTML = `<strong>${game.currentCustomer.name}:</strong><br>"${game.currentCustomer.order.text}"`;
 }
 
