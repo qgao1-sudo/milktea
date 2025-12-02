@@ -489,9 +489,9 @@ function drawDrinkCup() {
 function drawTeaMachine() {
     // Tea brewing machine on the left side - moved closer to customer area
     const x = 100;
-    const y = 420; // Moved toward customer/counter area
-    const width = 120;
-    const height = 180;
+    const y = 370; // Moved even closer to customer/counter area
+    const width = 150; // Enlarged from 120
+    const height = 220; // Enlarged from 180
 
     if (teaMachineLoaded) {
         // Draw the tea machine image
@@ -763,7 +763,7 @@ canvas.addEventListener('click', (e) => {
 
     if (game.mode === 'serving') {
         // Check if clicked on tea machine
-        if (x >= 100 && x <= 220 && y >= 420 && y <= 600) {
+        if (x >= 100 && x <= 250 && y >= 370 && y <= 590) {
             game.mode = 'making';
             canvas.style.cursor = 'grab';
             return;
