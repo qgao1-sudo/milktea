@@ -83,20 +83,20 @@ const customers = [
     }
 ];
 
-// Ingredient Definitions - All jars positioned on the large table
+// Ingredient Definitions - Positioned in work area (foreground)
 const ingredientDB = {
-    // Tea bases (back row on table)
-    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 200, y: 320, type: "base" },
-    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 320, y: 320, type: "base" },
-    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 440, y: 320, type: "base" },
+    // Tea bases - positioned in work area (foreground)
+    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 650, y: 450, type: "base" },
+    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 750, y: 450, type: "base" },
+    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 850, y: 450, type: "base" },
 
-    // Milk options (middle row on table)
-    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 200, y: 410, type: "milk" },
-    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 320, y: 410, type: "milk" },
+    // Milk options - positioned in work area
+    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 650, y: 560, type: "milk" },
+    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 750, y: 560, type: "milk" },
 
-    // Toppings (front row on table)
-    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 200, y: 500, type: "topping" },
-    "fruit": { name: "Fruit", color: "#FF69B4", emoji: "🍓", x: 320, y: 500, type: "topping" }
+    // Toppings - positioned in work area
+    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 950, y: 450, type: "topping" },
+    "fruit": { name: "Fruit", color: "#FF69B4", emoji: "🍓", x: 950, y: 560, type: "topping" }
 };
 
 // Initialize ingredients array
@@ -167,25 +167,31 @@ function drawBackground() {
         // Draw the background image
         ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
     } else {
-        // Fallback: draw gradient background
-        const wallGradient = ctx.createLinearGradient(0, 0, 0, 500);
-        wallGradient.addColorStop(0, '#FFE5CC');
-        wallGradient.addColorStop(1, '#FFD4A3');
+        // Customer area background (upper section - behind counter)
+        const customerGradient = ctx.createLinearGradient(0, 0, 0, 250);
+        customerGradient.addColorStop(0, '#FFE5CC');
+        customerGradient.addColorStop(1, '#FFD4A3');
+        ctx.fillStyle = customerGradient;
+        ctx.fillRect(0, 0, 1200, 250);
 
-        ctx.fillStyle = wallGradient;
-        ctx.fillRect(0, 0, 1200, 500);
-
-        // Menu board on left wall
+        // Menu board on back wall
         ctx.fillStyle = '#2c3e50';
-        ctx.fillRect(50, 80, 250, 200);
+        ctx.fillRect(50, 30, 200, 180);
         ctx.fillStyle = '#f39c12';
-        ctx.font = 'bold 24px Arial';
-        ctx.fillText('🧋 MENU', 100, 120);
+        ctx.font = 'bold 20px Arial';
+        ctx.fillText('🧋 MENU', 90, 60);
         ctx.fillStyle = '#fff';
-        ctx.font = '16px Arial';
-        ctx.fillText('Milk Tea ..... $4.5', 70, 160);
-        ctx.fillText('Fruit Tea .... $5.0', 70, 190);
-        ctx.fillText('Special ..... $6.0', 70, 220);
+        ctx.font = '14px Arial';
+        ctx.fillText('Milk Tea ... $4.5', 65, 95);
+        ctx.fillText('Fruit Tea .. $5.0', 65, 120);
+        ctx.fillText('Special ... $6.0', 65, 145);
+
+        // Work area background (lower section - player side)
+        const workGradient = ctx.createLinearGradient(0, 350, 0, 700);
+        workGradient.addColorStop(0, '#E8D5B7');
+        workGradient.addColorStop(1, '#C4A77D');
+        ctx.fillStyle = workGradient;
+        ctx.fillRect(0, 350, 1200, 350);
     }
 }
 
@@ -193,158 +199,167 @@ function drawCounter() {
     // Skip drawing counter if background image is loaded
     if (bgImageLoaded) return;
 
-    // Large work table in center
-    ctx.fillStyle = '#D2691E';
-    ctx.fillRect(150, 300, 900, 280);
-
-    // Table edge highlight
+    // Wooden counter - horizontal divider between customer area and work area
+    // Counter top surface
     ctx.fillStyle = '#A0522D';
-    ctx.fillRect(150, 300, 900, 15);
+    ctx.fillRect(0, 250, 1200, 100);
 
-    // Table shadow
-    ctx.fillStyle = 'rgba(0,0,0,0.3)';
-    ctx.fillRect(155, 585, 890, 10);
-
-    // Table legs
+    // Counter front edge (darker)
     ctx.fillStyle = '#8B4513';
-    ctx.fillRect(180, 580, 40, 70);
-    ctx.fillRect(1000, 580, 40, 70);
+    ctx.fillRect(0, 330, 1200, 20);
+
+    // Counter top highlight
+    ctx.fillStyle = '#D2691E';
+    ctx.fillRect(0, 250, 1200, 15);
+
+    // Counter wood grain effect (simple lines)
+    ctx.strokeStyle = 'rgba(139, 69, 19, 0.3)';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 10; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * 120, 260);
+        ctx.lineTo(i * 120, 330);
+        ctx.stroke();
+    }
 }
 
-function drawTeaBrewer() {
-    // Skip drawing tea brewer if background image is loaded
+function drawTeaMachine() {
+    // Skip drawing if background image is loaded
     if (bgImageLoaded) return;
 
-    const x = 950;
-    const y = 300;
+    // Tea brewing machine on the left side of work area
+    const x = 100;
+    const y = 450;
 
-    // Brewer base
+    // Machine body
     ctx.fillStyle = '#C0C0C0';
-    ctx.fillRect(x, y, 80, 100);
+    ctx.fillRect(x, y, 120, 180);
 
-    // Brewer top
-    ctx.fillStyle = '#A9A9A9';
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + 80, y);
-    ctx.lineTo(x + 70, y - 20);
-    ctx.lineTo(x + 10, y - 20);
-    ctx.closePath();
-    ctx.fill();
+    // Machine top
+    ctx.fillStyle = '#808080';
+    ctx.fillRect(x, y, 120, 25);
 
-    // Steam
-    if (game.currentDrink.base) {
-        ctx.font = '20px Arial';
-        ctx.fillText('💨', x + 30, y - 30);
-    }
-
-    // Display
+    // Display screen
     ctx.fillStyle = '#000';
-    ctx.fillRect(x + 10, y + 20, 60, 30);
+    ctx.fillRect(x + 15, y + 40, 90, 50);
+
+    // Status on screen
     if (game.currentDrink.base) {
         ctx.fillStyle = '#0F0';
-        ctx.font = '12px monospace';
-        ctx.fillText('BREWING', x + 12, y + 38);
+        ctx.font = '14px monospace';
+        ctx.fillText('BREWING', x + 22, y + 70);
+        // Steam effect
+        ctx.font = '24px Arial';
+        ctx.fillText('💨', x + 45, y + 25);
+    } else {
+        ctx.fillStyle = '#666';
+        ctx.font = '14px monospace';
+        ctx.fillText('READY', x + 32, y + 70);
     }
+
+    // Buttons
+    for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = '#444';
+        ctx.fillRect(x + 20 + i * 30, y + 110, 25, 15);
+    }
+
+    // Dispenser nozzle
+    ctx.fillStyle = '#666';
+    ctx.fillRect(x + 45, y + 150, 30, 30);
 }
 
 function drawDrinkCup() {
-    // Cup positioned on the right side of the table
-    const x = 700;
-    const y = 370;
+    // Cup positioned in work area (foreground)
+    const x = 400;
+    const y = 480;
 
-    // Cup body
+    // Cup body - larger for better visibility
     ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(x, y, 80, 120);
+    ctx.fillRect(x, y, 100, 150);
     ctx.strokeStyle = '#333';
     ctx.lineWidth = 3;
-    ctx.strokeRect(x, y, 80, 120);
+    ctx.strokeRect(x, y, 100, 150);
 
     // Lid
     ctx.fillStyle = '#FF69B4';
     ctx.beginPath();
-    ctx.arc(x + 40, y, 45, 0, Math.PI * 2);
+    ctx.arc(x + 50, y, 55, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
     // Straw hole
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.arc(x + 40, y, 5, 0, Math.PI * 2);
+    ctx.arc(x + 50, y, 5, 0, Math.PI * 2);
     ctx.fill();
 
     // Straw
     ctx.strokeStyle = '#FF0000';
-    ctx.lineWidth = 8;
+    ctx.lineWidth = 10;
     ctx.beginPath();
-    ctx.moveTo(x + 40, y - 50);
-    ctx.lineTo(x + 40, y + 20);
+    ctx.moveTo(x + 50, y - 60);
+    ctx.lineTo(x + 50, y + 25);
     ctx.stroke();
 
     // Draw drink layers
-    let layerY = y + 110;
-    const layerHeight = 25;
+    let layerY = y + 140;
+    const layerHeight = 30;
 
     // Toppings at bottom
     if (game.currentDrink.toppings.length > 0) {
         game.currentDrink.toppings.forEach((topping, i) => {
             ctx.fillStyle = ingredientDB[topping].color;
-            ctx.fillRect(x + 5, layerY - i * 15, 70, 15);
+            ctx.fillRect(x + 7, layerY - i * 20, 86, 20);
         });
-        layerY -= game.currentDrink.toppings.length * 15;
+        layerY -= game.currentDrink.toppings.length * 20;
     }
 
     // Milk layer
     if (game.currentDrink.milk) {
         ctx.fillStyle = ingredientDB[game.currentDrink.milk].color;
-        ctx.fillRect(x + 5, layerY - layerHeight, 70, layerHeight);
+        ctx.fillRect(x + 7, layerY - layerHeight, 86, layerHeight);
         layerY -= layerHeight;
     }
 
     // Tea base layer
     if (game.currentDrink.base) {
         ctx.fillStyle = ingredientDB[game.currentDrink.base].color;
-        ctx.fillRect(x + 5, layerY - layerHeight, 70, layerHeight);
+        ctx.fillRect(x + 7, layerY - layerHeight, 86, layerHeight);
     }
 
     // Shake indicator
     if (game.currentDrink.shaken) {
         ctx.fillStyle = '#2ecc71';
-        ctx.font = 'bold 14px Arial';
-        ctx.fillText('✓ SHAKEN', x - 10, y + 150);
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText('✓ SHAKEN', x - 5, y + 180);
     }
 }
 
 function drawCustomer() {
     if (!game.currentCustomer) return;
 
-    // Customer positioned behind the table - larger size
+    // Customer in background area (upper section) - showing upper body
     const x = 600;
-    const y = 180;
+    const y = 140; // Positioned in customer area
 
-    // Body
+    // Upper body (torso visible above counter)
     ctx.fillStyle = game.currentCustomer.color;
-    ctx.fillRect(x - 50, y + 60, 100, 150);
+    ctx.fillRect(x - 50, y + 50, 100, 100);
 
     // Head
     ctx.beginPath();
-    ctx.arc(x, y, 55, 0, Math.PI * 2);
+    ctx.arc(x, y, 60, 0, Math.PI * 2);
     ctx.fill();
 
-    // Face sprite - much larger
-    ctx.font = '80px Arial';
-    ctx.fillText(game.currentCustomer.sprite, x - 40, y + 25);
+    // Face sprite - large and clear
+    ctx.font = '90px Arial';
+    ctx.fillText(game.currentCustomer.sprite, x - 45, y + 30);
 
-    // Name label
+    // Name tag
     ctx.fillStyle = '#2c3e50';
-    ctx.font = 'bold 20px Arial';
-    ctx.fillText(game.currentCustomer.name, x - ctx.measureText(game.currentCustomer.name).width / 2, y + 235);
-
-    // Patience bar (optional - larger)
-    ctx.fillStyle = '#e74c3c';
-    ctx.fillRect(x - 50, y + 245, 100, 10);
-    ctx.fillStyle = '#2ecc71';
-    ctx.fillRect(x - 50, y + 245, 80, 10);
+    ctx.font = 'bold 16px Arial';
+    const nameWidth = ctx.measureText(game.currentCustomer.name).width;
+    ctx.fillText(game.currentCustomer.name, x - nameWidth / 2, y + 180);
 }
 
 function drawIngredients() {
@@ -460,15 +475,14 @@ function render() {
     try {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw all layers
+        // Draw in correct z-order: background -> counter -> work area -> foreground
         drawBackground();
-        drawFloor();
         drawCounter();
-        drawTeaBrewer();
-        drawCashRegister();
-        drawIngredients();
-        drawDrinkCup();
-        drawCustomer();
+        drawCustomer(); // Customer behind counter
+        drawTeaMachine(); // Tea machine in work area
+        drawIngredients(); // Ingredient jars in work area
+        drawDrinkCup(); // Cup being prepared
+        drawCashRegister(); // Keep cash register
 
         // Draw animations
         game.animations = game.animations.filter(anim => {
@@ -499,8 +513,8 @@ canvas.addEventListener('click', (e) => {
         }
     });
 
-    // Check cup (shake) - new position: x=700, y=370, width=80, height=120
-    if (x >= 700 && x <= 780 && y >= 370 && y <= 490) {
+    // Check cup (shake) - new position: x=400, y=480, width=100, height=150
+    if (x >= 400 && x <= 500 && y >= 480 && y <= 630) {
         shakeCup();
     }
 });
@@ -510,15 +524,16 @@ function addIngredient(id) {
     const ing = ingredientDB[id];
     console.log('Adding ingredient:', id, ing);
 
+    // Cup is at x=400, y=480 (center at 450)
     if (ing.type === 'base' && !game.currentDrink.base) {
         game.currentDrink.base = id;
-        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 740, 430));
+        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 450, 530));
     } else if (ing.type === 'milk' && !game.currentDrink.milk) {
         game.currentDrink.milk = id;
-        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 740, 410));
+        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 450, 510));
     } else if (ing.type === 'topping' && game.currentDrink.toppings.length < 3) {
         game.currentDrink.toppings.push(id);
-        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 740, 470));
+        game.animations.push(new Animation(ing.emoji, ing.x, ing.y, 450, 570));
     }
 }
 
@@ -645,8 +660,8 @@ function showThoughtBubble() {
 
     const bubble = document.getElementById('thoughtBubble');
     bubble.style.display = 'block';
-    bubble.style.left = '700px';
-    bubble.style.top = '80px';
+    bubble.style.left = '750px';
+    bubble.style.top = '50px';
     bubble.innerHTML = `<strong>${game.currentCustomer.name}:</strong><br>"${game.currentCustomer.order.text}"`;
 }
 
