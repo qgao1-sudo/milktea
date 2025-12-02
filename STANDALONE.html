@@ -354,6 +354,45 @@ function drawBackground() {
     ctx.fillText('Fruit Tea .. $5.0', 65, 120);
     ctx.fillText('Special ... $6.0', 65, 145);
 
+    // Decorative Poster 1 - Bubble Tea
+    ctx.fillStyle = '#FF69B4';
+    ctx.fillRect(800, 40, 140, 160);
+    ctx.fillStyle = '#FFB6C1';
+    ctx.fillRect(810, 50, 120, 140);
+    ctx.font = '60px Arial';
+    ctx.fillText('🧋', 845, 110);
+    ctx.fillStyle = '#2c3e50';
+    ctx.font = 'bold 16px Arial';
+    ctx.fillText('GLORIA', 830, 150);
+    ctx.font = '12px Arial';
+    ctx.fillText('Milk Tea', 840, 170);
+
+    // Decorative Poster 2 - Fruit Tea
+    ctx.fillStyle = '#FFA500';
+    ctx.fillRect(970, 40, 140, 160);
+    ctx.fillStyle = '#FFE4B5';
+    ctx.fillRect(980, 50, 120, 140);
+    ctx.font = '50px Arial';
+    ctx.fillText('🍓🥭', 995, 110);
+    ctx.fillStyle = '#2c3e50';
+    ctx.font = 'bold 16px Arial';
+    ctx.fillText('FRESH', 1010, 150);
+    ctx.font = '12px Arial';
+    ctx.fillText('Fruit Series', 995, 170);
+
+    // Decorative Poster 3 - Special Offer
+    ctx.fillStyle = '#9370DB';
+    ctx.fillRect(300, 40, 140, 160);
+    ctx.fillStyle = '#DDA0DD';
+    ctx.fillRect(310, 50, 120, 140);
+    ctx.font = '60px Arial';
+    ctx.fillText('⭐', 345, 110);
+    ctx.fillStyle = '#2c3e50';
+    ctx.font = 'bold 16px Arial';
+    ctx.fillText('SPECIAL', 330, 150);
+    ctx.font = '12px Arial';
+    ctx.fillText('Today Only!', 335, 170);
+
     // Work area background (lower section - player side)
     const workGradient = ctx.createLinearGradient(0, 350, 0, 700);
     workGradient.addColorStop(0, '#E8D5B7');
@@ -741,7 +780,6 @@ function render() {
         drawCustomer();
         drawTeaMachine();
         drawIngredients();
-        drawDrinkCup();
     } else if (game.mode === 'making') {
         // Draw making mode
         drawMakingMode();
@@ -763,29 +801,8 @@ canvas.addEventListener('click', (e) => {
             return;
         }
 
-        // Original serving mode interactions
-        game.ingredients.forEach(ing => {
-            if (x >= ing.x && x <= ing.x + ing.width && y >= ing.y && y <= ing.y + ing.height) {
-                const ingData = ingredientDB[ing.id];
-                if (ingData.type === 'base' && !game.currentDrink.base) {
-                    game.currentDrink.base = ing.id;
-                    game.animations.push(new Animation(ingData.emoji, ing.x, ing.y, 450, 530));
-                } else if (ingData.type === 'milk' && !game.currentDrink.milk) {
-                    game.currentDrink.milk = ing.id;
-                    game.animations.push(new Animation(ingData.emoji, ing.x, ing.y, 450, 510));
-                } else if ((ingData.type === 'topping' || ingData.type === 'fruit') && game.currentDrink.toppings.length < 3) {
-                    game.currentDrink.toppings.push(ing.id);
-                    game.animations.push(new Animation(ingData.emoji, ing.x, ing.y, 450, 570));
-                }
-            }
-        });
-
-        // Click on cup to shake
-        if (x >= 400 && x <= 500 && y >= 480 && y <= 630) {
-            if (!game.currentDrink.shaken && (game.currentDrink.base || game.currentDrink.milk || game.currentDrink.toppings.length > 0)) {
-                game.currentDrink.shaken = true;
-            }
-        }
+        // In serving mode, ingredients can only be clicked in making mode
+        // No direct ingredient interaction in serving mode
     } else if (game.mode === 'making') {
         // Check if clicked on done button
         if (x >= 450 && x <= 750 && y >= 580 && y <= 640) {
