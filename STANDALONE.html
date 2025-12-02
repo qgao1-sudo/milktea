@@ -299,23 +299,21 @@ const customers = [
 ];
 
 const ingredientDB = {
-    // Tea bases - positioned in work area (moved forward, larger size)
-    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 650, y: 480, type: "base" },
-    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 750, y: 480, type: "base" },
-    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 850, y: 480, type: "base" },
-    // Milk options - positioned in work area
-    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 950, y: 480, type: "milk" },
-    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 1050, y: 480, type: "milk" },
-    // Original toppings
-    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 650, y: 580, type: "topping" },
-    "pudding": { name: "Pudding", color: "#FFE4B5", emoji: "🍮", x: 750, y: 580, type: "topping" },
-    // Fruit boxes (square shaped) - new row
-    "strawberry": { name: "Strawberry", color: "#FF6B6B", emoji: "🍓", x: 400, y: 580, type: "fruit", shape: "square" },
-    "mango": { name: "Mango", color: "#FFA500", emoji: "🥭", x: 500, y: 580, type: "fruit", shape: "square" },
-    "lychee": { name: "Lychee", color: "#FFB6C1", emoji: "🍈", x: 850, y: 580, type: "fruit", shape: "square" },
-    "passion-fruit": { name: "Passion", color: "#9370DB", emoji: "🟣", x: 950, y: 580, type: "fruit", shape: "square" },
-    "blueberry": { name: "Blueberry", color: "#4169E1", emoji: "🫐", x: 1050, y: 580, type: "fruit", shape: "square" },
-    "kiwi": { name: "Kiwi", color: "#9ACD32", emoji: "🥝", x: 300, y: 580, type: "fruit", shape: "square" }
+    // First row: Jars (tea bases, milk, toppings) - aligned with tea machine level
+    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 280, y: 380, type: "base" },
+    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 380, y: 380, type: "base" },
+    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 480, y: 380, type: "base" },
+    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 580, y: 380, type: "milk" },
+    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 680, y: 380, type: "milk" },
+    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 780, y: 380, type: "topping" },
+    "pudding": { name: "Pudding", color: "#FFE4B5", emoji: "🍮", x: 880, y: 380, type: "topping" },
+    // Second row: Fruit boxes - square shaped
+    "strawberry": { name: "Strawberry", color: "#FF6B6B", emoji: "🍓", x: 280, y: 500, type: "fruit", shape: "square" },
+    "mango": { name: "Mango", color: "#FFA500", emoji: "🥭", x: 380, y: 500, type: "fruit", shape: "square" },
+    "lychee": { name: "Lychee", color: "#FFB6C1", emoji: "🍈", x: 480, y: 500, type: "fruit", shape: "square" },
+    "passion-fruit": { name: "Passion", color: "#9370DB", emoji: "🟣", x: 580, y: 500, type: "fruit", shape: "square" },
+    "blueberry": { name: "Blueberry", color: "#4169E1", emoji: "🫐", x: 680, y: 500, type: "fruit", shape: "square" },
+    "kiwi": { name: "Kiwi", color: "#9ACD32", emoji: "🥝", x: 780, y: 500, type: "fruit", shape: "square" }
 };
 
 for (let key in ingredientDB) {
@@ -657,37 +655,40 @@ function drawMakingMode() {
         ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
     }
 
-    // Ingredient options on the right
-    const startX = 800, startY = 100;
-    let offsetY = 0;
+    // Ingredient options - multi-column layout to fit all ingredients
+    const startX = 750, startY = 80;
+    const boxWidth = 70, boxHeight = 70;
+    const cols = 3;
+    const spacingX = 80, spacingY = 80;
 
     ctx.fillStyle = '#2c3e50';
     ctx.font = 'bold 20px Arial';
-    ctx.fillText('配料:', startX, startY);
+    ctx.fillText('配料:', startX, startY - 10);
 
     game.ingredients.forEach((ing, i) => {
-        const x = startX;
-        const y = startY + 50 + offsetY;
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const x = startX + col * spacingX;
+        const y = startY + row * spacingY;
 
         // Ingredient box
         ctx.fillStyle = ing.color;
         ctx.globalAlpha = 0.3;
-        ctx.fillRect(x, y, 120, 80);
+        ctx.fillRect(x, y, boxWidth, boxHeight);
         ctx.globalAlpha = 1.0;
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, 120, 80);
+        ctx.strokeRect(x, y, boxWidth, boxHeight);
 
         // Emoji
-        ctx.font = '40px Arial';
-        ctx.fillText(ing.emoji, x + 10, y + 50);
+        ctx.font = '30px Arial';
+        ctx.fillText(ing.emoji, x + 8, y + 40);
 
         // Name
         ctx.fillStyle = '#2c3e50';
-        ctx.font = '12px Arial';
-        ctx.fillText(ing.name, x + 10, y + 70);
-
-        offsetY += 95;
+        ctx.font = '9px Arial';
+        const nameWidth = ctx.measureText(ing.name).width;
+        ctx.fillText(ing.name, x + (boxWidth - nameWidth) / 2, y + 62);
     });
 
     // Done button
@@ -794,11 +795,19 @@ canvas.addEventListener('click', (e) => {
             return;
         }
 
-        // Check if clicked on ingredients
-        const startX = 800, startY = 150;
+        // Check if clicked on ingredients (multi-column layout)
+        const startX = 750, startY = 80;
+        const boxWidth = 70, boxHeight = 70;
+        const cols = 3;
+        const spacingX = 80, spacingY = 80;
+
         game.ingredients.forEach((ing, i) => {
-            const ingY = startY + i * 95;
-            if (x >= startX && x <= startX + 120 && y >= ingY && y <= ingY + 80) {
+            const col = i % cols;
+            const row = Math.floor(i / cols);
+            const ingX = startX + col * spacingX;
+            const ingY = startY + row * spacingY;
+
+            if (x >= ingX && x <= ingX + boxWidth && y >= ingY && y <= ingY + boxHeight) {
                 const ingData = ingredientDB[ing.id];
                 // Add to drink
                 if (ingData.type === 'base' && !game.currentDrink.base) {
