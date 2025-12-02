@@ -1,806 +1,694 @@
+// Canvas Setup
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
 // Game State
-const gameState = {
+const game = {
     money: 100,
     reputation: 0,
     day: 1,
-    time: 9.0, // 9:00 AM
-    upgrades: [],
-    menu: [
-        { name: "Classic Milk Tea", price: 4.5, recipe: {} }
-    ],
+    served: 0,
     currentCustomer: null,
-    customerQueue: [],
     currentDrink: {
         base: null,
-        sweetness: 5,
-        syrup: null,
-        ingredients: [],
+        milk: null,
         toppings: [],
-        seal: null,
-        shakeQuality: 0
+        sweetness: 5,
+        shaken: false
     },
-    currentStep: 1,
-    researches: {},
-    stats: {
-        drinksServed: 0,
-        perfectDrinks: 0,
-        totalEarnings: 0
-    }
-};
-
-// Customer Types and Templates
-const customerTypes = {
-    clear: {
-        probability: 0.3,
-        name: "Clear Customer",
-        orderStyle: "specific",
-        tolerance: 0.8 // Low tolerance for mistakes
-    },
-    descriptive: {
-        probability: 0.4,
-        name: "Descriptive Customer",
-        orderStyle: "descriptive",
-        tolerance: 0.6
-    },
-    challenge: {
-        probability: 0.2,
-        name: "Challenge Customer",
-        orderStyle: "challenge",
-        tolerance: 0.4,
-        reward: 2.0 // Double reward
-    },
-    special: {
-        probability: 0.1,
-        name: "Special Customer",
-        orderStyle: "special",
-        tolerance: 0.9
-    }
+    ingredients: [],
+    animations: []
 };
 
 // Customer Database
 const customers = [
-    // Clear Customers
     {
         name: "Sarah",
-        type: "clear",
-        avatar: "👩",
+        sprite: "👩",
+        color: "#FFB6C1",
         order: {
-            text: "I want a large milk tea with pearls, 30% sugar, less ice, and add coconut jelly.",
-            requirements: {
-                base: "black-tea",
-                sweetness: 3,
-                ingredients: ["fresh-milk"],
-                toppings: ["black-pearl", "coconut-jelly"]
-            }
+            text: "I want milk tea with pearls!",
+            base: "black-tea",
+            milk: "fresh-milk",
+            toppings: ["pearl"],
+            sweetness: 5
         }
     },
     {
         name: "Mike",
-        type: "clear",
-        avatar: "👨",
+        sprite: "👨",
+        color: "#87CEEB",
         order: {
-            text: "Green tea with oat milk, half sugar, add white pearls please.",
-            requirements: {
-                base: "green-tea",
-                sweetness: 5,
-                ingredients: ["oat-milk"],
-                toppings: ["white-pearl"]
-            }
+            text: "Green tea with oat milk please!",
+            base: "green-tea",
+            milk: "oat-milk",
+            toppings: [],
+            sweetness: 3
         }
     },
-    // Descriptive Customers
     {
         name: "Emma",
-        type: "descriptive",
-        avatar: "👧",
+        sprite: "👧",
+        color: "#FFD700",
         order: {
-            text: "Give me something that makes me happy, but not too sweet!",
-            hints: ["❤️", "🌸"],
-            requirements: {
-                base: ["jasmine-tea", "four-season-tea"],
-                sweetness: [4, 5, 6],
-                ingredients: ["strawberry", "fresh-milk"],
-                toppings: ["colorful-pearl"]
-            }
-        }
-    },
-    {
-        name: "David",
-        type: "descriptive",
-        avatar: "🧔",
-        order: {
-            text: "I want something like first love... sweet with a bit of sourness.",
-            hints: ["💖", "🍋"],
-            requirements: {
-                base: ["black-tea", "green-tea"],
-                sweetness: [4, 5],
-                ingredients: ["lemon", "passion-fruit"],
-                toppings: []
-            }
+            text: "Something fruity and sweet!",
+            base: "jasmine-tea",
+            milk: "fresh-milk",
+            toppings: ["fruit"],
+            sweetness: 7
         }
     },
     {
         name: "Lisa",
-        type: "descriptive",
-        avatar: "👱‍♀️",
+        sprite: "👱‍♀️",
+        color: "#FF69B4",
         order: {
-            text: "Something refreshing for a hot day, fruity and light!",
-            hints: ["❄️", "🍊"],
-            requirements: {
-                base: ["green-tea", "jasmine-tea"],
-                sweetness: [3, 4, 5],
-                ingredients: ["lemon", "mango"],
-                toppings: ["popping-boba"]
-            }
+            text: "Classic milk tea, extra pearls!",
+            base: "black-tea",
+            milk: "fresh-milk",
+            toppings: ["pearl", "pearl"],
+            sweetness: 5
         }
     },
-    // Challenge Customers
     {
         name: "Alex",
-        type: "challenge",
-        avatar: "🤠",
+        sprite: "🤠",
+        color: "#DEB887",
         order: {
-            text: "Surprise me with your weirdest combination!",
-            requirements: "random"
-        }
-    },
-    // Special Customers
-    {
-        name: "Linda (Blogger)",
-        type: "special",
-        avatar: "📸",
-        specialty: "instagram",
-        order: {
-            text: "Make me something Instagram-worthy! It needs to look amazing!",
-            hints: ["📷", "⭐"],
-            requirements: {
-                base: ["strawberry", "mango"],
-                ingredients: ["fresh-milk", "cream"],
-                toppings: ["colorful-pearl", "pudding"],
-                needsBeauty: true
-            }
-        }
-    },
-    {
-        name: "Jack (Trainer)",
-        type: "special",
-        avatar: "💪",
-        specialty: "fitness",
-        order: {
-            text: "I need something healthy. Show me the nutrition info!",
-            hints: ["🏋️", "❤️"],
-            requirements: {
-                base: ["green-tea"],
-                sweetness: [0, 1, 2],
-                ingredients: ["oat-milk", "soy-milk"],
-                toppings: [],
-                needsNutrition: true
-            }
-        }
-    },
-    {
-        name: "Grandma Chen",
-        type: "special",
-        avatar: "👵",
-        specialty: "regular",
-        order: {
-            text: "Just like the old days... classic milk tea with pearls, nothing fancy.",
-            requirements: {
-                base: "black-tea",
-                sweetness: 7,
-                ingredients: ["fresh-milk"],
-                toppings: ["black-pearl"]
-            }
+            text: "Oolong tea with soy milk!",
+            base: "oolong-tea",
+            milk: "soy-milk",
+            toppings: ["jelly"],
+            sweetness: 4
         }
     }
 ];
 
-// Ingredient Database
-const ingredients = {
-    bases: {
-        "black-tea": { name: "Black Tea", color: "#8B4513", cost: 0.5 },
-        "green-tea": { name: "Green Tea", color: "#90EE90", cost: 0.5 },
-        "oolong-tea": { name: "Oolong Tea", color: "#CD853F", cost: 0.7 },
-        "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", cost: 0.6 },
-        "pu-erh-tea": { name: "Pu-erh Tea", color: "#654321", cost: 0.8 },
-        "four-season-tea": { name: "Four Season Tea", color: "#FFD700", cost: 0.7 }
-    },
-    syrups: {
-        "cane-sugar": { name: "Cane Sugar", cost: 0.2 },
-        "honey": { name: "Honey", cost: 0.4 },
-        "brown-sugar": { name: "Brown Sugar", cost: 0.3 },
-        "zero-calorie": { name: "Zero Calorie", cost: 0.3 }
-    },
-    mainIngredients: {
-        "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", cost: 0.8 },
-        "oat-milk": { name: "Oat Milk", color: "#F5DEB3", cost: 1.0 },
-        "soy-milk": { name: "Soy Milk", color: "#FFFACD", cost: 0.9 },
-        "cream": { name: "Heavy Cream", color: "#FFFAF0", cost: 1.2 },
-        "mango": { name: "Mango", color: "#FFD700", cost: 1.5 },
-        "strawberry": { name: "Strawberry", color: "#FF69B4", cost: 1.3 },
-        "lemon": { name: "Lemon", color: "#FFFF00", cost: 0.8 },
-        "passion-fruit": { name: "Passion Fruit", color: "#FF8C00", cost: 1.4 }
-    },
-    toppings: {
-        "black-pearl": { name: "Black Pearls", color: "#000000", cost: 0.5 },
-        "white-pearl": { name: "White Pearls", color: "#FFFFFF", cost: 0.5 },
-        "colorful-pearl": { name: "Colorful Pearls", color: "#FF1493", cost: 0.7 },
-        "grass-jelly": { name: "Grass Jelly", color: "#2F4F4F", cost: 0.4 },
-        "coconut-jelly": { name: "Coconut Jelly", color: "#F0FFFF", cost: 0.5 },
-        "pudding": { name: "Pudding", color: "#FFE4B5", cost: 0.6 },
-        "popping-boba": { name: "Popping Boba", color: "#FF69B4", cost: 0.8 },
-        "red-bean": { name: "Red Bean", color: "#8B0000", cost: 0.5 }
-    }
+// Ingredient Definitions with Isometric Positions
+const ingredientDB = {
+    // Tea bases (back shelf)
+    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 920, y: 200, type: "base" },
+    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 1000, y: 200, type: "base" },
+    "oolong-tea": { name: "Oolong Tea", color: "#CD853F", emoji: "🫖", x: 1080, y: 200, type: "base" },
+    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 920, y: 270, type: "base" },
+
+    // Milk options (middle counter)
+    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 700, y: 350, type: "milk" },
+    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 790, y: 350, type: "milk" },
+    "soy-milk": { name: "Soy Milk", color: "#FFFACD", emoji: "🫘", x: 880, y: 350, type: "milk" },
+
+    // Toppings (front counter)
+    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 700, y: 480, type: "topping" },
+    "jelly": { name: "Jelly", color: "#90EE90", emoji: "🟢", x: 790, y: 480, type: "topping" },
+    "fruit": { name: "Fruit", color: "#FF69B4", emoji: "🍓", x: 880, y: 480, type: "topping" },
+    "pudding": { name: "Pudding", color: "#FFE4B5", emoji: "🍮", x: 970, y: 480, type: "topping" }
 };
 
-// Initialize Game
-function initGame() {
-    updateUI();
-    spawnCustomer();
-    startGameLoop();
-    setupEventListeners();
-}
-
-// Setup Event Listeners
-function setupEventListeners() {
-    // Base selection
-    document.querySelectorAll('#step-1 .option-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            selectOption(this, 'base', this.dataset.base);
-            setTimeout(() => nextStep(), 500);
-        });
-    });
-
-    // Sweetness slider
-    const sweetnessSlider = document.getElementById('sweetness-slider');
-    const sweetnessValue = document.getElementById('sweetness-value');
-    sweetnessSlider.addEventListener('input', function() {
-        gameState.currentDrink.sweetness = parseInt(this.value);
-        const percentage = this.value * 10;
-        sweetnessValue.textContent = `${percentage}% Sweet`;
-        updateDrinkPreview();
-    });
-
-    // Syrup selection
-    document.querySelectorAll('#step-2 .option-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            selectOption(this, 'syrup', this.dataset.syrup);
-        });
-    });
-
-    // Ingredient selection
-    document.querySelectorAll('#step-3 .option-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            toggleSelection(this, 'ingredients', this.dataset.ingredient);
-        });
-    });
-
-    // Topping selection
-    document.querySelectorAll('#step-4 .option-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            toggleSelection(this, 'toppings', this.dataset.topping);
-        });
-    });
-
-    // Seal selection
-    document.querySelectorAll('#step-5 .option-btn[data-seal]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            selectOption(this, 'seal', this.dataset.seal);
-        });
-    });
-
-    // Shake button
-    document.getElementById('shake-btn').addEventListener('click', shakeGame);
-
-    // Upgrade buttons
-    document.querySelectorAll('.upgrade-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            purchaseUpgrade(this.dataset.upgrade, parseInt(this.dataset.cost));
-        });
+// Initialize ingredients array
+for (let key in ingredientDB) {
+    game.ingredients.push({
+        id: key,
+        ...ingredientDB[key],
+        width: 60,
+        height: 60
     });
 }
 
-// Select single option
-function selectOption(button, category, value) {
-    // Remove selection from siblings
-    button.parentElement.querySelectorAll('.option-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
-    button.classList.add('selected');
+// Animation Class
+class Animation {
+    constructor(type, x, y, data) {
+        this.type = type;
+        this.x = x;
+        this.y = y;
+        this.data = data;
+        this.frame = 0;
+        this.maxFrame = data.duration || 30;
+    }
 
-    gameState.currentDrink[category] = value;
-    updateDrinkPreview();
-}
+    update() {
+        this.frame++;
+        return this.frame >= this.maxFrame;
+    }
 
-// Toggle multiple selection
-function toggleSelection(button, category, value) {
-    button.classList.toggle('selected');
+    draw() {
+        if (this.type === 'ingredient-fly') {
+            const progress = this.frame / this.maxFrame;
+            const currentX = this.data.startX + (this.data.endX - this.data.startX) * progress;
+            const currentY = this.data.startY + (this.data.endY - this.data.startY) * progress - Math.sin(progress * Math.PI) * 50;
 
-    if (button.classList.contains('selected')) {
-        if (!gameState.currentDrink[category].includes(value)) {
-            gameState.currentDrink[category].push(value);
+            ctx.save();
+            ctx.globalAlpha = 1 - progress * 0.5;
+            ctx.font = '32px Arial';
+            ctx.fillText(this.data.emoji, currentX, currentY);
+            ctx.restore();
+        } else if (this.type === 'shake') {
+            const shake = Math.sin(this.frame * 0.5) * 5;
+            ctx.save();
+            ctx.translate(shake, 0);
+            ctx.restore();
         }
-    } else {
-        gameState.currentDrink[category] = gameState.currentDrink[category].filter(v => v !== value);
     }
-
-    updateDrinkPreview();
 }
 
-// Next Step
-function nextStep() {
-    if (gameState.currentStep < 5) {
-        // Mark current step as completed
-        document.querySelector(`.step[data-step="${gameState.currentStep}"]`).classList.add('completed');
-        document.querySelector(`.step[data-step="${gameState.currentStep}"]`).classList.remove('active');
+// Draw Isometric Floor
+function drawFloor() {
+    const floorPattern = ctx.createLinearGradient(0, 500, 0, 700);
+    floorPattern.addColorStop(0, '#E8D5B7');
+    floorPattern.addColorStop(1, '#C4A77D');
 
-        gameState.currentStep++;
+    ctx.fillStyle = floorPattern;
+    ctx.fillRect(0, 500, 1200, 200);
 
-        // Hide current panel, show next
-        document.querySelectorAll('.step-panel').forEach(panel => {
-            panel.classList.add('hidden');
+    // Floor tiles
+    ctx.strokeStyle = '#A0826D';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 10; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * 120, 500);
+        ctx.lineTo(i * 120, 700);
+        ctx.stroke();
+    }
+}
+
+// Draw Background Wall and Shelves
+function drawBackground() {
+    // Wall
+    const wallGradient = ctx.createLinearGradient(0, 0, 0, 500);
+    wallGradient.addColorStop(0, '#FFE5CC');
+    wallGradient.addColorStop(1, '#FFD4A3');
+
+    ctx.fillStyle = wallGradient;
+    ctx.fillRect(0, 0, 1200, 500);
+
+    // Back shelf
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(850, 150, 350, 200);
+
+    // Shelf shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+    ctx.fillRect(850, 340, 350, 10);
+
+    // Menu board
+    ctx.fillStyle = '#2c3e50';
+    ctx.fillRect(50, 100, 300, 250);
+    ctx.fillStyle = '#f39c12';
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText('🧋 MENU', 120, 140);
+    ctx.fillStyle = '#fff';
+    ctx.font = '16px Arial';
+    ctx.fillText('Milk Tea ......... $4.5', 70, 180);
+    ctx.fillText('Fruit Tea ........ $5.0', 70, 210);
+    ctx.fillText('Special ......... $6.0', 70, 240);
+    ctx.fillText('+ Toppings ...... $0.5', 70, 280);
+}
+
+// Draw Counter (Isometric)
+function drawCounter() {
+    // Main counter - isometric view
+    ctx.save();
+
+    // Counter top (light brown)
+    ctx.fillStyle = '#D2691E';
+    ctx.beginPath();
+    ctx.moveTo(400, 400);
+    ctx.lineTo(1100, 400);
+    ctx.lineTo(1100, 550);
+    ctx.lineTo(400, 550);
+    ctx.closePath();
+    ctx.fill();
+
+    // Counter edge (darker)
+    ctx.fillStyle = '#A0522D';
+    ctx.fillRect(400, 550, 700, 20);
+
+    // Counter front face
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(400, 570, 700, 80);
+
+    // Counter details (drawers)
+    ctx.strokeStyle = '#654321';
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 5; i++) {
+        const x = 450 + i * 140;
+        ctx.strokeRect(x, 590, 120, 50);
+        // Drawer handles
+        ctx.fillStyle = '#FFD700';
+        ctx.fillRect(x + 50, 610, 20, 10);
+    }
+
+    ctx.restore();
+}
+
+// Draw Tea Brewer
+function drawTeaBrewer() {
+    const x = 950;
+    const y = 300;
+
+    // Brewer base
+    ctx.fillStyle = '#C0C0C0';
+    ctx.fillRect(x, y, 80, 100);
+
+    // Brewer top
+    ctx.fillStyle = '#A9A9A9';
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + 80, y);
+    ctx.lineTo(x + 70, y - 20);
+    ctx.lineTo(x + 10, y - 20);
+    ctx.closePath();
+    ctx.fill();
+
+    // Steam
+    if (game.currentDrink.base) {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.font = '20px Arial';
+        ctx.fillText('💨', x + 30, y - 30);
+    }
+
+    // Display
+    ctx.fillStyle = '#000';
+    ctx.fillRect(x + 10, y + 20, 60, 30);
+    if (game.currentDrink.base) {
+        ctx.fillStyle = '#0F0';
+        ctx.font = '12px monospace';
+        ctx.fillText('BREWING', x + 12, y + 38);
+    }
+}
+
+// Draw Current Drink Cup
+function drawDrinkCup() {
+    const x = 500;
+    const y = 420;
+
+    // Cup body
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(x, y, 80, 120);
+
+    // Cup outline
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x, y, 80, 120);
+
+    // Lid
+    ctx.fillStyle = '#FF69B4';
+    ctx.beginPath();
+    ctx.arc(x + 40, y, 45, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Straw hole
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(x + 40, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Straw
+    ctx.strokeStyle = '#FF0000';
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.moveTo(x + 40, y - 50);
+    ctx.lineTo(x + 40, y + 20);
+    ctx.stroke();
+
+    // Drink layers
+    let layerY = y + 110;
+    const layerHeight = 25;
+
+    // Toppings at bottom
+    if (game.currentDrink.toppings.length > 0) {
+        game.currentDrink.toppings.forEach((topping, i) => {
+            ctx.fillStyle = ingredientDB[topping].color;
+            ctx.fillRect(x + 5, layerY - i * 15, 70, 15);
         });
-        document.getElementById(`step-${gameState.currentStep}`).classList.remove('hidden');
+        layerY -= game.currentDrink.toppings.length * 15;
+    }
 
-        // Update step indicator
-        document.querySelector(`.step[data-step="${gameState.currentStep}"]`).classList.add('active');
+    // Milk layer
+    if (game.currentDrink.milk) {
+        ctx.fillStyle = ingredientDB[game.currentDrink.milk].color;
+        ctx.fillRect(x + 5, layerY - layerHeight, 70, layerHeight);
+        layerY -= layerHeight;
+    }
+
+    // Tea base layer
+    if (game.currentDrink.base) {
+        ctx.fillStyle = ingredientDB[game.currentDrink.base].color;
+        ctx.fillRect(x + 5, layerY - layerHeight, 70, layerHeight);
+    }
+
+    // Shake indicator
+    if (game.currentDrink.shaken) {
+        ctx.fillStyle = '#2ecc71';
+        ctx.font = 'bold 14px Arial';
+        ctx.fillText('✓ SHAKEN', x - 10, y + 150);
     }
 }
 
-// Update Drink Preview
-function updateDrinkPreview() {
-    const drinkLayers = document.getElementById('drink-layers');
-    const drinkDetails = document.getElementById('drink-details');
+// Draw Customer
+function drawCustomer() {
+    if (!game.currentCustomer) return;
 
-    drinkLayers.innerHTML = '';
-    drinkDetails.innerHTML = '';
+    const x = 150;
+    const y = 350;
 
-    // Add base layer
-    if (gameState.currentDrink.base) {
-        const baseInfo = ingredients.bases[gameState.currentDrink.base];
-        const layer = document.createElement('div');
-        layer.className = 'drink-layer';
-        layer.style.backgroundColor = baseInfo.color;
-        layer.style.height = '30%';
-        drinkLayers.appendChild(layer);
+    // Customer body (simple character)
+    ctx.fillStyle = game.currentCustomer.color;
 
-        drinkDetails.innerHTML += `<div class="detail-item"><span class="detail-label">Base:</span> ${baseInfo.name}</div>`;
+    // Body
+    ctx.fillRect(x - 30, y + 40, 60, 100);
+
+    // Head
+    ctx.beginPath();
+    ctx.arc(x, y, 35, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Face emoji
+    ctx.font = '50px Arial';
+    ctx.fillText(game.currentCustomer.sprite, x - 25, y + 15);
+
+    // Name tag
+    ctx.fillStyle = '#2c3e50';
+    ctx.font = 'bold 16px Arial';
+    ctx.fillText(game.currentCustomer.name, x - 40, y + 170);
+
+    // Patience indicator
+    ctx.fillStyle = '#e74c3c';
+    ctx.fillRect(x - 40, y + 180, 80, 8);
+    ctx.fillStyle = '#2ecc71';
+    ctx.fillRect(x - 40, y + 180, 80 * 0.8, 8); // 80% patience for now
+}
+
+// Draw Thought Bubble
+function showThoughtBubble() {
+    if (!game.currentCustomer) return;
+
+    const bubble = document.getElementById('thoughtBubble');
+    bubble.style.display = 'block';
+    bubble.style.left = '200px';
+    bubble.style.top = '200px';
+    bubble.innerHTML = `<strong>${game.currentCustomer.name}:</strong><br>"${game.currentCustomer.order.text}"`;
+}
+
+// Draw Ingredients on Counter
+function drawIngredients() {
+    game.ingredients.forEach(ing => {
+        // Ingredient container
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(ing.x - 5, ing.y - 5, ing.width + 10, ing.height + 10);
+
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(ing.x - 5, ing.y - 5, ing.width + 10, ing.height + 10);
+
+        // Ingredient emoji/icon
+        ctx.font = '48px Arial';
+        ctx.fillText(ing.emoji, ing.x + 5, ing.y + 45);
+
+        // Label
+        ctx.fillStyle = '#2c3e50';
+        ctx.font = 'bold 11px Arial';
+        const textWidth = ctx.measureText(ing.name).width;
+        ctx.fillText(ing.name, ing.x + (ing.width - textWidth) / 2, ing.y + 75);
+    });
+}
+
+// Draw Cash Register
+function drawCashRegister() {
+    const x = 280;
+    const y = 450;
+
+    // Register body
+    ctx.fillStyle = '#34495e';
+    ctx.fillRect(x, y, 100, 80);
+
+    // Screen
+    ctx.fillStyle = '#000';
+    ctx.fillRect(x + 10, y + 10, 80, 40);
+
+    // Display amount
+    ctx.fillStyle = '#0F0';
+    ctx.font = 'bold 16px monospace';
+    ctx.fillText(`$${game.money.toFixed(0)}`, x + 20, y + 35);
+
+    // Buttons
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            ctx.fillStyle = '#95a5a6';
+            ctx.fillRect(x + 15 + j * 25, y + 55 + i * 8, 20, 6);
+        }
     }
+}
 
-    // Add ingredient layers
-    gameState.currentDrink.ingredients.forEach(ing => {
-        const ingInfo = ingredients.mainIngredients[ing];
-        const layer = document.createElement('div');
-        layer.className = 'drink-layer';
-        layer.style.backgroundColor = ingInfo.color;
-        layer.style.height = '20%';
-        drinkLayers.appendChild(layer);
+// Main Render Function
+function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw scene layers (back to front)
+    drawBackground();
+    drawFloor();
+    drawCounter();
+    drawTeaBrewer();
+    drawCashRegister();
+    drawIngredients();
+    drawDrinkCup();
+    drawCustomer();
+
+    // Draw animations
+    game.animations = game.animations.filter(anim => {
+        anim.draw();
+        return !anim.update();
     });
 
-    // Add toppings at bottom
-    if (gameState.currentDrink.toppings.length > 0) {
-        const layer = document.createElement('div');
-        layer.className = 'drink-layer';
-        layer.style.backgroundColor = ingredients.toppings[gameState.currentDrink.toppings[0]].color;
-        layer.style.height = '15%';
-        drinkLayers.appendChild(layer);
-
-        drinkDetails.innerHTML += `<div class="detail-item"><span class="detail-label">Toppings:</span> ${gameState.currentDrink.toppings.length}</div>`;
-    }
-
-    drinkDetails.innerHTML += `<div class="detail-item"><span class="detail-label">Sweetness:</span> ${gameState.currentDrink.sweetness * 10}%</div>`;
+    requestAnimationFrame(render);
 }
 
-// Shake Mini-Game
-let shakeInterval;
-let shakePosition = 0;
-let shakeActive = false;
+// Handle Click
+canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-function shakeGame() {
-    if (shakeActive) {
-        // Stop and check
-        clearInterval(shakeInterval);
-        shakeActive = false;
-
-        const indicator = document.getElementById('shake-indicator');
-        const target = document.getElementById('shake-target');
-        const scoreEl = document.getElementById('shake-score');
-
-        // Calculate if in target zone (45-55%)
-        if (shakePosition >= 45 && shakePosition <= 55) {
-            gameState.currentDrink.shakeQuality = 1.0;
-            scoreEl.textContent = '🎯 Perfect Shake! +20% Quality';
-            scoreEl.style.color = '#4caf50';
-        } else if (shakePosition >= 35 && shakePosition <= 65) {
-            gameState.currentDrink.shakeQuality = 0.7;
-            scoreEl.textContent = '👍 Good Shake! +10% Quality';
-            scoreEl.style.color = '#ff9800';
-        } else {
-            gameState.currentDrink.shakeQuality = 0.5;
-            scoreEl.textContent = '😅 Okay Shake...';
-            scoreEl.style.color = '#f44336';
+    // Check ingredient clicks
+    game.ingredients.forEach(ing => {
+        if (x >= ing.x && x <= ing.x + ing.width &&
+            y >= ing.y && y <= ing.y + ing.height) {
+            addIngredient(ing.id);
         }
+    });
 
-        document.getElementById('shake-btn').textContent = '✅ Shaken!';
-        document.getElementById('shake-btn').disabled = true;
-    } else {
-        // Start shaking
-        shakeActive = true;
-        shakePosition = 0;
-        document.getElementById('shake-btn').textContent = '🛑 Stop!';
+    // Check if clicking cup to shake
+    if (x >= 500 && x <= 580 && y >= 420 && y <= 540) {
+        shakeCup();
+    }
+});
 
-        const indicator = document.getElementById('shake-indicator');
-        shakeInterval = setInterval(() => {
-            shakePosition += 2;
-            if (shakePosition > 100) shakePosition = 0;
-            indicator.style.left = shakePosition + '%';
+// Add Ingredient
+function addIngredient(id) {
+    const ing = ingredientDB[id];
+
+    if (ing.type === 'base' && !game.currentDrink.base) {
+        game.currentDrink.base = id;
+        createFlyAnimation(ing.emoji, ing.x, ing.y, 540, 480);
+        playSound('add');
+    } else if (ing.type === 'milk' && !game.currentDrink.milk) {
+        game.currentDrink.milk = id;
+        createFlyAnimation(ing.emoji, ing.x, ing.y, 540, 460);
+        playSound('add');
+    } else if (ing.type === 'topping' && game.currentDrink.toppings.length < 3) {
+        game.currentDrink.toppings.push(id);
+        createFlyAnimation(ing.emoji, ing.x, ing.y, 540, 520);
+        playSound('add');
+    }
+}
+
+// Create Flying Animation
+function createFlyAnimation(emoji, startX, startY, endX, endY) {
+    game.animations.push(new Animation('ingredient-fly', 0, 0, {
+        emoji: emoji,
+        startX: startX,
+        startY: startY,
+        endX: endX,
+        endY: endY,
+        duration: 20
+    }));
+}
+
+// Shake Cup
+function shakeCup() {
+    if (!game.currentDrink.shaken &&
+        (game.currentDrink.base || game.currentDrink.milk || game.currentDrink.toppings.length > 0)) {
+        game.currentDrink.shaken = true;
+
+        // Shake animation
+        let shakeCount = 0;
+        const shakeInterval = setInterval(() => {
+            shakeCount++;
+            if (shakeCount > 10) {
+                clearInterval(shakeInterval);
+            }
         }, 50);
+
+        playSound('shake');
     }
 }
 
-// Complete Drink
-function completeDrink() {
-    if (!gameState.currentCustomer) {
-        alert('No customer waiting!');
-        return;
-    }
+// Serve Drink
+function serveDrink() {
+    if (!game.currentCustomer) return;
 
-    // Calculate quality score
-    const quality = calculateDrinkQuality();
-    const price = calculatePrice(quality);
+    // Calculate score
+    const score = calculateScore();
+    const earnings = calculateEarnings(score);
 
-    // Show quality report
-    showQualityReport(quality, price);
+    // Update game state
+    game.money += earnings;
+    game.served++;
+    game.reputation += score >= 0.8 ? 10 : score >= 0.6 ? 5 : 2;
 
-    // Update stats
-    gameState.money += price;
-    gameState.stats.drinksServed++;
-    gameState.stats.totalEarnings += price;
-
-    if (quality.overall >= 0.9) {
-        gameState.reputation += 10;
-        gameState.stats.perfectDrinks++;
-    } else if (quality.overall >= 0.7) {
-        gameState.reputation += 5;
-    }
-
-    // Add to research
-    trackRecipe();
+    // Show result
+    showResult(score, earnings);
 
     // Reset for next customer
     setTimeout(() => {
-        resetDrinkMaking();
-        gameState.currentCustomer = null;
+        resetDrink();
         spawnCustomer();
         updateUI();
     }, 3000);
 }
 
-// Calculate Drink Quality
-function calculateDrinkQuality() {
-    const customer = gameState.currentCustomer;
-    const drink = gameState.currentDrink;
-    const req = customer.order.requirements;
+// Calculate Score
+function calculateScore() {
+    const order = game.currentCustomer.order;
+    const drink = game.currentDrink;
 
-    let scores = {
-        base: 0,
-        sweetness: 0,
-        ingredients: 0,
-        toppings: 0,
-        shake: drink.shakeQuality
-    };
+    let score = 0;
+    let total = 0;
 
     // Check base
-    if (Array.isArray(req.base)) {
-        scores.base = req.base.includes(drink.base) ? 1 : 0.5;
-    } else if (req.base === "random" || req.base === drink.base) {
-        scores.base = 1;
+    if (order.base) {
+        total++;
+        if (drink.base === order.base) score++;
     }
 
-    // Check sweetness
-    if (Array.isArray(req.sweetness)) {
-        scores.sweetness = req.sweetness.includes(drink.sweetness) ? 1 : 0.7;
-    } else if (req.sweetness) {
-        const diff = Math.abs(req.sweetness - drink.sweetness);
-        scores.sweetness = Math.max(0, 1 - (diff * 0.15));
-    } else {
-        scores.sweetness = 1;
-    }
-
-    // Check ingredients
-    if (req.ingredients && req.ingredients.length > 0) {
-        const matches = req.ingredients.filter(ing => drink.ingredients.includes(ing)).length;
-        scores.ingredients = matches / req.ingredients.length;
-    } else {
-        scores.ingredients = 1;
+    // Check milk
+    if (order.milk) {
+        total++;
+        if (drink.milk === order.milk) score++;
     }
 
     // Check toppings
-    if (req.toppings && req.toppings.length > 0) {
-        const matches = req.toppings.filter(top => drink.toppings.includes(top)).length;
-        scores.toppings = matches / req.toppings.length;
-    } else {
-        scores.toppings = drink.toppings.length > 0 ? 1 : 0.8;
+    if (order.toppings && order.toppings.length > 0) {
+        total += order.toppings.length;
+        order.toppings.forEach(topping => {
+            if (drink.toppings.includes(topping)) score++;
+        });
     }
 
-    // Calculate overall
-    const overall = (scores.base + scores.sweetness + scores.ingredients + scores.toppings + scores.shake) / 5;
+    // Shake bonus
+    if (drink.shaken) {
+        score += 0.5;
+        total += 0.5;
+    }
 
-    return {
-        ...scores,
-        overall
-    };
+    return total > 0 ? score / total : 0;
 }
 
-// Calculate Price
-function calculatePrice(quality) {
+// Calculate Earnings
+function calculateEarnings(score) {
     const basePrice = 4.5;
-    const multiplier = 0.8 + (quality.overall * 1.2); // 0.8x to 2.0x
+    const multiplier = 0.7 + (score * 1.3); // 0.7x to 2.0x
+    const tip = score >= 0.9 ? basePrice * 0.5 : score >= 0.7 ? basePrice * 0.2 : 0;
 
-    // Calculate cost
-    let cost = 0;
-    if (gameState.currentDrink.base) {
-        cost += ingredients.bases[gameState.currentDrink.base].cost;
-    }
-    gameState.currentDrink.ingredients.forEach(ing => {
-        cost += ingredients.mainIngredients[ing].cost;
-    });
-    gameState.currentDrink.toppings.forEach(top => {
-        cost += ingredients.toppings[top].cost;
-    });
-
-    const price = (basePrice + cost) * multiplier;
-
-    // Add tip for perfect orders
-    let tip = 0;
-    if (quality.overall >= 0.95) {
-        tip = price * 0.3; // 30% tip
-    } else if (quality.overall >= 0.85) {
-        tip = price * 0.15; // 15% tip
-    }
-
-    return parseFloat((price + tip).toFixed(2));
+    return parseFloat((basePrice * multiplier + tip).toFixed(2));
 }
 
-// Show Quality Report
-function showQualityReport(quality, price) {
-    const modal = document.getElementById('quality-modal');
-    const report = document.getElementById('quality-report');
-    const feedback = document.getElementById('customer-feedback');
+// Show Result Modal
+function showResult(score, earnings) {
+    const modal = document.getElementById('resultModal');
+    const emoji = document.getElementById('scoreEmoji');
+    const feedback = document.getElementById('feedbackText');
+    const earningsText = document.getElementById('earningsText');
 
-    report.innerHTML = `
-        <div class="report-item">
-            <span class="report-label">Base Match:</span>
-            <span class="report-value">${(quality.base * 100).toFixed(0)}%</span>
-        </div>
-        <div class="report-item">
-            <span class="report-label">Sweetness:</span>
-            <span class="report-value">${(quality.sweetness * 100).toFixed(0)}%</span>
-        </div>
-        <div class="report-item">
-            <span class="report-label">Ingredients:</span>
-            <span class="report-value">${(quality.ingredients * 100).toFixed(0)}%</span>
-        </div>
-        <div class="report-item">
-            <span class="report-label">Toppings:</span>
-            <span class="report-value">${(quality.toppings * 100).toFixed(0)}%</span>
-        </div>
-        <div class="report-item">
-            <span class="report-label">Shake Quality:</span>
-            <span class="report-value">${(quality.shake * 100).toFixed(0)}%</span>
-        </div>
-        <div class="report-item" style="border-top: 2px solid #667eea; margin-top: 10px; padding-top: 10px;">
-            <span class="report-label">Overall Quality:</span>
-            <span class="report-value" style="font-size: 24px;">${(quality.overall * 100).toFixed(0)}%</span>
-        </div>
-    `;
-
-    let emoji, text;
-    if (quality.overall >= 0.95) {
-        emoji = '🤩';
-        text = 'Absolutely perfect! This is exactly what I wanted!';
-    } else if (quality.overall >= 0.85) {
-        emoji = '😊';
-        text = 'Really good! I love it!';
-    } else if (quality.overall >= 0.7) {
-        emoji = '🙂';
-        text = 'Pretty good, thanks!';
-    } else if (quality.overall >= 0.5) {
-        emoji = '😐';
-        text = 'It\'s okay... not quite what I expected.';
+    if (score >= 0.9) {
+        emoji.textContent = '🤩';
+        feedback.textContent = 'PERFECT! Exactly what I wanted!';
+    } else if (score >= 0.7) {
+        emoji.textContent = '😊';
+        feedback.textContent = 'Great job! This is delicious!';
+    } else if (score >= 0.5) {
+        emoji.textContent = '🙂';
+        feedback.textContent = 'Pretty good, thanks!';
     } else {
-        emoji = '😞';
-        text = 'This isn\'t really what I ordered...';
+        emoji.textContent = '😐';
+        feedback.textContent = 'Not quite what I ordered...';
     }
 
-    feedback.innerHTML = `
-        <div class="feedback-score">${emoji}</div>
-        <div class="feedback-text">"${text}"</div>
-        <div class="feedback-tip">Earned: $${price}</div>
-    `;
-
-    modal.classList.remove('hidden');
+    earningsText.textContent = `Earned: $${earnings} (${(score * 100).toFixed(0)}% match)`;
+    modal.classList.add('active');
 }
 
-// Close Quality Modal
-function closeQualityModal() {
-    document.getElementById('quality-modal').classList.add('hidden');
+// Close Result Modal
+function closeResultModal() {
+    document.getElementById('resultModal').classList.remove('active');
 }
 
-// Track Recipe for Research
-function trackRecipe() {
-    const drink = gameState.currentDrink;
-    const key = `${drink.base}-${drink.sweetness}-${drink.ingredients.join(',')}-${drink.toppings.join(',')}`;
-
-    if (!gameState.researches[key]) {
-        gameState.researches[key] = {
-            count: 0,
-            recipe: { ...drink },
-            ratings: []
-        };
-    }
-
-    gameState.researches[key].count++;
-}
-
-// Reset Drink Making
-function resetDrinkMaking() {
-    gameState.currentDrink = {
+// Reset Drink
+function resetDrink() {
+    game.currentDrink = {
         base: null,
-        sweetness: 5,
-        syrup: null,
-        ingredients: [],
+        milk: null,
         toppings: [],
-        seal: null,
-        shakeQuality: 0
+        sweetness: 5,
+        shaken: false
     };
-    gameState.currentStep = 1;
-
-    // Reset UI
-    document.querySelectorAll('.step').forEach(step => {
-        step.classList.remove('active', 'completed');
-    });
-    document.querySelector('.step[data-step="1"]').classList.add('active');
-
-    document.querySelectorAll('.step-panel').forEach(panel => {
-        panel.classList.add('hidden');
-    });
-    document.getElementById('step-1').classList.remove('hidden');
-
-    document.querySelectorAll('.option-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
-
-    document.getElementById('sweetness-slider').value = 5;
-    document.getElementById('sweetness-value').textContent = '50% Sweet';
-    document.getElementById('shake-btn').textContent = '🫨 Shake!';
-    document.getElementById('shake-btn').disabled = false;
-    document.getElementById('shake-score').textContent = '';
-
-    updateDrinkPreview();
 }
 
 // Spawn Customer
 function spawnCustomer() {
-    // Random customer selection
-    const customer = customers[Math.floor(Math.random() * customers.length)];
-    gameState.currentCustomer = customer;
-
-    const currentCustomerEl = document.getElementById('current-customer');
-    currentCustomerEl.innerHTML = `
-        <div class="customer-avatar">${customer.avatar}</div>
-        <div class="customer-name">${customer.name}</div>
-        <div class="customer-type">${customerTypes[customer.type].name}</div>
-        <div class="customer-order">
-            <div class="order-text">"${customer.order.text}"</div>
-            ${customer.order.hints ? `
-                <div class="order-hints">
-                    ${customer.order.hints.map(hint => `<span class="hint-icon">${hint}</span>`).join('')}
-                </div>
-            ` : ''}
-        </div>
-    `;
+    game.currentCustomer = customers[Math.floor(Math.random() * customers.length)];
+    showThoughtBubble();
 }
 
 // Update UI
 function updateUI() {
-    document.getElementById('money').textContent = `$${gameState.money.toFixed(2)}`;
-    document.getElementById('reputation').textContent = gameState.reputation;
-    document.getElementById('day').textContent = gameState.day;
-
-    const hours = Math.floor(gameState.time);
-    const minutes = Math.floor((gameState.time - hours) * 60);
-    document.getElementById('time').textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    document.getElementById('money').textContent = `$${game.money.toFixed(2)}`;
+    document.getElementById('reputation').textContent = game.reputation;
+    document.getElementById('day').textContent = game.day;
+    document.getElementById('served').textContent = game.served;
 }
 
-// Purchase Upgrade
-function purchaseUpgrade(upgradeId, cost) {
-    if (gameState.money >= cost) {
-        gameState.money -= cost;
-        gameState.upgrades.push(upgradeId);
-
-        // Disable button
-        event.target.disabled = true;
-        event.target.textContent = '✅ Purchased';
-
-        updateUI();
-        alert(`Upgrade purchased: ${upgradeId}`);
-    } else {
-        alert(`Not enough money! Need $${cost}`);
-    }
+// Sound Effects (simple)
+function playSound(type) {
+    // You can add Web Audio API sounds here
+    console.log(`Playing sound: ${type}`);
 }
 
-// Show Tab
-function showTab(tabName) {
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    event.target.classList.add('active');
+// Hover effect for ingredients
+canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-    });
-    document.getElementById(`${tabName}-tab`).classList.remove('hidden');
-}
-
-// Game Loop
-function startGameLoop() {
-    setInterval(() => {
-        gameState.time += 0.1; // 6 minutes per real second
-
-        if (gameState.time >= 21.0) { // 9 PM
-            endDay();
+    let hovering = false;
+    game.ingredients.forEach(ing => {
+        if (x >= ing.x && x <= ing.x + ing.width &&
+            y >= ing.y && y <= ing.y + ing.height) {
+            hovering = true;
+            canvas.style.cursor = 'pointer';
         }
+    });
 
-        updateUI();
-    }, 1000);
-}
+    if (!hovering) {
+        canvas.style.cursor = 'default';
+    }
+});
 
-// End Day
-function endDay() {
-    const modal = document.getElementById('day-end-modal');
-    const summary = document.getElementById('day-summary');
-
-    summary.innerHTML = `
-        <div class="summary-item">
-            <span class="summary-label">Drinks Served:</span>
-            <span class="summary-value">${gameState.stats.drinksServed}</span>
-        </div>
-        <div class="summary-item">
-            <span class="summary-label">Perfect Drinks:</span>
-            <span class="summary-value">${gameState.stats.perfectDrinks}</span>
-        </div>
-        <div class="summary-item">
-            <span class="summary-label">Today's Earnings:</span>
-            <span class="summary-value">$${gameState.stats.totalEarnings.toFixed(2)}</span>
-        </div>
-        <div class="summary-item">
-            <span class="summary-label">Total Money:</span>
-            <span class="summary-value">$${gameState.money.toFixed(2)}</span>
-        </div>
-        <div class="summary-item">
-            <span class="summary-label">Reputation:</span>
-            <span class="summary-value">${gameState.reputation}</span>
-        </div>
-    `;
-
-    modal.classList.remove('hidden');
-}
-
-// Start New Day
-function startNewDay() {
-    gameState.day++;
-    gameState.time = 9.0;
-    gameState.stats = {
-        drinksServed: 0,
-        perfectDrinks: 0,
-        totalEarnings: 0
-    };
-
-    document.getElementById('day-end-modal').classList.add('hidden');
-    updateUI();
+// Initialize Game
+function init() {
     spawnCustomer();
+    updateUI();
+    render();
 }
 
-// Initialize when page loads
-window.addEventListener('DOMContentLoaded', initGame);
+// Start game when page loads
+window.addEventListener('DOMContentLoaded', init);

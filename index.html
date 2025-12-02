@@ -3,329 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gloria Milktea Shop - Bubble Tea Game</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Gloria Milktea Shop - Pixel Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            overflow: hidden;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        #gameContainer {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #gameCanvas {
+            background: #87CEEB;
+            border: 8px solid #2c3e50;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            cursor: pointer;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        .ui-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+
+        .stats-panel {
+            background: #2c3e50;
+            border: 4px solid #34495e;
+            padding: 15px;
+            color: #fff;
+            font-size: 12px;
+            pointer-events: all;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .stat-item {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-label {
+            color: #f39c12;
+        }
+
+        .stat-value {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        .instruction-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(44, 62, 80, 0.95);
+            border: 4px solid #34495e;
+            padding: 20px 30px;
+            color: #fff;
+            font-size: 10px;
+            text-align: center;
+            pointer-events: all;
+            max-width: 600px;
+            line-height: 1.8;
+        }
+
+        .ingredient-name {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 1000;
+        }
+
+        .action-button {
+            background: #2ecc71;
+            border: 4px solid #27ae60;
+            color: #fff;
+            padding: 15px 30px;
+            font-size: 12px;
+            cursor: pointer;
+            margin: 10px;
+            font-family: 'Press Start 2P', monospace;
+            box-shadow: 0 4px 0 #229954;
+            transition: all 0.1s;
+        }
+
+        .action-button:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #229954;
+        }
+
+        .action-button:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #229954;
+        }
+
+        .action-button.disabled {
+            background: #95a5a6;
+            border-color: #7f8c8d;
+            box-shadow: 0 4px 0 #7f8c8d;
+            cursor: not-allowed;
+        }
+
+        #thoughtBubble {
+            position: absolute;
+            background: white;
+            border: 4px solid #2c3e50;
+            border-radius: 20px;
+            padding: 15px 20px;
+            font-size: 11px;
+            color: #2c3e50;
+            max-width: 250px;
+            line-height: 1.6;
+            pointer-events: none;
+            display: none;
+            z-index: 100;
+        }
+
+        #thoughtBubble::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 30px;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid white;
+        }
+
+        #thoughtBubble::before {
+            content: '';
+            position: absolute;
+            bottom: -24px;
+            left: 28px;
+            width: 0;
+            height: 0;
+            border-left: 17px solid transparent;
+            border-right: 17px solid transparent;
+            border-top: 24px solid #2c3e50;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #2c3e50;
+            border: 8px solid #34495e;
+            padding: 40px;
+            color: #fff;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .modal-content h2 {
+            color: #f39c12;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .modal-content p {
+            margin: 15px 0;
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .score-display {
+            font-size: 48px;
+            margin: 20px 0;
+        }
+
+        .buttons-container {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+        }
+    </style>
 </head>
 <body>
-    <div class="game-container">
-        <!-- Header -->
-        <header class="game-header">
-            <h1>🧋 Gloria Milktea Shop</h1>
-            <div class="stats">
-                <div class="stat">
+    <div id="gameContainer">
+        <div class="ui-overlay">
+            <div class="stats-panel">
+                <div class="stat-item">
                     <span class="stat-label">💰 Money:</span>
-                    <span id="money">$100</span>
+                    <span class="stat-value" id="money">$100</span>
                 </div>
-                <div class="stat">
-                    <span class="stat-label">⭐ Reputation:</span>
-                    <span id="reputation">0</span>
+                <div class="stat-item">
+                    <span class="stat-label">⭐ Rep:</span>
+                    <span class="stat-value" id="reputation">0</span>
                 </div>
-                <div class="stat">
+                <div class="stat-item">
                     <span class="stat-label">📅 Day:</span>
-                    <span id="day">1</span>
+                    <span class="stat-value" id="day">1</span>
                 </div>
-                <div class="stat">
-                    <span class="stat-label">🕐 Time:</span>
-                    <span id="time">09:00</span>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Game Area -->
-        <div class="game-main">
-            <!-- Left Panel: Customer Area -->
-            <div class="customer-area">
-                <h2>Customers</h2>
-                <div id="customer-queue" class="customer-queue"></div>
-                <div id="current-customer" class="current-customer">
-                    <div class="waiting-message">Waiting for customers...</div>
-                </div>
-            </div>
-
-            <!-- Center Panel: Drink Making Area -->
-            <div class="making-area">
-                <h2>Make Drink</h2>
-
-                <!-- Step Indicator -->
-                <div class="step-indicator">
-                    <div class="step active" data-step="1">
-                        <span class="step-num">1</span>
-                        <span class="step-name">Base</span>
-                    </div>
-                    <div class="step" data-step="2">
-                        <span class="step-num">2</span>
-                        <span class="step-name">Sweetness</span>
-                    </div>
-                    <div class="step" data-step="3">
-                        <span class="step-num">3</span>
-                        <span class="step-name">Main Ingredients</span>
-                    </div>
-                    <div class="step" data-step="4">
-                        <span class="step-num">4</span>
-                        <span class="step-name">Toppings</span>
-                    </div>
-                    <div class="step" data-step="5">
-                        <span class="step-num">5</span>
-                        <span class="step-name">Finish</span>
-                    </div>
-                </div>
-
-                <!-- Current Drink Preview -->
-                <div class="drink-preview">
-                    <div id="drink-cup" class="cup">
-                        <div class="cup-content">
-                            <div id="drink-layers"></div>
-                        </div>
-                    </div>
-                    <div id="drink-details" class="drink-details"></div>
-                </div>
-
-                <!-- Making Steps -->
-                <div id="step-content" class="step-content">
-                    <!-- Step 1: Base Selection -->
-                    <div class="step-panel" id="step-1">
-                        <h3>Choose Base</h3>
-                        <div class="options-grid">
-                            <button class="option-btn" data-base="black-tea" data-temp="95°C">
-                                🍵 Black Tea
-                            </button>
-                            <button class="option-btn" data-base="green-tea" data-temp="80°C">
-                                🍃 Green Tea
-                            </button>
-                            <button class="option-btn" data-base="oolong-tea" data-temp="90°C">
-                                🫖 Oolong Tea
-                            </button>
-                            <button class="option-btn" data-base="jasmine-tea" data-temp="85°C">
-                                🌸 Jasmine Tea
-                            </button>
-                            <button class="option-btn" data-base="pu-erh-tea" data-temp="100°C">
-                                🍂 Pu-erh Tea
-                            </button>
-                            <button class="option-btn" data-base="four-season-tea" data-temp="90°C">
-                                🌺 Four Season Tea
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Sweetness -->
-                    <div class="step-panel hidden" id="step-2">
-                        <h3>Sweetness Level</h3>
-                        <div class="slider-container">
-                            <label for="sweetness-slider">Sugar Level:</label>
-                            <input type="range" id="sweetness-slider" min="0" max="10" value="5" step="1">
-                            <span id="sweetness-value">50% Sweet</span>
-                        </div>
-                        <div class="options-grid">
-                            <button class="option-btn" data-syrup="cane-sugar">
-                                🧂 Cane Sugar
-                            </button>
-                            <button class="option-btn" data-syrup="honey">
-                                🍯 Honey
-                            </button>
-                            <button class="option-btn" data-syrup="brown-sugar">
-                                🟤 Brown Sugar
-                            </button>
-                            <button class="option-btn" data-syrup="zero-calorie">
-                                💧 Zero Calorie
-                            </button>
-                        </div>
-                        <button class="next-btn" onclick="nextStep()">Next Step →</button>
-                    </div>
-
-                    <!-- Step 3: Main Ingredients -->
-                    <div class="step-panel hidden" id="step-3">
-                        <h3>Main Ingredients</h3>
-                        <div class="category">
-                            <h4>Milk Options</h4>
-                            <div class="options-grid">
-                                <button class="option-btn" data-ingredient="fresh-milk">
-                                    🥛 Fresh Milk
-                                </button>
-                                <button class="option-btn" data-ingredient="oat-milk">
-                                    🌾 Oat Milk
-                                </button>
-                                <button class="option-btn" data-ingredient="soy-milk">
-                                    🫘 Soy Milk
-                                </button>
-                                <button class="option-btn" data-ingredient="cream">
-                                    🥛 Heavy Cream
-                                </button>
-                            </div>
-                        </div>
-                        <div class="category">
-                            <h4>Fruits (Optional)</h4>
-                            <div class="options-grid">
-                                <button class="option-btn" data-ingredient="mango">
-                                    🥭 Mango
-                                </button>
-                                <button class="option-btn" data-ingredient="strawberry">
-                                    🍓 Strawberry
-                                </button>
-                                <button class="option-btn" data-ingredient="lemon">
-                                    🍋 Lemon
-                                </button>
-                                <button class="option-btn" data-ingredient="passion-fruit">
-                                    🥭 Passion Fruit
-                                </button>
-                            </div>
-                        </div>
-                        <button class="next-btn" onclick="nextStep()">Next Step →</button>
-                    </div>
-
-                    <!-- Step 4: Toppings -->
-                    <div class="step-panel hidden" id="step-4">
-                        <h3>Toppings</h3>
-                        <div class="category">
-                            <h4>Pearls</h4>
-                            <div class="options-grid">
-                                <button class="option-btn" data-topping="black-pearl">
-                                    ⚫ Black Pearls
-                                </button>
-                                <button class="option-btn" data-topping="white-pearl">
-                                    ⚪ White Pearls
-                                </button>
-                                <button class="option-btn" data-topping="colorful-pearl">
-                                    🌈 Colorful Pearls
-                                </button>
-                            </div>
-                        </div>
-                        <div class="category">
-                            <h4>Jellies & Others</h4>
-                            <div class="options-grid">
-                                <button class="option-btn" data-topping="grass-jelly">
-                                    🟫 Grass Jelly
-                                </button>
-                                <button class="option-btn" data-topping="coconut-jelly">
-                                    🥥 Coconut Jelly
-                                </button>
-                                <button class="option-btn" data-topping="pudding">
-                                    🍮 Pudding
-                                </button>
-                                <button class="option-btn" data-topping="popping-boba">
-                                    💥 Popping Boba
-                                </button>
-                                <button class="option-btn" data-topping="red-bean">
-                                    🫘 Red Bean
-                                </button>
-                            </div>
-                        </div>
-                        <button class="next-btn" onclick="nextStep()">Next Step →</button>
-                    </div>
-
-                    <!-- Step 5: Finish -->
-                    <div class="step-panel hidden" id="step-5">
-                        <h3>Final Touches</h3>
-                        <div class="category">
-                            <h4>Seal & Decoration</h4>
-                            <div class="options-grid">
-                                <button class="option-btn" data-seal="regular">
-                                    📍 Regular Seal
-                                </button>
-                                <button class="option-btn" data-seal="logo">
-                                    ⭐ Logo Seal
-                                </button>
-                            </div>
-                        </div>
-                        <div class="shake-section">
-                            <h4>Shake the Drink!</h4>
-                            <div class="rhythm-game">
-                                <button id="shake-btn" class="shake-btn">🫨 Shake!</button>
-                                <div id="shake-meter" class="shake-meter">
-                                    <div id="shake-indicator" class="shake-indicator"></div>
-                                    <div id="shake-target" class="shake-target"></div>
-                                </div>
-                                <div id="shake-score" class="shake-score"></div>
-                            </div>
-                        </div>
-                        <button class="complete-btn" onclick="completeDrink()">✅ Complete & Serve</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Panel: Shop Management -->
-            <div class="shop-area">
-                <div class="tabs">
-                    <button class="tab-btn active" onclick="showTab('menu')">📋 Menu</button>
-                    <button class="tab-btn" onclick="showTab('upgrades')">⬆️ Upgrades</button>
-                    <button class="tab-btn" onclick="showTab('research')">🧪 Research</button>
-                </div>
-
-                <!-- Menu Tab -->
-                <div id="menu-tab" class="tab-content">
-                    <h3>Your Menu</h3>
-                    <div id="menu-list" class="menu-list">
-                        <div class="menu-item">
-                            <div class="menu-item-name">Classic Milk Tea</div>
-                            <div class="menu-item-price">$4.50</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Upgrades Tab -->
-                <div id="upgrades-tab" class="tab-content hidden">
-                    <h3>Shop Upgrades</h3>
-                    <div class="upgrade-list">
-                        <div class="upgrade-item">
-                            <h4>🔥 Triple Tea Brewer</h4>
-                            <p>Brew 3 types of tea simultaneously</p>
-                            <button class="upgrade-btn" data-upgrade="triple-brewer" data-cost="150">
-                                Buy - $150
-                            </button>
-                        </div>
-                        <div class="upgrade-item">
-                            <h4>❄️ Large Refrigerator</h4>
-                            <p>Store unlimited ingredients</p>
-                            <button class="upgrade-btn" data-upgrade="large-fridge" data-cost="200">
-                                Buy - $200
-                            </button>
-                        </div>
-                        <div class="upgrade-item">
-                            <h4>🪑 Seating Area</h4>
-                            <p>Add 2 tables for dine-in customers</p>
-                            <button class="upgrade-btn" data-upgrade="seating" data-cost="300">
-                                Buy - $300
-                            </button>
-                        </div>
-                        <div class="upgrade-item">
-                            <h4>📸 Instagram Wall</h4>
-                            <p>Attract special customers</p>
-                            <button class="upgrade-btn" data-upgrade="insta-wall" data-cost="500">
-                                Buy - $500
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Research Tab -->
-                <div id="research-tab" class="tab-content hidden">
-                    <h3>Research Lab</h3>
-                    <p>Create new drinks by experimenting with ingredients!</p>
-                    <div id="research-recipes" class="research-recipes">
-                        <div class="info-box">
-                            💡 Serve drinks to customers. When 3+ customers rate a combination as "perfect", you can add it to your menu!
-                        </div>
-                    </div>
+                <div class="stat-item">
+                    <span class="stat-label">🎯 Served:</span>
+                    <span class="stat-value" id="served">0</span>
                 </div>
             </div>
         </div>
 
-        <!-- Quality Report Modal -->
-        <div id="quality-modal" class="modal hidden">
-            <div class="modal-content">
-                <h2>Quality Report</h2>
-                <div id="quality-report" class="quality-report"></div>
-                <div id="customer-feedback" class="customer-feedback"></div>
-                <button class="modal-btn" onclick="closeQualityModal()">Continue</button>
-            </div>
+        <canvas id="gameCanvas" width="1200" height="700"></canvas>
+
+        <div class="buttons-container">
+            <button class="action-button" id="serveBtn" onclick="serveDrink()">
+                🎯 SERVE DRINK
+            </button>
+            <button class="action-button" id="resetBtn" onclick="resetDrink()">
+                🔄 RESET
+            </button>
         </div>
 
-        <!-- Game Over / Day End Modal -->
-        <div id="day-end-modal" class="modal hidden">
-            <div class="modal-content">
-                <h2>Day Complete!</h2>
-                <div id="day-summary" class="day-summary"></div>
-                <button class="modal-btn" onclick="startNewDay()">Start New Day</button>
-            </div>
+        <div class="instruction-panel">
+            <strong>HOW TO PLAY:</strong><br>
+            Click on ingredients to add to cup → Shake the cup → Serve to customer!<br>
+            Match customer orders shown in thought bubble for tips!
+        </div>
+
+        <div id="thoughtBubble"></div>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <h2>ORDER COMPLETE!</h2>
+            <div class="score-display" id="scoreEmoji">😊</div>
+            <p id="feedbackText">Great job!</p>
+            <p id="earningsText">Earned: $0</p>
+            <button class="action-button" onclick="closeResultModal()">CONTINUE</button>
         </div>
     </div>
 
