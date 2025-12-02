@@ -272,6 +272,10 @@ const game = {
     day: 1,
     served: 0,
     currentCustomer: null,
+    customerX: -100, // Customer position for walking animation
+    customerY: 140,
+    customerTargetX: 600, // Target position at counter
+    customerState: 'none', // 'walking', 'arrived', 'none'
     currentDrink: { base: null, milk: null, toppings: [], shaken: false },
     ingredients: [],
     animations: [],
@@ -374,8 +378,8 @@ function drawCustomer() {
     if (!game.currentCustomer) return;
 
     // Customer in background area (upper section) - showing upper body
-    const x = 600;
-    const y = 140; // Positioned in customer area
+    const x = game.customerX; // Use animated position
+    const y = game.customerY; // Positioned in customer area
 
     // Upper body (torso visible above counter)
     ctx.fillStyle = game.currentCustomer.color;
@@ -390,11 +394,13 @@ function drawCustomer() {
     ctx.font = '90px Arial';
     ctx.fillText(game.currentCustomer.sprite, x - 45, y + 30);
 
-    // Name tag
-    ctx.fillStyle = '#2c3e50';
-    ctx.font = 'bold 16px Arial';
-    const nameWidth = ctx.measureText(game.currentCustomer.name).width;
-    ctx.fillText(game.currentCustomer.name, x - nameWidth / 2, y + 180);
+    // Name tag (only show when customer has arrived)
+    if (game.customerState === 'arrived') {
+        ctx.fillStyle = '#2c3e50';
+        ctx.font = 'bold 16px Arial';
+        const nameWidth = ctx.measureText(game.currentCustomer.name).width;
+        ctx.fillText(game.currentCustomer.name, x - nameWidth / 2, y + 180);
+    }
 }
 
 function drawDrinkCup() {
@@ -617,8 +623,35 @@ function drawMakingMode() {
     ctx.fillText('👆 点击配料拖拽到杯子里', 400, 150);
 }
 
+function updateCustomer() {
+    // Animate customer walking to counter
+    if (game.customerState === 'walking') {
+        const speed = 3; // pixels per frame
+        const distance = game.customerTargetX - game.customerX;
+
+        if (Math.abs(distance) > speed) {
+            // Still walking
+            game.customerX += speed;
+        } else {
+            // Arrived at counter
+            game.customerX = game.customerTargetX;
+            game.customerState = 'arrived';
+
+            // Show thought bubble when arrived
+            const bubble = document.getElementById('thoughtBubble');
+            bubble.style.display = 'block';
+            bubble.style.left = (game.customerX + 150) + 'px';
+            bubble.style.top = '50px';
+            bubble.innerHTML = `<strong>${game.currentCustomer.name}:</strong><br>"${game.currentCustomer.order.text}"`;
+        }
+    }
+}
+
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Update customer animation
+    updateCustomer();
 
     if (game.mode === 'serving') {
         // Draw serving mode
@@ -727,11 +760,15 @@ function resetDrink() { game.currentDrink = { base: null, milk: null, toppings: 
 function closeResultModal() { document.getElementById('resultModal').classList.remove('active'); }
 function spawnCustomer() {
     game.currentCustomer = customers[Math.floor(Math.random() * customers.length)];
+
+    // Start customer off-screen to the left
+    game.customerX = -100;
+    game.customerY = 140;
+    game.customerState = 'walking';
+
+    // Hide thought bubble initially - it will show when customer arrives
     const bubble = document.getElementById('thoughtBubble');
-    bubble.style.display = 'block';
-    bubble.style.left = '750px';
-    bubble.style.top = '50px';
-    bubble.innerHTML = `<strong>${game.currentCustomer.name}:</strong><br>"${game.currentCustomer.order.text}"`;
+    bubble.style.display = 'none';
 }
 function updateUI() {
     document.getElementById('money').textContent = `$${game.money.toFixed(2)}`;
