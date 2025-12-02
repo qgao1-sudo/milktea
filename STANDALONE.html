@@ -506,7 +506,7 @@ function drawIngredients() {
         const gradient = ctx.createLinearGradient(jarX, jarY, jarX + jarWidth, jarY);
         gradient.addColorStop(0, 'rgba(200, 230, 255, 0.8)'); gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.9)'); gradient.addColorStop(1, 'rgba(200, 230, 255, 0.8)');
         ctx.fillStyle = gradient; ctx.fillRect(jarX + 5, jarY + 10, jarWidth - 10, jarHeight - 15);
-        ctx.strokeStyle = 'rgba(100, 150, 200, 0.6)'); ctx.lineWidth = 2; ctx.strokeRect(jarX + 5, jarY + 10, jarWidth - 10, jarHeight - 15);
+        ctx.strokeStyle = 'rgba(100, 150, 200, 0.6)'; ctx.lineWidth = 2; ctx.strokeRect(jarX + 5, jarY + 10, jarWidth - 10, jarHeight - 15);
         const lidGradient = ctx.createLinearGradient(jarX, jarY, jarX + jarWidth, jarY);
         lidGradient.addColorStop(0, '#8B7355'); lidGradient.addColorStop(0.5, '#D4A76A'); lidGradient.addColorStop(1, '#8B7355');
         ctx.fillStyle = lidGradient; ctx.fillRect(jarX, jarY, jarWidth, 12);
