@@ -363,22 +363,80 @@ function drawCustomer() {
 
 function drawIngredients() {
     game.ingredients.forEach(ing => {
-        // Container
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(ing.x - 5, ing.y - 5, ing.width + 10, ing.height + 10);
-        ctx.strokeStyle = '#333';
+        const jarX = ing.x;
+        const jarY = ing.y;
+        const jarWidth = ing.width;
+        const jarHeight = ing.height + 20;
+
+        // Draw glass jar
+        // Jar body (glass effect)
+        const gradient = ctx.createLinearGradient(jarX, jarY, jarX + jarWidth, jarY);
+        gradient.addColorStop(0, 'rgba(200, 230, 255, 0.8)');
+        gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.9)');
+        gradient.addColorStop(1, 'rgba(200, 230, 255, 0.8)');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(jarX + 5, jarY + 10, jarWidth - 10, jarHeight - 15);
+
+        // Jar outline
+        ctx.strokeStyle = 'rgba(100, 150, 200, 0.6)';
         ctx.lineWidth = 2;
-        ctx.strokeRect(ing.x - 5, ing.y - 5, ing.width + 10, ing.height + 10);
+        ctx.strokeRect(jarX + 5, jarY + 10, jarWidth - 10, jarHeight - 15);
 
-        // Emoji
-        ctx.font = '48px Arial';
-        ctx.fillText(ing.emoji, ing.x + 5, ing.y + 45);
+        // Jar lid (metal cap)
+        const lidGradient = ctx.createLinearGradient(jarX, jarY, jarX + jarWidth, jarY);
+        lidGradient.addColorStop(0, '#8B7355');
+        lidGradient.addColorStop(0.5, '#D4A76A');
+        lidGradient.addColorStop(1, '#8B7355');
 
-        // Label
+        ctx.fillStyle = lidGradient;
+        ctx.fillRect(jarX, jarY, jarWidth, 12);
+
+        // Lid rim
+        ctx.strokeStyle = '#5D4E37';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(jarX, jarY, jarWidth, 12);
+
+        // Lid top highlight
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.fillRect(jarX + 5, jarY + 2, jarWidth - 10, 3);
+
+        // Contents inside jar (colored based on ingredient)
+        ctx.fillStyle = ing.color;
+        ctx.globalAlpha = 0.7;
+        ctx.fillRect(jarX + 10, jarY + 40, jarWidth - 20, jarHeight - 50);
+        ctx.globalAlpha = 1.0;
+
+        // Ingredient emoji on jar
+        ctx.font = '32px Arial';
+        ctx.fillText(ing.emoji, jarX + 15, jarY + 35);
+
+        // Glass shine effect
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.fillRect(jarX + 8, jarY + 12, 8, jarHeight - 20);
+
+        // Label on jar
+        ctx.fillStyle = 'rgba(255, 248, 220, 0.9)';
+        const labelHeight = 18;
+        const labelY = jarY + jarHeight - labelHeight - 5;
+        ctx.fillRect(jarX + 8, labelY, jarWidth - 16, labelHeight);
+
+        // Label border
+        ctx.strokeStyle = '#D2691E';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(jarX + 8, labelY, jarWidth - 16, labelHeight);
+
+        // Label text
         ctx.fillStyle = '#2c3e50';
-        ctx.font = 'bold 11px Arial';
+        ctx.font = 'bold 9px Arial';
         const textWidth = ctx.measureText(ing.name).width;
-        ctx.fillText(ing.name, ing.x + (ing.width - textWidth) / 2, ing.y + 75);
+        ctx.fillText(ing.name, jarX + (jarWidth - textWidth) / 2, labelY + 12);
+
+        // Shadow under jar
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.beginPath();
+        ctx.ellipse(jarX + jarWidth / 2, jarY + jarHeight + 3, jarWidth / 2 - 5, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
     });
 }
 
