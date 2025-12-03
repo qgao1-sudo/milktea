@@ -327,15 +327,15 @@ const customerImages = {
     rayWalking1: new Image(),
     rayWalking2: new Image(),
     rayFront: new Image(),
-    evaWalking1: new Image(),
-    evaWalking2: new Image(),
-    evaFront: new Image(),
-    sunwooWalking1: new Image(),
-    sunwooWalking2: new Image(),
-    sunwooFront: new Image(),
-    angelinaWalking1: new Image(),
-    angelinaWalking2: new Image(),
-    angelinaFront: new Image()
+    selinaWalking1: new Image(),
+    selinaWalking2: new Image(),
+    selinaFront: new Image(),
+    manasviWalking1: new Image(),
+    manasviWalking2: new Image(),
+    manasviFront: new Image(),
+    kayleyWalking1: new Image(),
+    kayleyWalking2: new Image(),
+    kayleyFront: new Image()
 };
 
 // Jenny images
@@ -346,18 +346,18 @@ customerImages.jennyFront.src = '微信图片_20251203014739_66_18.png';
 customerImages.rayWalking1.src = 'Ray走路1.png';
 customerImages.rayWalking2.src = 'Ray走路2.png';
 customerImages.rayFront.src = 'Ray站立.png';
-// Eva images
-customerImages.evaWalking1.src = 'eva走路1.png';
-customerImages.evaWalking2.src = 'eva走路2.png';
-customerImages.evaFront.src = 'eva站立.png';
-// Sunwoo images
-customerImages.sunwooWalking1.src = 'sunwoo走路1.png';
-customerImages.sunwooWalking2.src = 'sunwoo走路2.png';
-customerImages.sunwooFront.src = 'sunwoo站立.png';
-// Angelina images
-customerImages.angelinaWalking1.src = 'angi走路1.png';
-customerImages.angelinaWalking2.src = 'angi走路2.png';
-customerImages.angelinaFront.src = 'angi站.png';
+// Selina images
+customerImages.selinaWalking1.src = 'selina走路1.png';
+customerImages.selinaWalking2.src = 'Selina走路2.png';
+customerImages.selinaFront.src = 'selina站立.png';
+// Manasvi images
+customerImages.manasviWalking1.src = 'manasvi走路1.png';
+customerImages.manasviWalking2.src = 'manasvi走路2.png';
+customerImages.manasviFront.src = 'manasvi站立.png';
+// Kayley images
+customerImages.kayleyWalking1.src = 'kayley走路1.png';
+customerImages.kayleyWalking2.src = 'Kayley走路2.png';
+customerImages.kayleyFront.src = 'kayley站立.png';
 
 let customerImagesLoaded = 0;
 const totalCustomerImages = Object.keys(customerImages).length;
@@ -397,7 +397,13 @@ const customers = [
         name: "Jenny",
         sprite: "👩",
         color: "#FFB6C1",
-        order: { text: "I want Berry Milky Hug!", base: null, milk: "fresh-milk", toppings: ["strawberry", "ice-cream", "chocolate", "strawberry"] },
+        order: {
+            text: "I want Berry Milky Hug!",
+            base: null,
+            milk: "fresh-milk",
+            toppings: ["strawberry", "ice-cream", "chocolate", "strawberry"],
+            recipe: ["strawberry", "fresh-milk", "ice-cream", "chocolate", "strawberry"]
+        },
         hasImage: true,
         walkingImages: [customerImages.jennyWalking1, customerImages.jennyWalking2],
         frontImage: customerImages.jennyFront
@@ -406,37 +412,61 @@ const customers = [
         name: "Ray",
         sprite: "👨",
         color: "#87CEEB",
-        order: { text: "Lemonade please!", base: "jasmine-tea", milk: null, toppings: ["lemon", "honey"] },
+        order: {
+            text: "Lemonade please!",
+            base: "jasmine-tea",
+            milk: null,
+            toppings: ["lemon", "honey"],
+            recipe: ["lemon", "honey", "jasmine-tea"]
+        },
         hasImage: true,
         walkingImages: [customerImages.rayWalking1, customerImages.rayWalking2],
         frontImage: customerImages.rayFront
     },
     {
-        name: "Eva",
+        name: "Selina",
         sprite: "👧",
         color: "#FFD700",
-        order: { text: "Orange drink sounds refreshing!", base: "green-tea", milk: null, toppings: ["orange", "honey"] },
+        order: {
+            text: "Orange drink sounds refreshing!",
+            base: "green-tea",
+            milk: null,
+            toppings: ["orange", "honey"],
+            recipe: ["orange", "honey", "green-tea"]
+        },
         hasImage: true,
-        walkingImages: [customerImages.evaWalking1, customerImages.evaWalking2],
-        frontImage: customerImages.evaFront
+        walkingImages: [customerImages.selinaWalking1, customerImages.selinaWalking2],
+        frontImage: customerImages.selinaFront
     },
     {
-        name: "Sunwoo",
+        name: "Manasvi",
         sprite: "👨",
         color: "#98D8C8",
-        order: { text: "Blueberry Shake please!", base: null, milk: "fresh-milk", toppings: ["blueberry", "cream"] },
+        order: {
+            text: "Blueberry Shake please!",
+            base: null,
+            milk: "fresh-milk",
+            toppings: ["blueberry", "cream"],
+            recipe: ["blueberry", "fresh-milk", "cream"]
+        },
         hasImage: true,
-        walkingImages: [customerImages.sunwooWalking1, customerImages.sunwooWalking2],
-        frontImage: customerImages.sunwooFront
+        walkingImages: [customerImages.manasviWalking1, customerImages.manasviWalking2],
+        frontImage: customerImages.manasviFront
     },
     {
-        name: "Angelina",
+        name: "Kayley",
         sprite: "👩",
         color: "#F4A6D7",
-        order: { text: "Lemonade please!", base: "jasmine-tea", milk: null, toppings: ["lemon", "honey"] },
+        order: {
+            text: "Lemonade please!",
+            base: "jasmine-tea",
+            milk: null,
+            toppings: ["lemon", "honey"],
+            recipe: ["lemon", "honey", "jasmine-tea"]
+        },
         hasImage: true,
-        walkingImages: [customerImages.angelinaWalking1, customerImages.angelinaWalking2],
-        frontImage: customerImages.angelinaFront
+        walkingImages: [customerImages.kayleyWalking1, customerImages.kayleyWalking2],
+        frontImage: customerImages.kayleyFront
     }
 ];
 
@@ -1022,33 +1052,17 @@ function drawMakingMode() {
         let recipeY = noteY + 85;
         let stepNum = 1;
 
-        // Add recipe steps based on order
+        // Add recipe steps based on recipe order
         const order = game.currentCustomer.order;
 
-        // Add toppings/fruits first
-        if (order.toppings && order.toppings.length > 0) {
-            order.toppings.forEach(topping => {
-                const ingName = ingredientDB[topping].name;
+        // Use recipe field for correct order
+        if (order.recipe && order.recipe.length > 0) {
+            order.recipe.forEach(ingredient => {
+                const ingName = ingredientDB[ingredient].name;
                 ctx.fillText(`${stepNum}. Add ${ingName.toLowerCase()}`, noteX + 15, recipeY);
                 recipeY += 18;
                 stepNum++;
             });
-        }
-
-        // Add milk
-        if (order.milk) {
-            const milkName = ingredientDB[order.milk].name;
-            ctx.fillText(`${stepNum}. Add ${milkName.toLowerCase()}`, noteX + 15, recipeY);
-            recipeY += 18;
-            stepNum++;
-        }
-
-        // Add base (tea)
-        if (order.base) {
-            const baseName = ingredientDB[order.base].name;
-            ctx.fillText(`${stepNum}. Add ${baseName.toLowerCase()}`, noteX + 15, recipeY);
-            recipeY += 18;
-            stepNum++;
         }
 
         // Reminder
