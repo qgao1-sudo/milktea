@@ -313,14 +313,43 @@ Object.keys(cupImages).forEach(key => {
 
 // Load customer character images
 const customerImages = {
-    sarahWalking1: new Image(),
-    sarahWalking2: new Image(),
-    sarahFront: new Image()
+    jennyWalking1: new Image(),
+    jennyWalking2: new Image(),
+    jennyFront: new Image(),
+    rayWalking1: new Image(),
+    rayWalking2: new Image(),
+    rayFront: new Image(),
+    evaWalking1: new Image(),
+    evaWalking2: new Image(),
+    evaFront: new Image(),
+    sunwooWalking1: new Image(),
+    sunwooWalking2: new Image(),
+    sunwooFront: new Image(),
+    angelinaWalking1: new Image(),
+    angelinaWalking2: new Image(),
+    angelinaFront: new Image()
 };
 
-customerImages.sarahWalking1.src = '微信图片_20251203015929_75_18.png';
-customerImages.sarahWalking2.src = '微信图片_20251203015931_76_18.png';
-customerImages.sarahFront.src = '微信图片_20251203014739_66_18.png';
+// Jenny images
+customerImages.jennyWalking1.src = '微信图片_20251203015929_75_18.png';
+customerImages.jennyWalking2.src = '微信图片_20251203015931_76_18.png';
+customerImages.jennyFront.src = '微信图片_20251203014739_66_18.png';
+// Ray images
+customerImages.rayWalking1.src = 'Ray走路1.png';
+customerImages.rayWalking2.src = 'Ray走路2.png';
+customerImages.rayFront.src = 'Ray站立.png';
+// Eva images
+customerImages.evaWalking1.src = 'eva走路1.png';
+customerImages.evaWalking2.src = 'eva走路2.png';
+customerImages.evaFront.src = 'eva站立.png';
+// Sunwoo images
+customerImages.sunwooWalking1.src = 'sunwoo走路1.png';
+customerImages.sunwooWalking2.src = 'sunwoo走路2.png';
+customerImages.sunwooFront.src = 'sunwoo站立.png';
+// Angelina images
+customerImages.angelinaWalking1.src = 'angi走路1.png';
+customerImages.angelinaWalking2.src = 'angi走路2.png';
+customerImages.angelinaFront.src = 'angi站.png';
 
 let customerImagesLoaded = 0;
 const totalCustomerImages = Object.keys(customerImages).length;
@@ -361,11 +390,45 @@ const customers = [
         color: "#FFB6C1",
         order: { text: "I want Berry Milky Hug!", base: null, milk: "fresh-milk", toppings: ["strawberry", "ice-cream", "chocolate", "strawberry"] },
         hasImage: true,
-        walkingImages: [customerImages.sarahWalking1, customerImages.sarahWalking2],
-        frontImage: customerImages.sarahFront
+        walkingImages: [customerImages.jennyWalking1, customerImages.jennyWalking2],
+        frontImage: customerImages.jennyFront
     },
-    { name: "Mike", sprite: "👨", color: "#87CEEB", order: { text: "Lemonade please!", base: "jasmine-tea", milk: null, toppings: ["lemon", "honey"] } },
-    { name: "Emma", sprite: "👧", color: "#FFD700", order: { text: "Orange drink sounds refreshing!", base: "green-tea", milk: null, toppings: ["orange", "honey"] } }
+    {
+        name: "Ray",
+        sprite: "👨",
+        color: "#87CEEB",
+        order: { text: "Lemonade please!", base: "jasmine-tea", milk: null, toppings: ["lemon", "honey"] },
+        hasImage: true,
+        walkingImages: [customerImages.rayWalking1, customerImages.rayWalking2],
+        frontImage: customerImages.rayFront
+    },
+    {
+        name: "Eva",
+        sprite: "👧",
+        color: "#FFD700",
+        order: { text: "Orange drink sounds refreshing!", base: "green-tea", milk: null, toppings: ["orange", "honey"] },
+        hasImage: true,
+        walkingImages: [customerImages.evaWalking1, customerImages.evaWalking2],
+        frontImage: customerImages.evaFront
+    },
+    {
+        name: "Sunwoo",
+        sprite: "👨",
+        color: "#98D8C8",
+        order: { text: "I want Berry Milky Hug!", base: null, milk: "fresh-milk", toppings: ["strawberry", "ice-cream", "chocolate", "strawberry"] },
+        hasImage: true,
+        walkingImages: [customerImages.sunwooWalking1, customerImages.sunwooWalking2],
+        frontImage: customerImages.sunwooFront
+    },
+    {
+        name: "Angelina",
+        sprite: "👩",
+        color: "#F4A6D7",
+        order: { text: "Lemonade please!", base: "jasmine-tea", milk: null, toppings: ["lemon", "honey"] },
+        hasImage: true,
+        walkingImages: [customerImages.angelinaWalking1, customerImages.angelinaWalking2],
+        frontImage: customerImages.angelinaFront
+    }
 ];
 
 const ingredientDB = {
