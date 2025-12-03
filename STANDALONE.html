@@ -319,37 +319,38 @@ const game = {
 };
 
 const customers = [
-    { name: "Sarah", sprite: "👩", color: "#FFB6C1", order: { text: "I want milk tea with pearls!", base: "black-tea", milk: "fresh-milk", toppings: ["pearl"] } },
-    { name: "Mike", sprite: "👨", color: "#87CEEB", order: { text: "Green tea with oat milk please!", base: "green-tea", milk: "oat-milk", toppings: [] } },
-    { name: "Emma", sprite: "👧", color: "#FFD700", order: { text: "Mango milk tea sounds amazing!", base: "jasmine-tea", milk: "fresh-milk", toppings: ["mango"] } },
-    { name: "Lisa", sprite: "👱‍♀️", color: "#FF69B4", order: { text: "Classic milk tea, extra pearls!", base: "black-tea", milk: "fresh-milk", toppings: ["pearl", "pearl"] } },
-    { name: "Tom", sprite: "👦", color: "#98D8C8", order: { text: "Strawberry tea with lychee!", base: "green-tea", milk: "fresh-milk", toppings: ["strawberry", "lychee"] } },
-    { name: "Anna", sprite: "👸", color: "#FFE4E1", order: { text: "Blueberry and kiwi tea!", base: "jasmine-tea", milk: "oat-milk", toppings: ["blueberry", "kiwi"] } },
-    { name: "Jack", sprite: "🧑", color: "#B0E0E6", order: { text: "Passion fruit paradise!", base: "black-tea", milk: "fresh-milk", toppings: ["passion-fruit"] } }
+    { name: "Sarah", sprite: "👩", color: "#FFB6C1", order: { text: "I want Berry Milky Hug!", base: null, milk: "fresh-milk", toppings: ["strawberry", "ice-cream", "chocolate", "strawberry"] } },
+    { name: "Mike", sprite: "👨", color: "#87CEEB", order: { text: "Lemonade please!", base: "jasmine-tea", milk: null, toppings: ["lemon", "honey"] } },
+    { name: "Emma", sprite: "👧", color: "#FFD700", order: { text: "Orange drink sounds refreshing!", base: "green-tea", milk: null, toppings: ["orange", "honey"] } }
 ];
 
 const ingredientDB = {
     // First row: Jars (tea bases, milk, toppings) - aligned with tea machine level
-    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 280, y: 380, type: "base" },
-    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 380, y: 380, type: "base" },
-    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 480, y: 380, type: "base" },
-    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 580, y: 380, type: "milk" },
-    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 680, y: 380, type: "milk" },
-    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 780, y: 380, type: "topping" },
-    "pudding": { name: "Pudding", color: "#FFE4B5", emoji: "🍮", x: 880, y: 380, type: "topping" },
-    "ice-cream": { name: "Ice Cream", color: "#FFF8DC", emoji: "🍦", x: 980, y: 380, type: "topping" },
-    "chocolate": { name: "Chocolate", color: "#8B4513", emoji: "🍫", x: 1080, y: 380, type: "topping" },
+    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 280, y: 380, type: "base", onTable: true },
+    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 380, y: 380, type: "base", onTable: true },
+    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 480, y: 380, type: "base", onTable: true },
+    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 580, y: 380, type: "milk", onTable: true },
+    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 680, y: 380, type: "milk", onTable: true },
+    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 780, y: 380, type: "topping", onTable: true },
+    "pudding": { name: "Pudding", color: "#FFE4B5", emoji: "🍮", x: 880, y: 380, type: "topping", onTable: true },
+    "ice-cream": { name: "Ice Cream", color: "#FFF8DC", emoji: "🍦", x: 980, y: 380, type: "topping", category: "饮品", onTable: true },
+    "chocolate": { name: "Chocolate", color: "#8B4513", emoji: "🍫", x: 1080, y: 380, type: "topping", category: "酱汁", onTable: true },
     // Second row: Fruit boxes - square shaped
-    "strawberry": { name: "Strawberry", color: "#FF6B6B", emoji: "🍓", x: 280, y: 500, type: "fruit", shape: "square" },
-    "mango": { name: "Mango", color: "#FFA500", emoji: "🥭", x: 380, y: 500, type: "fruit", shape: "square" },
-    "lychee": { name: "Lychee", color: "#FFB6C1", emoji: "🍈", x: 480, y: 500, type: "fruit", shape: "square" },
-    "passion-fruit": { name: "Passion", color: "#9370DB", emoji: "🟣", x: 580, y: 500, type: "fruit", shape: "square" },
-    "blueberry": { name: "Blueberry", color: "#4169E1", emoji: "🫐", x: 680, y: 500, type: "fruit", shape: "square" },
-    "kiwi": { name: "Kiwi", color: "#9ACD32", emoji: "🥝", x: 780, y: 500, type: "fruit", shape: "square" }
+    "strawberry": { name: "Strawberry", color: "#FF6B6B", emoji: "🍓", x: 280, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
+    "mango": { name: "Mango", color: "#FFA500", emoji: "🥭", x: 380, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
+    "lychee": { name: "Lychee", color: "#FFB6C1", emoji: "🍈", x: 480, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
+    "passion-fruit": { name: "Passion", color: "#9370DB", emoji: "🟣", x: 580, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
+    "blueberry": { name: "Blueberry", color: "#4169E1", emoji: "🫐", x: 680, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
+    "kiwi": { name: "Kiwi", color: "#9ACD32", emoji: "🥝", x: 780, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
+    // New ingredients - only in making mode
+    "honey": { name: "Honey", color: "#FFD700", emoji: "🍯", type: "topping", category: "酱汁", onTable: false },
+    "lemon": { name: "Lemon", color: "#FFF44F", emoji: "🍋", type: "fruit", category: "水果", onTable: false },
+    "orange": { name: "Orange", color: "#FFA500", emoji: "🍊", type: "fruit", category: "水果", onTable: false }
 };
 
 for (let key in ingredientDB) {
-    game.ingredients.push({ id: key, ...ingredientDB[key], width: 80, height: 80 });
+    const ing = { id: key, ...ingredientDB[key], width: 80, height: 80 };
+    game.ingredients.push(ing);
 }
 
 class Animation {
@@ -413,10 +414,13 @@ function drawBackground() {
     ctx.font = 'bold 20px Arial';
     ctx.fillText('🧋 MENU', 90, 60);
     ctx.fillStyle = '#fff';
-    ctx.font = '14px Arial';
-    ctx.fillText('Milk Tea ... $4.5', 65, 95);
-    ctx.fillText('Fruit Tea .. $5.0', 65, 120);
-    ctx.fillText('Special ... $6.0', 65, 145);
+    ctx.font = '12px Arial';
+    ctx.fillText('Berry Milky Hug', 60, 95);
+    ctx.fillText('.......... $6.5', 60, 110);
+    ctx.fillText('Lemonade', 60, 135);
+    ctx.fillText('.......... $4.5', 60, 150);
+    ctx.fillText('Orange Drink', 60, 175);
+    ctx.fillText('.......... $4.5', 60, 190);
 
     // Decorative Poster 1 - Bubble Tea
     ctx.fillStyle = '#FF69B4';
@@ -636,6 +640,9 @@ function drawTeaMachine() {
 
 function drawIngredients() {
     game.ingredients.forEach(ing => {
+        // Only draw ingredients that are on the table
+        if (!ing.onTable) return;
+
         const jarX = ing.x, jarY = ing.y, jarWidth = ing.width, jarHeight = ing.height;
 
         if (ing.shape === 'square') {
@@ -767,40 +774,62 @@ function drawMakingMode() {
         ctx.stroke();
     }
 
-    // Ingredient options - multi-column layout to fit all ingredients
+    // Ingredient options - categorized display
     const startX = 750, startY = 80;
-    const boxWidth = 70, boxHeight = 70;
-    const cols = 3;
-    const spacingX = 80, spacingY = 80;
+    const boxWidth = 60, boxHeight = 60;
+    const spacingX = 70, spacingY = 70;
 
-    ctx.fillStyle = '#2c3e50';
-    ctx.font = 'bold 20px Arial';
-    ctx.fillText('配料:', startX, startY - 10);
+    let currentY = startY;
 
-    game.ingredients.forEach((ing, i) => {
-        const col = i % cols;
-        const row = Math.floor(i / cols);
-        const x = startX + col * spacingX;
-        const y = startY + row * spacingY;
+    // Group ingredients by category
+    const categories = {
+        '水果': game.ingredients.filter(ing => ing.category === '水果'),
+        '酱汁': game.ingredients.filter(ing => ing.category === '酱汁'),
+        '饮品': game.ingredients.filter(ing => ing.category === '饮品')
+    };
 
-        // Ingredient box
-        ctx.fillStyle = ing.color;
-        ctx.globalAlpha = 0.3;
-        ctx.fillRect(x, y, boxWidth, boxHeight);
-        ctx.globalAlpha = 1.0;
-        ctx.strokeStyle = '#333';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, boxWidth, boxHeight);
+    // Also add base and milk
+    const bases = game.ingredients.filter(ing => ing.type === 'base');
+    const milks = game.ingredients.filter(ing => ing.type === 'milk');
+    const otherToppings = game.ingredients.filter(ing => (ing.type === 'topping' || ing.type === 'fruit') && !ing.category);
 
-        // Emoji
-        ctx.font = '30px Arial';
-        ctx.fillText(ing.emoji, x + 8, y + 40);
+    // Draw each category
+    Object.keys(categories).forEach(categoryName => {
+        const items = categories[categoryName];
+        if (items.length === 0) return;
 
-        // Name
+        // Category title
         ctx.fillStyle = '#2c3e50';
-        ctx.font = '9px Arial';
-        const nameWidth = ctx.measureText(ing.name).width;
-        ctx.fillText(ing.name, x + (boxWidth - nameWidth) / 2, y + 62);
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText(categoryName, startX, currentY);
+        currentY += 25;
+
+        // Draw items in this category
+        items.forEach((ing, i) => {
+            const x = startX + (i % 3) * spacingX;
+            const y = currentY + Math.floor(i / 3) * spacingY;
+
+            // Ingredient box
+            ctx.fillStyle = ing.color;
+            ctx.globalAlpha = 0.3;
+            ctx.fillRect(x, y, boxWidth, boxHeight);
+            ctx.globalAlpha = 1.0;
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, boxWidth, boxHeight);
+
+            // Emoji
+            ctx.font = '28px Arial';
+            ctx.fillText(ing.emoji, x + 8, y + 38);
+
+            // Name
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = '8px Arial';
+            const nameWidth = ctx.measureText(ing.name).width;
+            ctx.fillText(ing.name, x + (boxWidth - nameWidth) / 2, y + 53);
+        });
+
+        currentY += Math.ceil(items.length / 3) * spacingY + 15;
     });
 
     // Done button - moved up to avoid overlap with bottom buttons
@@ -979,29 +1008,45 @@ canvas.addEventListener('click', (e) => {
             return;
         }
 
-        // Check if clicked on ingredients (multi-column layout)
+        // Check if clicked on ingredients (categorized layout)
         const startX = 750, startY = 80;
-        const boxWidth = 70, boxHeight = 70;
-        const cols = 3;
-        const spacingX = 80, spacingY = 80;
+        const boxWidth = 60, boxHeight = 60;
+        const spacingX = 70, spacingY = 70;
 
-        game.ingredients.forEach((ing, i) => {
-            const col = i % cols;
-            const row = Math.floor(i / cols);
-            const ingX = startX + col * spacingX;
-            const ingY = startY + row * spacingY;
+        let currentY = startY;
 
-            if (x >= ingX && x <= ingX + boxWidth && y >= ingY && y <= ingY + boxHeight) {
-                const ingData = ingredientDB[ing.id];
-                // Add to drink
-                if (ingData.type === 'base' && !game.currentDrink.base) {
-                    game.currentDrink.base = ing.id;
-                } else if (ingData.type === 'milk' && !game.currentDrink.milk) {
-                    game.currentDrink.milk = ing.id;
-                } else if ((ingData.type === 'topping' || ingData.type === 'fruit') && game.currentDrink.toppings.length < 3) {
-                    game.currentDrink.toppings.push(ing.id);
+        // Group ingredients by category
+        const categories = {
+            '水果': game.ingredients.filter(ing => ing.category === '水果'),
+            '酱汁': game.ingredients.filter(ing => ing.category === '酱汁'),
+            '饮品': game.ingredients.filter(ing => ing.category === '饮品')
+        };
+
+        // Check each category
+        Object.keys(categories).forEach(categoryName => {
+            const items = categories[categoryName];
+            if (items.length === 0) return;
+
+            currentY += 25; // Skip category title
+
+            items.forEach((ing, i) => {
+                const ingX = startX + (i % 3) * spacingX;
+                const ingY = currentY + Math.floor(i / 3) * spacingY;
+
+                if (x >= ingX && x <= ingX + boxWidth && y >= ingY && y <= ingY + boxHeight) {
+                    const ingData = ingredientDB[ing.id];
+                    // Add to drink - increased limit to 5
+                    if (ingData.type === 'base' && !game.currentDrink.base) {
+                        game.currentDrink.base = ing.id;
+                    } else if (ingData.type === 'milk' && !game.currentDrink.milk) {
+                        game.currentDrink.milk = ing.id;
+                    } else if ((ingData.type === 'topping' || ingData.type === 'fruit') && game.currentDrink.toppings.length < 5) {
+                        game.currentDrink.toppings.push(ing.id);
+                    }
                 }
-            }
+            });
+
+            currentY += Math.ceil(items.length / 3) * spacingY + 15;
         });
     } else if (game.mode === 'finished') {
         // Check if clicked on continue button
