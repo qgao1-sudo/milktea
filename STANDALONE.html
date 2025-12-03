@@ -284,6 +284,10 @@ const cupImages = {
     lemon: new Image(),
     lemonHoney: new Image(),
     lemonHoneyJasmine: new Image(),
+    // Orange series
+    orange: new Image(),
+    orangeHoney: new Image(),
+    orangeHoneyGreenTea: new Image(),
     // Blueberry series
     blueberry: new Image(),
     blueberryMilk: new Image(),
@@ -303,9 +307,13 @@ cupImages.strawberryMilkIceCream.src = '微信图片_20251203020037_77_18.png';
 cupImages.strawberryMilkIceCreamChocolate.src = '微信图片_20251202201413_13_1.png';
 cupImages.complete.src = '微信图片_20251202201511_14_1.png';
 // Lemon series
-cupImages.lemon.src = '微信图片_20251203015513_72_18.jpg';
-cupImages.lemonHoney.src = '微信图片_20251203015514_73_18.jpg';
+cupImages.lemon.src = '柠檬.png';
+cupImages.lemonHoney.src = '柠檬蜂蜜.png';
 cupImages.lemonHoneyJasmine.src = '微信图片_20251203015519_74_18.png';
+// Orange series
+cupImages.orange.src = '橙子.png';
+cupImages.orangeHoney.src = '橙子蜂蜜.png';
+cupImages.orangeHoneyGreenTea.src = '橙子饮料.png';
 // Blueberry series
 cupImages.blueberry.src = '蓝莓底.png';
 cupImages.blueberryMilk.src = '蓝莓牛奶.png';
@@ -314,7 +322,7 @@ cupImages.blueberryMilkCream.src = '蓝莓牛奶奶油.png';
 cupImages.mango.src = '芒果.png';
 cupImages.mangoMilk.src = '芒果牛奶.png';
 cupImages.mangoMilkCream.src = '芒果牛奶奶油.jpg';
-cupImages.mangoMilkCreamIceCream.src = '芒果牛奶奶油冰淇淋.jpg';
+cupImages.mangoMilkCreamIceCream.src = '杨枝甘露.png';
 
 let cupImagesLoaded = 0;
 const totalCupImages = Object.keys(cupImages).length;
@@ -635,6 +643,24 @@ function getCurrentCupImage() {
         }
     }
 
+    // Check for orange series
+    const hasOrange = drink.toppings.includes('orange');
+    const hasGreenTea = drink.base === 'green-tea';
+
+    if (hasOrange) {
+        // Orange series
+        if (hasOrange && hasHoney && hasGreenTea) {
+            // Stage 3: orange + honey + green tea
+            return cupImages.orangeHoneyGreenTea;
+        } else if (hasOrange && hasHoney) {
+            // Stage 2: orange + honey
+            return cupImages.orangeHoney;
+        } else if (hasOrange) {
+            // Stage 1: orange only
+            return cupImages.orange;
+        }
+    }
+
     // Check for strawberry series
     const strawberryCount = drink.toppings.filter(t => t === 'strawberry').length;
     const hasIceCream = drink.toppings.includes('ice-cream');
@@ -719,6 +745,24 @@ function shouldHideLayers() {
         } else if (hasLemon && hasHoney) {
             return true;
         } else if (hasLemon) {
+            return true;
+        }
+    }
+
+    // Check for orange series
+    const hasOrange = drink.toppings.includes('orange');
+    const hasGreenTea = drink.base === 'green-tea';
+
+    // Hide layers for the orange-based sequence:
+    // 1. Orange only
+    // 2. Orange + honey
+    // 3. Orange + honey + green tea
+    if (hasOrange) {
+        if (hasOrange && hasHoney && hasGreenTea) {
+            return true;
+        } else if (hasOrange && hasHoney) {
+            return true;
+        } else if (hasOrange) {
             return true;
         }
     }
