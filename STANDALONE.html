@@ -283,7 +283,11 @@ const cupImages = {
     // Lemon series
     lemon: new Image(),
     lemonHoney: new Image(),
-    lemonHoneyJasmine: new Image()
+    lemonHoneyJasmine: new Image(),
+    // Blueberry series
+    blueberry: new Image(),
+    blueberryMilk: new Image(),
+    blueberryMilkCream: new Image()
 };
 
 cupImages.empty.src = '微信图片_20251202200937_7_1.png';
@@ -297,6 +301,10 @@ cupImages.complete.src = '微信图片_20251202201511_14_1.png';
 cupImages.lemon.src = '微信图片_20251203015513_72_18.jpg';
 cupImages.lemonHoney.src = '微信图片_20251203015514_73_18.jpg';
 cupImages.lemonHoneyJasmine.src = '微信图片_20251203015519_74_18.png';
+// Blueberry series
+cupImages.blueberry.src = '蓝莓底.png';
+cupImages.blueberryMilk.src = '蓝莓牛奶.png';
+cupImages.blueberryMilkCream.src = '蓝莓牛奶奶油.png';
 
 let cupImagesLoaded = 0;
 const totalCupImages = Object.keys(cupImages).length;
@@ -415,7 +423,7 @@ const customers = [
         name: "Sunwoo",
         sprite: "👨",
         color: "#98D8C8",
-        order: { text: "I want Berry Milky Hug!", base: null, milk: "fresh-milk", toppings: ["strawberry", "ice-cream", "chocolate", "strawberry"] },
+        order: { text: "Blueberry Shake please!", base: null, milk: "fresh-milk", toppings: ["blueberry", "cream"] },
         hasImage: true,
         walkingImages: [customerImages.sunwooWalking1, customerImages.sunwooWalking2],
         frontImage: customerImages.sunwooFront
@@ -433,26 +441,27 @@ const customers = [
 
 const ingredientDB = {
     // First row: Jars (tea bases, milk, toppings) - aligned with tea machine level
-    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 280, y: 380, type: "base", category: "饮品", onTable: true },
-    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 380, y: 380, type: "base", category: "饮品", onTable: true },
-    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 480, y: 380, type: "base", category: "饮品", onTable: true },
-    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 580, y: 380, type: "milk", category: "饮品", onTable: true },
-    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 680, y: 380, type: "milk", category: "饮品", onTable: true },
+    "black-tea": { name: "Black Tea", color: "#8B4513", emoji: "🍵", x: 280, y: 380, type: "base", category: "Drinks", onTable: true },
+    "green-tea": { name: "Green Tea", color: "#90EE90", emoji: "🍃", x: 380, y: 380, type: "base", category: "Drinks", onTable: true },
+    "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 480, y: 380, type: "base", category: "Drinks", onTable: true },
+    "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 580, y: 380, type: "milk", category: "Drinks", onTable: true },
+    "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 680, y: 380, type: "milk", category: "Drinks", onTable: true },
     "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 780, y: 380, type: "topping", onTable: true },
     "pudding": { name: "Pudding", color: "#FFE4B5", emoji: "🍮", x: 880, y: 380, type: "topping", onTable: true },
-    "ice-cream": { name: "Ice Cream", color: "#FFF8DC", emoji: "🍦", x: 980, y: 380, type: "topping", category: "饮品", onTable: true },
-    "chocolate": { name: "Chocolate", color: "#8B4513", emoji: "🍫", x: 1080, y: 380, type: "topping", category: "酱汁", onTable: true },
+    "ice-cream": { name: "Ice Cream", color: "#FFF8DC", emoji: "🍦", x: 980, y: 380, type: "topping", category: "Drinks", onTable: true },
+    "chocolate": { name: "Chocolate", color: "#8B4513", emoji: "🍫", x: 1080, y: 380, type: "topping", category: "Sauces", onTable: true },
     // Second row: Fruit boxes - square shaped
-    "strawberry": { name: "Strawberry", color: "#FF6B6B", emoji: "🍓", x: 280, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
-    "mango": { name: "Mango", color: "#FFA500", emoji: "🥭", x: 380, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
-    "lychee": { name: "Lychee", color: "#FFB6C1", emoji: "🍈", x: 480, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
-    "passion-fruit": { name: "Passion", color: "#9370DB", emoji: "🟣", x: 580, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
-    "blueberry": { name: "Blueberry", color: "#4169E1", emoji: "🫐", x: 680, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
-    "kiwi": { name: "Kiwi", color: "#9ACD32", emoji: "🥝", x: 780, y: 500, type: "fruit", shape: "square", category: "水果", onTable: true },
+    "strawberry": { name: "Strawberry", color: "#FF6B6B", emoji: "🍓", x: 280, y: 500, type: "fruit", shape: "square", category: "Fruits", onTable: true },
+    "mango": { name: "Mango", color: "#FFA500", emoji: "🥭", x: 380, y: 500, type: "fruit", shape: "square", category: "Fruits", onTable: true },
+    "lychee": { name: "Lychee", color: "#FFB6C1", emoji: "🍈", x: 480, y: 500, type: "fruit", shape: "square", category: "Fruits", onTable: true },
+    "passion-fruit": { name: "Passion", color: "#9370DB", emoji: "🟣", x: 580, y: 500, type: "fruit", shape: "square", category: "Fruits", onTable: true },
+    "blueberry": { name: "Blueberry", color: "#4169E1", emoji: "🫐", x: 680, y: 500, type: "fruit", shape: "square", category: "Fruits", onTable: true },
+    "kiwi": { name: "Kiwi", color: "#9ACD32", emoji: "🥝", x: 780, y: 500, type: "fruit", shape: "square", category: "Fruits", onTable: true },
     // New ingredients - only in making mode
-    "honey": { name: "Honey", color: "#FFD700", emoji: "🍯", type: "topping", category: "酱汁", onTable: false },
-    "lemon": { name: "Lemon", color: "#FFF44F", emoji: "🍋", type: "fruit", category: "水果", onTable: false },
-    "orange": { name: "Orange", color: "#FFA500", emoji: "🍊", type: "fruit", category: "水果", onTable: false }
+    "honey": { name: "Honey", color: "#FFD700", emoji: "🍯", type: "topping", category: "Sauces", onTable: false },
+    "lemon": { name: "Lemon", color: "#FFF44F", emoji: "🍋", type: "fruit", category: "Fruits", onTable: false },
+    "orange": { name: "Orange", color: "#FFA500", emoji: "🍊", type: "fruit", category: "Fruits", onTable: false },
+    "cream": { name: "Cream", color: "#FFFACD", emoji: "🥛", type: "topping", category: "Sauces", onTable: false }
 };
 
 for (let key in ingredientDB) {
@@ -520,6 +529,24 @@ function getCurrentCupImage() {
         return cupImages.strawberry;
     }
 
+    // Check for blueberry series
+    const hasBlueberry = drink.toppings.includes('blueberry');
+    const hasCream = drink.toppings.includes('cream');
+
+    if (hasBlueberry) {
+        // Blueberry series
+        if (hasBlueberry && hasMilk && hasCream) {
+            // Stage 3: blueberry + milk + cream
+            return cupImages.blueberryMilkCream;
+        } else if (hasBlueberry && hasMilk) {
+            // Stage 2: blueberry + milk
+            return cupImages.blueberryMilk;
+        } else if (hasBlueberry) {
+            // Stage 1: blueberry only
+            return cupImages.blueberry;
+        }
+    }
+
     // Empty cup
     return cupImages.empty;
 }
@@ -580,6 +607,24 @@ function shouldHideLayers() {
         }
         // Check if complete (two strawberries + milk + ice cream + chocolate)
         if (hasMilk && hasIceCream && hasChocolate && strawberryCount >= 2) {
+            return true;
+        }
+    }
+
+    // Check for blueberry series
+    const hasBlueberry = drink.toppings.includes('blueberry');
+    const hasCream = drink.toppings.includes('cream');
+
+    // Hide layers for the blueberry-based sequence:
+    // 1. Blueberry only
+    // 2. Blueberry + milk
+    // 3. Blueberry + milk + cream
+    if (hasBlueberry) {
+        if (hasBlueberry && hasMilk && hasCream) {
+            return true;
+        } else if (hasBlueberry && hasMilk) {
+            return true;
+        } else if (hasBlueberry) {
             return true;
         }
     }
@@ -938,7 +983,86 @@ function drawMakingMode() {
     // Title
     ctx.fillStyle = '#2c3e50';
     ctx.font = 'bold 32px Arial';
-    ctx.fillText('🧋 制作奶茶', 50, 60);
+    ctx.fillText('🧋 Making Drinks', 50, 60);
+
+    // Recipe sticky note on the left
+    const noteX = 50, noteY = 100;
+    const noteWidth = 250, noteHeight = 400;
+
+    // Sticky note background (yellow)
+    ctx.fillStyle = '#FFEB3B';
+    ctx.fillRect(noteX, noteY, noteWidth, noteHeight);
+
+    // Sticky note shadow
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.fillRect(noteX + 3, noteY + 3, noteWidth, noteHeight);
+    ctx.fillStyle = '#FFEB3B';
+    ctx.fillRect(noteX, noteY, noteWidth, noteHeight);
+
+    // Sticky note border
+    ctx.strokeStyle = '#FDD835';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(noteX, noteY, noteWidth, noteHeight);
+
+    // Recipe title
+    ctx.fillStyle = '#2c3e50';
+    ctx.font = 'bold 18px Arial';
+    ctx.fillText('📝 Recipes', noteX + 70, noteY + 30);
+
+    // Recipe content
+    ctx.font = '12px Arial';
+    let recipeY = noteY + 55;
+
+    // Berry Milky Hug
+    ctx.font = 'bold 13px Arial';
+    ctx.fillText('Berry Milky Hug:', noteX + 10, recipeY);
+    ctx.font = '11px Arial';
+    recipeY += 18;
+    ctx.fillText('1. Add strawberry', noteX + 15, recipeY);
+    recipeY += 15;
+    ctx.fillText('2. Add fresh milk', noteX + 15, recipeY);
+    recipeY += 15;
+    ctx.fillText('3. Add ice cream', noteX + 15, recipeY);
+    recipeY += 15;
+    ctx.fillText('4. Add chocolate', noteX + 15, recipeY);
+    recipeY += 15;
+    ctx.fillText('5. Add strawberry', noteX + 15, recipeY);
+    recipeY += 25;
+
+    // Lemonade
+    ctx.font = 'bold 13px Arial';
+    ctx.fillText('Lemonade:', noteX + 10, recipeY);
+    ctx.font = '11px Arial';
+    recipeY += 18;
+    ctx.fillText('1. Add lemon', noteX + 15, recipeY);
+    recipeY += 15;
+    ctx.fillText('2. Add honey', noteX + 15, recipeY);
+    recipeY += 15;
+    ctx.fillText('3. Add jasmine tea', noteX + 15, recipeY);
+    recipeY += 25;
+
+    // Orange Drink
+    ctx.font = 'bold 13px Arial';
+    ctx.fillText('Orange Drink:', noteX + 10, recipeY);
+    ctx.font = '11px Arial';
+    recipeY += 18;
+    ctx.fillText('1. Add orange', noteX + 15, recipeY);
+    recipeY += 15;
+    ctx.fillText('2. Add honey', noteX + 15, recipeY);
+    recipeY += 15;
+    ctx.fillText('3. Add green tea', noteX + 15, recipeY);
+    recipeY += 25;
+
+    // Blueberry Shake
+    ctx.font = 'bold 13px Arial';
+    ctx.fillText('Blueberry Shake:', noteX + 10, recipeY);
+    ctx.font = '11px Arial';
+    recipeY += 18;
+    ctx.fillText('1. Add blueberry', noteX + 15, recipeY);
+    recipeY += 15;
+    ctx.fillText('2. Add fresh milk', noteX + 15, recipeY);
+    recipeY += 15;
+    ctx.fillText('3. Add cream', noteX + 15, recipeY);
 
     // Large cup in center
     const cupX = 500, cupY = 250;
@@ -1005,9 +1129,9 @@ function drawMakingMode() {
 
     // Group ingredients by category
     const categories = {
-        '水果': game.ingredients.filter(ing => ing.category === '水果'),
-        '酱汁': game.ingredients.filter(ing => ing.category === '酱汁'),
-        '饮品': game.ingredients.filter(ing => ing.category === '饮品')
+        'Fruits': game.ingredients.filter(ing => ing.category === 'Fruits'),
+        'Sauces': game.ingredients.filter(ing => ing.category === 'Sauces'),
+        'Drinks': game.ingredients.filter(ing => ing.category === 'Drinks')
     };
 
     // Also add base and milk
@@ -1059,12 +1183,12 @@ function drawMakingMode() {
     ctx.fillRect(450, 520, 300, 60);
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 24px Arial';
-    ctx.fillText('✅ 完成制作', 510, 560);
+    ctx.fillText('✅ Complete', 520, 560);
 
     // Hand cursor hint
     ctx.fillStyle = '#666';
     ctx.font = '16px Arial';
-    ctx.fillText('👆 点击配料拖拽到杯子里', 400, 150);
+    ctx.fillText('👆 Click ingredients to add', 430, 150);
 }
 
 function drawFinishedDrink() {
@@ -1075,7 +1199,7 @@ function drawFinishedDrink() {
     // Title
     ctx.fillStyle = '#2c3e50';
     ctx.font = 'bold 32px Arial';
-    ctx.fillText('✨ 完成！', 520, 60);
+    ctx.fillText('✨ Finished!', 500, 60);
 
     // Display box for finished drink
     const boxX = 450, boxY = 150;
@@ -1151,14 +1275,14 @@ function drawFinishedDrink() {
     // Label
     ctx.fillStyle = '#2c3e50';
     ctx.font = 'bold 20px Arial';
-    ctx.fillText('您的奶茶已完成！', boxX + 55, boxY + 40);
+    ctx.fillText('Your drink is ready!', boxX + 45, boxY + 40);
 
     // Continue button
     ctx.fillStyle = '#3498db';
     ctx.fillRect(500, 590, 200, 50);
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 20px Arial';
-    ctx.fillText('继续 →', 545, 622);
+    ctx.fillText('Continue →', 530, 622);
 }
 
 function updateCustomer() {
