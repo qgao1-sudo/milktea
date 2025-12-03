@@ -271,17 +271,35 @@ teaMachineImage.onerror = () => {
     console.error('Failed to load tea machine image');
 };
 
-// Load cup image
-const cupImage = new Image();
-cupImage.src = '微信图片_20251202200937_7_1.png';
-let cupLoaded = false;
-cupImage.onload = () => {
-    cupLoaded = true;
-    console.log('Cup image loaded successfully');
+// Load cup images for different stages
+const cupImages = {
+    empty: new Image(),
+    strawberry: new Image(),
+    strawberryMilk: new Image(),
+    strawberryMilkIceCream: new Image(),
+    strawberryMilkIceCreamChocolate: new Image(),
+    complete: new Image()
 };
-cupImage.onerror = () => {
-    console.error('Failed to load cup image');
-};
+
+cupImages.empty.src = '微信图片_20251202200937_7_1.png';
+cupImages.strawberry.src = '微信图片_20251202201106_8_1.png';
+cupImages.strawberryMilk.src = '微信图片_20251202201222_9_1.jpg';
+cupImages.strawberryMilkIceCream.src = '微信图片_20251202201312_11_1.jpg';
+cupImages.strawberryMilkIceCreamChocolate.src = '微信图片_20251202201413_13_1.png';
+cupImages.complete.src = '微信图片_20251202201511_14_1.png';
+
+let cupImagesLoaded = 0;
+const totalCupImages = Object.keys(cupImages).length;
+
+Object.keys(cupImages).forEach(key => {
+    cupImages[key].onload = () => {
+        cupImagesLoaded++;
+        console.log(`Cup image ${key} loaded (${cupImagesLoaded}/${totalCupImages})`);
+    };
+    cupImages[key].onerror = () => {
+        console.error(`Failed to load cup image: ${key}`);
+    };
+});
 
 const game = {
     money: 100,
@@ -319,6 +337,8 @@ const ingredientDB = {
     "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 680, y: 380, type: "milk" },
     "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 780, y: 380, type: "topping" },
     "pudding": { name: "Pudding", color: "#FFE4B5", emoji: "🍮", x: 880, y: 380, type: "topping" },
+    "ice-cream": { name: "Ice Cream", color: "#FFF8DC", emoji: "🍦", x: 980, y: 380, type: "topping" },
+    "chocolate": { name: "Chocolate", color: "#8B4513", emoji: "🍫", x: 1080, y: 380, type: "topping" },
     // Second row: Fruit boxes - square shaped
     "strawberry": { name: "Strawberry", color: "#FF6B6B", emoji: "🍓", x: 280, y: 500, type: "fruit", shape: "square" },
     "mango": { name: "Mango", color: "#FFA500", emoji: "🥭", x: 380, y: 500, type: "fruit", shape: "square" },
@@ -343,6 +363,38 @@ class Animation {
         const currentX = this.startX + (this.endX - this.startX) * progress;
         const currentY = this.startY + (this.endY - this.startY) * progress - Math.sin(progress * Math.PI) * 50;
         ctx.save(); ctx.globalAlpha = 1 - progress * 0.5; ctx.font = '32px Arial'; ctx.fillText(this.emoji, currentX, currentY); ctx.restore();
+    }
+}
+
+function getCurrentCupImage() {
+    // Determine which cup image to show based on current drink ingredients
+    const drink = game.currentDrink;
+
+    // Count strawberries
+    const strawberryCount = drink.toppings.filter(t => t === 'strawberry').length;
+    const hasIceCream = drink.toppings.includes('ice-cream');
+    const hasChocolate = drink.toppings.includes('chocolate');
+    const hasMilk = drink.milk !== null;
+
+    // Check the specific sequence
+    if (strawberryCount >= 2 && hasMilk && hasIceCream && hasChocolate) {
+        // Final stage: strawberry + milk + ice cream + chocolate + strawberry
+        return cupImages.complete;
+    } else if (strawberryCount >= 1 && hasMilk && hasIceCream && hasChocolate) {
+        // Stage 4: strawberry + milk + ice cream + chocolate
+        return cupImages.strawberryMilkIceCreamChocolate;
+    } else if (strawberryCount >= 1 && hasMilk && hasIceCream) {
+        // Stage 3: strawberry + milk + ice cream
+        return cupImages.strawberryMilkIceCream;
+    } else if (strawberryCount >= 1 && hasMilk) {
+        // Stage 2: strawberry + milk
+        return cupImages.strawberryMilk;
+    } else if (strawberryCount >= 1) {
+        // Stage 1: strawberry only
+        return cupImages.strawberry;
+    } else {
+        // Empty cup
+        return cupImages.empty;
     }
 }
 
@@ -687,9 +739,10 @@ function drawMakingMode() {
         ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
     }
 
-    // Draw cup image on top
-    if (cupLoaded) {
-        ctx.drawImage(cupImage, cupX, cupY, cupWidth, cupHeight);
+    // Draw cup image on top - use dynamic cup image based on ingredients
+    const currentCupImage = getCurrentCupImage();
+    if (currentCupImage && currentCupImage.complete) {
+        ctx.drawImage(currentCupImage, cupX, cupY, cupWidth, cupHeight);
     } else {
         // Fallback: draw simple cup if image not loaded
         ctx.fillStyle = '#FFFFFF';
@@ -813,9 +866,10 @@ function drawFinishedDrink() {
         ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
     }
 
-    // Draw cup image on top
-    if (cupLoaded) {
-        ctx.drawImage(cupImage, cupX, cupY, cupWidth, cupHeight);
+    // Draw cup image on top - use dynamic cup image based on ingredients
+    const currentCupImage = getCurrentCupImage();
+    if (currentCupImage && currentCupImage.complete) {
+        ctx.drawImage(currentCupImage, cupX, cupY, cupWidth, cupHeight);
     } else {
         // Fallback: draw simple cup if image not loaded
         ctx.fillStyle = '#FFFFFF';
