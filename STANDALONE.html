@@ -271,6 +271,18 @@ teaMachineImage.onerror = () => {
     console.error('Failed to load tea machine image');
 };
 
+// Load cup image
+const cupImage = new Image();
+cupImage.src = '微信图片_20251202200937_7_1.png';
+let cupLoaded = false;
+cupImage.onload = () => {
+    cupLoaded = true;
+    console.log('Cup image loaded successfully');
+};
+cupImage.onerror = () => {
+    console.error('Failed to load cup image');
+};
+
 const game = {
     money: 100,
     reputation: 0,
@@ -652,28 +664,9 @@ function drawMakingMode() {
 
     // Large cup in center
     const cupX = 500, cupY = 250;
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(cupX, cupY, 150, 250);
-    ctx.strokeStyle = '#333';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(cupX, cupY, 150, 250);
+    const cupWidth = 150, cupHeight = 250;
 
-    // Cup lid
-    ctx.fillStyle = '#FF69B4';
-    ctx.beginPath();
-    ctx.arc(cupX + 75, cupY, 80, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-
-    // Straw
-    ctx.strokeStyle = '#FF0000';
-    ctx.lineWidth = 12;
-    ctx.beginPath();
-    ctx.moveTo(cupX + 75, cupY - 80);
-    ctx.lineTo(cupX + 75, cupY + 30);
-    ctx.stroke();
-
-    // Draw drink layers in cup
+    // Draw drink layers in cup first (behind the cup image)
     let layerY = cupY + 230;
     const layerHeight = 40;
 
@@ -692,6 +685,33 @@ function drawMakingMode() {
     if (game.currentDrink.base) {
         ctx.fillStyle = ingredientDB[game.currentDrink.base].color;
         ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
+    }
+
+    // Draw cup image on top
+    if (cupLoaded) {
+        ctx.drawImage(cupImage, cupX, cupY, cupWidth, cupHeight);
+    } else {
+        // Fallback: draw simple cup if image not loaded
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(cupX, cupY, cupWidth, cupHeight);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(cupX, cupY, cupWidth, cupHeight);
+
+        // Cup lid
+        ctx.fillStyle = '#FF69B4';
+        ctx.beginPath();
+        ctx.arc(cupX + 75, cupY, 80, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Straw
+        ctx.strokeStyle = '#FF0000';
+        ctx.lineWidth = 12;
+        ctx.beginPath();
+        ctx.moveTo(cupX + 75, cupY - 80);
+        ctx.lineTo(cupX + 75, cupY + 30);
+        ctx.stroke();
     }
 
     // Ingredient options - multi-column layout to fit all ingredients
@@ -770,28 +790,9 @@ function drawFinishedDrink() {
 
     // Large finished cup in center of box
     const cupX = boxX + 75, cupY = boxY + 100;
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(cupX, cupY, 150, 250);
-    ctx.strokeStyle = '#333';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(cupX, cupY, 150, 250);
+    const cupWidth = 150, cupHeight = 250;
 
-    // Cup lid
-    ctx.fillStyle = '#FF69B4';
-    ctx.beginPath();
-    ctx.arc(cupX + 75, cupY, 80, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-
-    // Straw
-    ctx.strokeStyle = '#FF0000';
-    ctx.lineWidth = 12;
-    ctx.beginPath();
-    ctx.moveTo(cupX + 75, cupY - 80);
-    ctx.lineTo(cupX + 75, cupY + 30);
-    ctx.stroke();
-
-    // Draw drink layers in cup
+    // Draw drink layers in cup first (behind the cup image)
     let layerY = cupY + 230;
     const layerHeight = 40;
 
@@ -810,6 +811,33 @@ function drawFinishedDrink() {
     if (game.currentDrink.base) {
         ctx.fillStyle = ingredientDB[game.currentDrink.base].color;
         ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
+    }
+
+    // Draw cup image on top
+    if (cupLoaded) {
+        ctx.drawImage(cupImage, cupX, cupY, cupWidth, cupHeight);
+    } else {
+        // Fallback: draw simple cup if image not loaded
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(cupX, cupY, cupWidth, cupHeight);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(cupX, cupY, cupWidth, cupHeight);
+
+        // Cup lid
+        ctx.fillStyle = '#FF69B4';
+        ctx.beginPath();
+        ctx.arc(cupX + 75, cupY, 80, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Straw
+        ctx.strokeStyle = '#FF0000';
+        ctx.lineWidth = 12;
+        ctx.beginPath();
+        ctx.moveTo(cupX + 75, cupY - 80);
+        ctx.lineTo(cupX + 75, cupY + 30);
+        ctx.stroke();
     }
 
     // Label
