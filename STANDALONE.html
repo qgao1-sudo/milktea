@@ -287,7 +287,12 @@ const cupImages = {
     // Blueberry series
     blueberry: new Image(),
     blueberryMilk: new Image(),
-    blueberryMilkCream: new Image()
+    blueberryMilkCream: new Image(),
+    // Mango series
+    mango: new Image(),
+    mangoMilk: new Image(),
+    mangoMilkCream: new Image(),
+    mangoMilkCreamIceCream: new Image()
 };
 
 cupImages.empty.src = '微信图片_20251202200937_7_1.png';
@@ -305,6 +310,11 @@ cupImages.lemonHoneyJasmine.src = '微信图片_20251203015519_74_18.png';
 cupImages.blueberry.src = '蓝莓底.png';
 cupImages.blueberryMilk.src = '蓝莓牛奶.png';
 cupImages.blueberryMilkCream.src = '蓝莓牛奶奶油.png';
+// Mango series
+cupImages.mango.src = '芒果.png';
+cupImages.mangoMilk.src = '芒果牛奶.png';
+cupImages.mangoMilkCream.src = '芒果牛奶奶油.jpg';
+cupImages.mangoMilkCreamIceCream.src = '芒果牛奶奶油冰淇淋.jpg';
 
 let cupImagesLoaded = 0;
 const totalCupImages = Object.keys(cupImages).length;
@@ -335,7 +345,10 @@ const customerImages = {
     manasviFront: new Image(),
     kayleyWalking1: new Image(),
     kayleyWalking2: new Image(),
-    kayleyFront: new Image()
+    kayleyFront: new Image(),
+    monicaWalking1: new Image(),
+    monicaWalking2: new Image(),
+    monicaFront: new Image()
 };
 
 // Jenny images
@@ -358,6 +371,10 @@ customerImages.manasviFront.src = 'manasvi站立.png';
 customerImages.kayleyWalking1.src = 'kayley走路1.png';
 customerImages.kayleyWalking2.src = 'Kayley走路2.png';
 customerImages.kayleyFront.src = 'kayley站立.png';
+// Monica images
+customerImages.monicaWalking1.src = 'monica走路1.png';
+customerImages.monicaWalking2.src = 'monica走路2.jpg';
+customerImages.monicaFront.src = 'monica站立.png';
 
 let customerImagesLoaded = 0;
 const totalCustomerImages = Object.keys(customerImages).length;
@@ -467,6 +484,21 @@ const customers = [
         hasImage: true,
         walkingImages: [customerImages.kayleyWalking1, customerImages.kayleyWalking2],
         frontImage: customerImages.kayleyFront
+    },
+    {
+        name: "Monica",
+        sprite: "👩",
+        color: "#FFA07A",
+        order: {
+            text: "Mango Ice Cream Shake please!",
+            base: null,
+            milk: "fresh-milk",
+            toppings: ["mango", "cream", "ice-cream"],
+            recipe: ["mango", "fresh-milk", "cream", "ice-cream"]
+        },
+        hasImage: true,
+        walkingImages: [customerImages.monicaWalking1, customerImages.monicaWalking2],
+        frontImage: customerImages.monicaFront
     }
 ];
 
@@ -578,6 +610,26 @@ function getCurrentCupImage() {
         }
     }
 
+    // Check for mango series
+    const hasMango = drink.toppings.includes('mango');
+
+    if (hasMango) {
+        // Mango series
+        if (hasMango && hasMilk && hasCream && hasIceCream) {
+            // Stage 4: mango + milk + cream + ice cream
+            return cupImages.mangoMilkCreamIceCream;
+        } else if (hasMango && hasMilk && hasCream) {
+            // Stage 3: mango + milk + cream
+            return cupImages.mangoMilkCream;
+        } else if (hasMango && hasMilk) {
+            // Stage 2: mango + milk
+            return cupImages.mangoMilk;
+        } else if (hasMango) {
+            // Stage 1: mango only
+            return cupImages.mango;
+        }
+    }
+
     // Empty cup
     return cupImages.empty;
 }
@@ -656,6 +708,26 @@ function shouldHideLayers() {
         } else if (hasBlueberry && hasMilk) {
             return true;
         } else if (hasBlueberry) {
+            return true;
+        }
+    }
+
+    // Check for mango series
+    const hasMango = drink.toppings.includes('mango');
+
+    // Hide layers for the mango-based sequence:
+    // 1. Mango only
+    // 2. Mango + milk
+    // 3. Mango + milk + cream
+    // 4. Mango + milk + cream + ice cream
+    if (hasMango) {
+        if (hasMango && hasMilk && hasCream && hasIceCream) {
+            return true;
+        } else if (hasMango && hasMilk && hasCream) {
+            return true;
+        } else if (hasMango && hasMilk) {
+            return true;
+        } else if (hasMango) {
             return true;
         }
     }
