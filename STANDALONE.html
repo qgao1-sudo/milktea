@@ -284,7 +284,7 @@ const game = {
     currentDrink: { base: null, milk: null, toppings: [], shaken: false },
     ingredients: [],
     animations: [],
-    mode: 'serving', // 'serving' or 'making'
+    mode: 'serving', // 'serving', 'making', or 'finished'
     draggedIngredient: null
 };
 
@@ -730,17 +730,99 @@ function drawMakingMode() {
         ctx.fillText(ing.name, x + (boxWidth - nameWidth) / 2, y + 62);
     });
 
-    // Done button
+    // Done button - moved up to avoid overlap with bottom buttons
     ctx.fillStyle = '#2ecc71';
-    ctx.fillRect(450, 580, 300, 60);
+    ctx.fillRect(450, 520, 300, 60);
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 24px Arial';
-    ctx.fillText('✅ 完成制作', 510, 620);
+    ctx.fillText('✅ 完成制作', 510, 560);
 
     // Hand cursor hint
     ctx.fillStyle = '#666';
     ctx.font = '16px Arial';
     ctx.fillText('👆 点击配料拖拽到杯子里', 400, 150);
+}
+
+function drawFinishedDrink() {
+    // Background
+    ctx.fillStyle = '#E8D5B7';
+    ctx.fillRect(0, 0, 1200, 700);
+
+    // Title
+    ctx.fillStyle = '#2c3e50';
+    ctx.font = 'bold 32px Arial';
+    ctx.fillText('✨ 完成！', 520, 60);
+
+    // Display box for finished drink
+    const boxX = 450, boxY = 150;
+    const boxWidth = 300, boxHeight = 400;
+
+    // Box shadow
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.fillRect(boxX + 5, boxY + 5, boxWidth, boxHeight);
+
+    // Box background
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+    ctx.strokeStyle = '#2c3e50';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+
+    // Large finished cup in center of box
+    const cupX = boxX + 75, cupY = boxY + 100;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(cupX, cupY, 150, 250);
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(cupX, cupY, 150, 250);
+
+    // Cup lid
+    ctx.fillStyle = '#FF69B4';
+    ctx.beginPath();
+    ctx.arc(cupX + 75, cupY, 80, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Straw
+    ctx.strokeStyle = '#FF0000';
+    ctx.lineWidth = 12;
+    ctx.beginPath();
+    ctx.moveTo(cupX + 75, cupY - 80);
+    ctx.lineTo(cupX + 75, cupY + 30);
+    ctx.stroke();
+
+    // Draw drink layers in cup
+    let layerY = cupY + 230;
+    const layerHeight = 40;
+
+    if (game.currentDrink.toppings.length > 0) {
+        game.currentDrink.toppings.forEach((topping, i) => {
+            ctx.fillStyle = ingredientDB[topping].color;
+            ctx.fillRect(cupX + 10, layerY - i * 30, 130, 30);
+        });
+        layerY -= game.currentDrink.toppings.length * 30;
+    }
+    if (game.currentDrink.milk) {
+        ctx.fillStyle = ingredientDB[game.currentDrink.milk].color;
+        ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
+        layerY -= layerHeight;
+    }
+    if (game.currentDrink.base) {
+        ctx.fillStyle = ingredientDB[game.currentDrink.base].color;
+        ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
+    }
+
+    // Label
+    ctx.fillStyle = '#2c3e50';
+    ctx.font = 'bold 20px Arial';
+    ctx.fillText('您的奶茶已完成！', boxX + 55, boxY + 40);
+
+    // Continue button
+    ctx.fillStyle = '#3498db';
+    ctx.fillRect(500, 590, 200, 50);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 20px Arial';
+    ctx.fillText('继续 →', 545, 622);
 }
 
 function updateCustomer() {
@@ -783,6 +865,9 @@ function render() {
     } else if (game.mode === 'making') {
         // Draw making mode
         drawMakingMode();
+    } else if (game.mode === 'finished') {
+        // Draw finished drink display
+        drawFinishedDrink();
     }
 
     game.animations = game.animations.filter(anim => { anim.draw(); return !anim.update(); });
@@ -804,9 +889,9 @@ canvas.addEventListener('click', (e) => {
         // In serving mode, ingredients can only be clicked in making mode
         // No direct ingredient interaction in serving mode
     } else if (game.mode === 'making') {
-        // Check if clicked on done button
-        if (x >= 450 && x <= 750 && y >= 580 && y <= 640) {
-            game.mode = 'serving';
+        // Check if clicked on done button (moved up)
+        if (x >= 450 && x <= 750 && y >= 520 && y <= 580) {
+            game.mode = 'finished';
             game.currentDrink.shaken = true;
             canvas.style.cursor = 'default';
             return;
@@ -836,6 +921,13 @@ canvas.addEventListener('click', (e) => {
                 }
             }
         });
+    } else if (game.mode === 'finished') {
+        // Check if clicked on continue button
+        if (x >= 500 && x <= 700 && y >= 590 && y <= 640) {
+            game.mode = 'serving';
+            canvas.style.cursor = 'default';
+            return;
+        }
     }
 });
 
