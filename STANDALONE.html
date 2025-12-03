@@ -290,7 +290,7 @@ cupImages.empty.src = '微信图片_20251202200937_7_1.png';
 // Strawberry series
 cupImages.strawberry.src = '微信图片_20251202201106_8_1.png';
 cupImages.strawberryMilk.src = '微信图片_20251203012924_64_18.png';
-cupImages.strawberryMilkIceCream.src = '微信图片_20251202201312_11_1.jpg';
+cupImages.strawberryMilkIceCream.src = '微信图片_20251203015929_75_18.png';
 cupImages.strawberryMilkIceCreamChocolate.src = '微信图片_20251202201413_13_1.png';
 cupImages.complete.src = '微信图片_20251202201511_14_1.png';
 // Lemon series
@@ -318,8 +318,8 @@ const customerImages = {
     sarahFront: new Image()
 };
 
-customerImages.sarahWalking1.src = '微信图片_20251203014746_70_18.jpg';
-customerImages.sarahWalking2.src = '微信图片_20251203014811_71_18.png';
+customerImages.sarahWalking1.src = '微信图片_20251203015931_76_18.png';
+customerImages.sarahWalking2.src = '微信图片_20251203020037_77_18.png';
 customerImages.sarahFront.src = '微信图片_20251203014739_66_18.png';
 
 let customerImagesLoaded = 0;
@@ -342,7 +342,7 @@ const game = {
     served: 0,
     currentCustomer: null,
     customerX: -100, // Customer position for walking animation
-    customerY: 140,
+    customerY: 220,
     customerTargetX: 600, // Target position at counter
     customerState: 'none', // 'walking', 'arrived', 'none'
     customerWalkFrame: 0, // Animation frame for walking (0 or 1)
@@ -356,7 +356,7 @@ const game = {
 
 const customers = [
     {
-        name: "Sarah",
+        name: "Jenny",
         sprite: "👩",
         color: "#FFB6C1",
         order: { text: "I want Berry Milky Hug!", base: null, milk: "fresh-milk", toppings: ["strawberry", "ice-cream", "chocolate", "strawberry"] },
@@ -1257,7 +1257,7 @@ function spawnCustomer() {
 
     // Start customer off-screen to the left
     game.customerX = -100;
-    game.customerY = 140;
+    game.customerY = 220;
     game.customerState = 'walking';
 
     // Reset walking animation frame
