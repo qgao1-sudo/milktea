@@ -274,19 +274,29 @@ teaMachineImage.onerror = () => {
 // Load cup images for different stages
 const cupImages = {
     empty: new Image(),
+    // Strawberry series
     strawberry: new Image(),
     strawberryMilk: new Image(),
     strawberryMilkIceCream: new Image(),
     strawberryMilkIceCreamChocolate: new Image(),
-    complete: new Image()
+    complete: new Image(),
+    // Lemon series
+    lemon: new Image(),
+    lemonHoney: new Image(),
+    lemonHoneyJasmine: new Image()
 };
 
 cupImages.empty.src = '微信图片_20251202200937_7_1.png';
+// Strawberry series
 cupImages.strawberry.src = '微信图片_20251202201106_8_1.png';
 cupImages.strawberryMilk.src = '微信图片_20251203012924_64_18.png';
 cupImages.strawberryMilkIceCream.src = '微信图片_20251202201312_11_1.jpg';
 cupImages.strawberryMilkIceCreamChocolate.src = '微信图片_20251202201413_13_1.png';
 cupImages.complete.src = '微信图片_20251202201511_14_1.png';
+// Lemon series
+cupImages.lemon.src = '微信图片_20251203015513_72_18.jpg';
+cupImages.lemonHoney.src = '微信图片_20251203015514_73_18.jpg';
+cupImages.lemonHoneyJasmine.src = '微信图片_20251203015519_74_18.png';
 
 let cupImagesLoaded = 0;
 const totalCupImages = Object.keys(cupImages).length;
@@ -405,13 +415,31 @@ function getCurrentCupImage() {
     // Determine which cup image to show based on current drink ingredients
     const drink = game.currentDrink;
 
-    // Count strawberries
+    // Check for lemon series first
+    const hasLemon = drink.toppings.includes('lemon');
+    const hasHoney = drink.toppings.includes('honey');
+    const hasJasmineTea = drink.base === 'jasmine-tea';
+
+    if (hasLemon) {
+        // Lemon series
+        if (hasLemon && hasHoney && hasJasmineTea) {
+            // Stage 3: lemon + honey + jasmine tea
+            return cupImages.lemonHoneyJasmine;
+        } else if (hasLemon && hasHoney) {
+            // Stage 2: lemon + honey
+            return cupImages.lemonHoney;
+        } else if (hasLemon) {
+            // Stage 1: lemon only
+            return cupImages.lemon;
+        }
+    }
+
+    // Check for strawberry series
     const strawberryCount = drink.toppings.filter(t => t === 'strawberry').length;
     const hasIceCream = drink.toppings.includes('ice-cream');
     const hasChocolate = drink.toppings.includes('chocolate');
     const hasMilk = drink.milk !== null;
 
-    // Check the specific sequence
     if (strawberryCount >= 2 && hasMilk && hasIceCream && hasChocolate) {
         // Final stage: strawberry + milk + ice cream + chocolate + strawberry
         return cupImages.complete;
@@ -427,15 +455,36 @@ function getCurrentCupImage() {
     } else if (strawberryCount >= 1) {
         // Stage 1: strawberry only
         return cupImages.strawberry;
-    } else {
-        // Empty cup
-        return cupImages.empty;
     }
+
+    // Empty cup
+    return cupImages.empty;
 }
 
 // Check if we should hide the colored layers (for specific cup image sequences)
 function shouldHideLayers() {
     const drink = game.currentDrink;
+
+    // Check for lemon series
+    const hasLemon = drink.toppings.includes('lemon');
+    const hasHoney = drink.toppings.includes('honey');
+    const hasJasmineTea = drink.base === 'jasmine-tea';
+
+    // Hide layers for the lemon-based sequence:
+    // 1. Lemon only
+    // 2. Lemon + honey
+    // 3. Lemon + honey + jasmine tea
+    if (hasLemon) {
+        if (hasLemon && hasHoney && hasJasmineTea) {
+            return true;
+        } else if (hasLemon && hasHoney) {
+            return true;
+        } else if (hasLemon) {
+            return true;
+        }
+    }
+
+    // Check for strawberry series
     const strawberryCount = drink.toppings.filter(t => t === 'strawberry').length;
     const hasIceCream = drink.toppings.includes('ice-cream');
     const hasChocolate = drink.toppings.includes('chocolate');
