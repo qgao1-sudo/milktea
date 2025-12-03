@@ -384,6 +384,7 @@ const game = {
     customerState: 'none', // 'walking', 'arrived', 'none'
     customerWalkFrame: 0, // Animation frame for walking (0 or 1)
     customerFrameCounter: 0, // Counter for frame switching
+    customerIndex: 0, // Index for rotating through customers
     currentDrink: { base: null, milk: null, toppings: [], shaken: false },
     ingredients: [],
     animations: [],
@@ -985,84 +986,77 @@ function drawMakingMode() {
     ctx.font = 'bold 32px Arial';
     ctx.fillText('🧋 Making Drinks', 50, 60);
 
-    // Recipe sticky note on the left
-    const noteX = 50, noteY = 100;
-    const noteWidth = 250, noteHeight = 400;
+    // Recipe sticky note on the left - showing current customer's order
+    if (game.currentCustomer) {
+        const noteX = 50, noteY = 100;
+        const noteWidth = 250, noteHeight = 300;
 
-    // Sticky note background (yellow)
-    ctx.fillStyle = '#FFEB3B';
-    ctx.fillRect(noteX, noteY, noteWidth, noteHeight);
+        // Sticky note background (yellow)
+        ctx.fillStyle = '#FFEB3B';
+        ctx.fillRect(noteX, noteY, noteWidth, noteHeight);
 
-    // Sticky note shadow
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.fillRect(noteX + 3, noteY + 3, noteWidth, noteHeight);
-    ctx.fillStyle = '#FFEB3B';
-    ctx.fillRect(noteX, noteY, noteWidth, noteHeight);
+        // Sticky note shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.fillRect(noteX + 3, noteY + 3, noteWidth, noteHeight);
+        ctx.fillStyle = '#FFEB3B';
+        ctx.fillRect(noteX, noteY, noteWidth, noteHeight);
 
-    // Sticky note border
-    ctx.strokeStyle = '#FDD835';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(noteX, noteY, noteWidth, noteHeight);
+        // Sticky note border
+        ctx.strokeStyle = '#FDD835';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(noteX, noteY, noteWidth, noteHeight);
 
-    // Recipe title
-    ctx.fillStyle = '#2c3e50';
-    ctx.font = 'bold 18px Arial';
-    ctx.fillText('📝 Recipes', noteX + 70, noteY + 30);
+        // Recipe title
+        ctx.fillStyle = '#2c3e50';
+        ctx.font = 'bold 18px Arial';
+        ctx.fillText('📝 Recipe', noteX + 80, noteY + 30);
 
-    // Recipe content
-    ctx.font = '12px Arial';
-    let recipeY = noteY + 55;
+        // Customer name and order
+        ctx.font = 'bold 14px Arial';
+        ctx.fillStyle = game.currentCustomer.color;
+        ctx.fillText(`${game.currentCustomer.name}'s order:`, noteX + 10, noteY + 60);
 
-    // Berry Milky Hug
-    ctx.font = 'bold 13px Arial';
-    ctx.fillText('Berry Milky Hug:', noteX + 10, recipeY);
-    ctx.font = '11px Arial';
-    recipeY += 18;
-    ctx.fillText('1. Add strawberry', noteX + 15, recipeY);
-    recipeY += 15;
-    ctx.fillText('2. Add fresh milk', noteX + 15, recipeY);
-    recipeY += 15;
-    ctx.fillText('3. Add ice cream', noteX + 15, recipeY);
-    recipeY += 15;
-    ctx.fillText('4. Add chocolate', noteX + 15, recipeY);
-    recipeY += 15;
-    ctx.fillText('5. Add strawberry', noteX + 15, recipeY);
-    recipeY += 25;
+        // Recipe content
+        ctx.fillStyle = '#2c3e50';
+        ctx.font = '11px Arial';
+        let recipeY = noteY + 85;
+        let stepNum = 1;
 
-    // Lemonade
-    ctx.font = 'bold 13px Arial';
-    ctx.fillText('Lemonade:', noteX + 10, recipeY);
-    ctx.font = '11px Arial';
-    recipeY += 18;
-    ctx.fillText('1. Add lemon', noteX + 15, recipeY);
-    recipeY += 15;
-    ctx.fillText('2. Add honey', noteX + 15, recipeY);
-    recipeY += 15;
-    ctx.fillText('3. Add jasmine tea', noteX + 15, recipeY);
-    recipeY += 25;
+        // Add recipe steps based on order
+        const order = game.currentCustomer.order;
 
-    // Orange Drink
-    ctx.font = 'bold 13px Arial';
-    ctx.fillText('Orange Drink:', noteX + 10, recipeY);
-    ctx.font = '11px Arial';
-    recipeY += 18;
-    ctx.fillText('1. Add orange', noteX + 15, recipeY);
-    recipeY += 15;
-    ctx.fillText('2. Add honey', noteX + 15, recipeY);
-    recipeY += 15;
-    ctx.fillText('3. Add green tea', noteX + 15, recipeY);
-    recipeY += 25;
+        // Add toppings/fruits first
+        if (order.toppings && order.toppings.length > 0) {
+            order.toppings.forEach(topping => {
+                const ingName = ingredientDB[topping].name;
+                ctx.fillText(`${stepNum}. Add ${ingName.toLowerCase()}`, noteX + 15, recipeY);
+                recipeY += 18;
+                stepNum++;
+            });
+        }
 
-    // Blueberry Shake
-    ctx.font = 'bold 13px Arial';
-    ctx.fillText('Blueberry Shake:', noteX + 10, recipeY);
-    ctx.font = '11px Arial';
-    recipeY += 18;
-    ctx.fillText('1. Add blueberry', noteX + 15, recipeY);
-    recipeY += 15;
-    ctx.fillText('2. Add fresh milk', noteX + 15, recipeY);
-    recipeY += 15;
-    ctx.fillText('3. Add cream', noteX + 15, recipeY);
+        // Add milk
+        if (order.milk) {
+            const milkName = ingredientDB[order.milk].name;
+            ctx.fillText(`${stepNum}. Add ${milkName.toLowerCase()}`, noteX + 15, recipeY);
+            recipeY += 18;
+            stepNum++;
+        }
+
+        // Add base (tea)
+        if (order.base) {
+            const baseName = ingredientDB[order.base].name;
+            ctx.fillText(`${stepNum}. Add ${baseName.toLowerCase()}`, noteX + 15, recipeY);
+            recipeY += 18;
+            stepNum++;
+        }
+
+        // Reminder
+        recipeY += 10;
+        ctx.font = 'italic 10px Arial';
+        ctx.fillStyle = '#666';
+        ctx.fillText('Follow the order carefully!', noteX + 15, recipeY);
+    }
 
     // Large cup in center
     const cupX = 500, cupY = 250;
@@ -1373,9 +1367,9 @@ canvas.addEventListener('click', (e) => {
 
         // Group ingredients by category
         const categories = {
-            '水果': game.ingredients.filter(ing => ing.category === '水果'),
-            '酱汁': game.ingredients.filter(ing => ing.category === '酱汁'),
-            '饮品': game.ingredients.filter(ing => ing.category === '饮品')
+            'Fruits': game.ingredients.filter(ing => ing.category === 'Fruits'),
+            'Sauces': game.ingredients.filter(ing => ing.category === 'Sauces'),
+            'Drinks': game.ingredients.filter(ing => ing.category === 'Drinks')
         };
 
         // Check each category
@@ -1440,7 +1434,9 @@ function serveDrink() {
 function resetDrink() { game.currentDrink = { base: null, milk: null, toppings: [], shaken: false }; }
 function closeResultModal() { document.getElementById('resultModal').classList.remove('active'); }
 function spawnCustomer() {
-    game.currentCustomer = customers[Math.floor(Math.random() * customers.length)];
+    // Select customer in order (rotating through the list)
+    game.currentCustomer = customers[game.customerIndex];
+    game.customerIndex = (game.customerIndex + 1) % customers.length;
 
     // Start customer off-screen to the left
     game.customerX = -100;
