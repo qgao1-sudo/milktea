@@ -301,6 +301,30 @@ Object.keys(cupImages).forEach(key => {
     };
 });
 
+// Load customer character images
+const customerImages = {
+    sarahWalking1: new Image(),
+    sarahWalking2: new Image(),
+    sarahFront: new Image()
+};
+
+customerImages.sarahWalking1.src = '微信图片_20251203014746_70_18.jpg';
+customerImages.sarahWalking2.src = '微信图片_20251203014811_71_18.png';
+customerImages.sarahFront.src = '微信图片_20251203014739_66_18.png';
+
+let customerImagesLoaded = 0;
+const totalCustomerImages = Object.keys(customerImages).length;
+
+Object.keys(customerImages).forEach(key => {
+    customerImages[key].onload = () => {
+        customerImagesLoaded++;
+        console.log(`Customer image ${key} loaded (${customerImagesLoaded}/${totalCustomerImages})`);
+    };
+    customerImages[key].onerror = () => {
+        console.error(`Failed to load customer image: ${key}`);
+    };
+});
+
 const game = {
     money: 100,
     reputation: 0,
@@ -311,6 +335,8 @@ const game = {
     customerY: 140,
     customerTargetX: 600, // Target position at counter
     customerState: 'none', // 'walking', 'arrived', 'none'
+    customerWalkFrame: 0, // Animation frame for walking (0 or 1)
+    customerFrameCounter: 0, // Counter for frame switching
     currentDrink: { base: null, milk: null, toppings: [], shaken: false },
     ingredients: [],
     animations: [],
@@ -319,7 +345,15 @@ const game = {
 };
 
 const customers = [
-    { name: "Sarah", sprite: "👩", color: "#FFB6C1", order: { text: "I want Berry Milky Hug!", base: null, milk: "fresh-milk", toppings: ["strawberry", "ice-cream", "chocolate", "strawberry"] } },
+    {
+        name: "Sarah",
+        sprite: "👩",
+        color: "#FFB6C1",
+        order: { text: "I want Berry Milky Hug!", base: null, milk: "fresh-milk", toppings: ["strawberry", "ice-cream", "chocolate", "strawberry"] },
+        hasImage: true,
+        walkingImages: [customerImages.sarahWalking1, customerImages.sarahWalking2],
+        frontImage: customerImages.sarahFront
+    },
     { name: "Mike", sprite: "👨", color: "#87CEEB", order: { text: "Lemonade please!", base: "jasmine-tea", milk: null, toppings: ["lemon", "honey"] } },
     { name: "Emma", sprite: "👧", color: "#FFD700", order: { text: "Orange drink sounds refreshing!", base: "green-tea", milk: null, toppings: ["orange", "honey"] } }
 ];
@@ -543,6 +577,45 @@ function drawCustomer() {
     const x = game.customerX; // Use animated position
     const y = game.customerY; // Positioned in customer area
 
+    // Check if customer has custom images
+    if (game.currentCustomer.hasImage) {
+        let currentImage;
+
+        // Select image based on state
+        if (game.customerState === 'walking') {
+            // Alternate between two walking images
+            currentImage = game.currentCustomer.walkingImages[game.customerWalkFrame];
+        } else if (game.customerState === 'arrived') {
+            // Use front-facing image when arrived
+            currentImage = game.currentCustomer.frontImage;
+        }
+
+        // Draw customer image if loaded
+        if (currentImage && currentImage.complete) {
+            // Draw image centered on position
+            const imgWidth = 120;
+            const imgHeight = 180;
+            ctx.drawImage(currentImage, x - imgWidth / 2, y - imgHeight / 2, imgWidth, imgHeight);
+        } else {
+            // Fallback to emoji if image not loaded
+            drawCustomerEmoji(x, y);
+        }
+    } else {
+        // Use emoji for customers without custom images
+        drawCustomerEmoji(x, y);
+    }
+
+    // Name tag (only show when customer has arrived)
+    if (game.customerState === 'arrived') {
+        ctx.fillStyle = '#2c3e50';
+        ctx.font = 'bold 16px Arial';
+        const nameWidth = ctx.measureText(game.currentCustomer.name).width;
+        ctx.fillText(game.currentCustomer.name, x - nameWidth / 2, y + 120);
+    }
+}
+
+// Helper function to draw emoji-based customer
+function drawCustomerEmoji(x, y) {
     // Upper body (torso visible above counter)
     ctx.fillStyle = game.currentCustomer.color;
     ctx.fillRect(x - 50, y + 50, 100, 100);
@@ -555,14 +628,6 @@ function drawCustomer() {
     // Face sprite - large and clear
     ctx.font = '90px Arial';
     ctx.fillText(game.currentCustomer.sprite, x - 45, y + 30);
-
-    // Name tag (only show when customer has arrived)
-    if (game.customerState === 'arrived') {
-        ctx.fillStyle = '#2c3e50';
-        ctx.font = 'bold 16px Arial';
-        const nameWidth = ctx.measureText(game.currentCustomer.name).width;
-        ctx.fillText(game.currentCustomer.name, x - nameWidth / 2, y + 180);
-    }
 }
 
 function drawDrinkCup() {
@@ -993,6 +1058,13 @@ function updateCustomer() {
         if (Math.abs(distance) > speed) {
             // Still walking
             game.customerX += speed;
+
+            // Update walking animation frame (switch every 10 frames)
+            game.customerFrameCounter++;
+            if (game.customerFrameCounter >= 10) {
+                game.customerFrameCounter = 0;
+                game.customerWalkFrame = game.customerWalkFrame === 0 ? 1 : 0;
+            }
         } else {
             // Arrived at counter
             game.customerX = game.customerTargetX;
@@ -1138,6 +1210,10 @@ function spawnCustomer() {
     game.customerX = -100;
     game.customerY = 140;
     game.customerState = 'walking';
+
+    // Reset walking animation frame
+    game.customerWalkFrame = 0;
+    game.customerFrameCounter = 0;
 
     // Hide thought bubble initially - it will show when customer arrives
     const bubble = document.getElementById('thoughtBubble');
