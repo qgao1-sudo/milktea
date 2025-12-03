@@ -283,7 +283,7 @@ const cupImages = {
 
 cupImages.empty.src = '微信图片_20251202200937_7_1.png';
 cupImages.strawberry.src = '微信图片_20251202201106_8_1.png';
-cupImages.strawberryMilk.src = '微信图片_20251202201222_9_1.jpg';
+cupImages.strawberryMilk.src = '微信图片_20251203012924_64_18.png';
 cupImages.strawberryMilkIceCream.src = '微信图片_20251202201312_11_1.jpg';
 cupImages.strawberryMilkIceCreamChocolate.src = '微信图片_20251202201413_13_1.png';
 cupImages.complete.src = '微信图片_20251202201511_14_1.png';
@@ -397,6 +397,48 @@ function getCurrentCupImage() {
         // Empty cup
         return cupImages.empty;
     }
+}
+
+// Check if we should hide the colored layers (for specific cup image sequences)
+function shouldHideLayers() {
+    const drink = game.currentDrink;
+    const strawberryCount = drink.toppings.filter(t => t === 'strawberry').length;
+    const hasIceCream = drink.toppings.includes('ice-cream');
+    const hasChocolate = drink.toppings.includes('chocolate');
+    const hasMilk = drink.milk !== null;
+
+    // Hide layers for the strawberry-based sequence:
+    // 1. Empty cup with strawberry
+    // 2. Strawberry + milk
+    // 3. Strawberry + milk + ice cream
+    // 4. Strawberry + milk + ice cream + chocolate
+    // 5. Strawberry + milk + ice cream + chocolate + strawberry (complete)
+
+    // If we have strawberry and are following the specific sequence, hide layers
+    if (strawberryCount >= 1) {
+        // Check if only strawberry (no milk, ice cream, chocolate)
+        if (!hasMilk && !hasIceCream && !hasChocolate) {
+            return true;
+        }
+        // Check if strawberry + milk only
+        if (hasMilk && !hasIceCream && !hasChocolate) {
+            return true;
+        }
+        // Check if strawberry + milk + ice cream
+        if (hasMilk && hasIceCream && !hasChocolate) {
+            return true;
+        }
+        // Check if strawberry + milk + ice cream + chocolate (one strawberry)
+        if (hasMilk && hasIceCream && hasChocolate && strawberryCount === 1) {
+            return true;
+        }
+        // Check if complete (two strawberries + milk + ice cream + chocolate)
+        if (hasMilk && hasIceCream && hasChocolate && strawberryCount >= 2) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function drawBackground() {
@@ -726,24 +768,27 @@ function drawMakingMode() {
     const cupWidth = 150, cupHeight = 250;
 
     // Draw drink layers in cup first (behind the cup image)
-    let layerY = cupY + 230;
-    const layerHeight = 40;
+    // Only draw layers if not in a special cup image sequence
+    if (!shouldHideLayers()) {
+        let layerY = cupY + 230;
+        const layerHeight = 40;
 
-    if (game.currentDrink.toppings.length > 0) {
-        game.currentDrink.toppings.forEach((topping, i) => {
-            ctx.fillStyle = ingredientDB[topping].color;
-            ctx.fillRect(cupX + 10, layerY - i * 30, 130, 30);
-        });
-        layerY -= game.currentDrink.toppings.length * 30;
-    }
-    if (game.currentDrink.milk) {
-        ctx.fillStyle = ingredientDB[game.currentDrink.milk].color;
-        ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
-        layerY -= layerHeight;
-    }
-    if (game.currentDrink.base) {
-        ctx.fillStyle = ingredientDB[game.currentDrink.base].color;
-        ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
+        if (game.currentDrink.toppings.length > 0) {
+            game.currentDrink.toppings.forEach((topping, i) => {
+                ctx.fillStyle = ingredientDB[topping].color;
+                ctx.fillRect(cupX + 10, layerY - i * 30, 130, 30);
+            });
+            layerY -= game.currentDrink.toppings.length * 30;
+        }
+        if (game.currentDrink.milk) {
+            ctx.fillStyle = ingredientDB[game.currentDrink.milk].color;
+            ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
+            layerY -= layerHeight;
+        }
+        if (game.currentDrink.base) {
+            ctx.fillStyle = ingredientDB[game.currentDrink.base].color;
+            ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
+        }
     }
 
     // Draw cup image on top - use dynamic cup image based on ingredients
@@ -875,24 +920,27 @@ function drawFinishedDrink() {
     const cupWidth = 150, cupHeight = 250;
 
     // Draw drink layers in cup first (behind the cup image)
-    let layerY = cupY + 230;
-    const layerHeight = 40;
+    // Only draw layers if not in a special cup image sequence
+    if (!shouldHideLayers()) {
+        let layerY = cupY + 230;
+        const layerHeight = 40;
 
-    if (game.currentDrink.toppings.length > 0) {
-        game.currentDrink.toppings.forEach((topping, i) => {
-            ctx.fillStyle = ingredientDB[topping].color;
-            ctx.fillRect(cupX + 10, layerY - i * 30, 130, 30);
-        });
-        layerY -= game.currentDrink.toppings.length * 30;
-    }
-    if (game.currentDrink.milk) {
-        ctx.fillStyle = ingredientDB[game.currentDrink.milk].color;
-        ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
-        layerY -= layerHeight;
-    }
-    if (game.currentDrink.base) {
-        ctx.fillStyle = ingredientDB[game.currentDrink.base].color;
-        ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
+        if (game.currentDrink.toppings.length > 0) {
+            game.currentDrink.toppings.forEach((topping, i) => {
+                ctx.fillStyle = ingredientDB[topping].color;
+                ctx.fillRect(cupX + 10, layerY - i * 30, 130, 30);
+            });
+            layerY -= game.currentDrink.toppings.length * 30;
+        }
+        if (game.currentDrink.milk) {
+            ctx.fillStyle = ingredientDB[game.currentDrink.milk].color;
+            ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
+            layerY -= layerHeight;
+        }
+        if (game.currentDrink.base) {
+            ctx.fillStyle = ingredientDB[game.currentDrink.base].color;
+            ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
+        }
     }
 
     // Draw cup image on top - use dynamic cup image based on ingredients
