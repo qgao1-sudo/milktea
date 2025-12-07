@@ -12,11 +12,13 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #000;
             font-family: 'Press Start 2P', 'Courier New', monospace;
             overflow: hidden;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
+            margin: 0;
+            padding: 0;
         }
 
         #gameContainer {
@@ -26,15 +28,16 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 0;
+            margin: 0;
         }
 
         #gameCanvas {
             background: #87CEEB;
-            border: 8px solid #2c3e50;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5);
             cursor: pointer;
             image-rendering: pixelated;
             image-rendering: crisp-edges;
+            display: block;
         }
 
         .ui-overlay {
