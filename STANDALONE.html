@@ -1053,11 +1053,11 @@ function drawDrinkCup() {
 }
 
 function drawTeaMachine() {
-    // Tea brewing machine on the left side - moved closer to customer area
-    const x = 100;
-    const y = 370; // Moved even closer to customer/counter area
-    const width = 150; // Enlarged from 120
-    const height = 220; // Enlarged from 180
+    // Tea brewing machine in the center - enlarged
+    const x = 500; // Center position
+    const y = 360;
+    const width = 200; // Larger size
+    const height = 280; // Larger size
 
     if (teaMachineLoaded) {
         // Draw the tea machine image
@@ -1104,6 +1104,58 @@ function drawTeaMachine() {
         ctx.fillStyle = '#666';
         ctx.fillRect(x + 45, y + 150, 30, 30);
     }
+}
+
+function drawCashRegister() {
+    // Cash register on the right side
+    const x = 900;
+    const y = 380;
+    const width = 180;
+    const height = 200;
+
+    // Base of cash register
+    ctx.fillStyle = '#2c3e50';
+    ctx.fillRect(x, y + 120, width, 80);
+
+    // Screen/display area
+    ctx.fillStyle = '#34495e';
+    ctx.fillRect(x + 10, y, width - 20, 130);
+
+    // Screen
+    ctx.fillStyle = '#1abc9c';
+    ctx.fillRect(x + 25, y + 15, width - 50, 85);
+
+    // Display money
+    ctx.fillStyle = '#000';
+    ctx.font = 'bold 24px monospace';
+    const moneyText = `$${game.money.toFixed(2)}`;
+    const textWidth = ctx.measureText(moneyText).width;
+    ctx.fillText(moneyText, x + (width - textWidth) / 2, y + 60);
+
+    // Number pad buttons (3x3 grid)
+    ctx.fillStyle = '#7f8c8d';
+    for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+            const btnX = x + 25 + col * 40;
+            const btnY = y + 135 + row * 20;
+            ctx.fillRect(btnX, btnY, 35, 15);
+        }
+    }
+
+    // Cash drawer indicator
+    ctx.fillStyle = '#95a5a6';
+    ctx.fillRect(x + 20, y + 170, width - 40, 25);
+
+    // Decorative elements
+    ctx.fillStyle = '#e74c3c';
+    ctx.beginPath();
+    ctx.arc(x + width - 30, y + 25, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Label
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 12px Arial';
+    ctx.fillText('💰 CASH', x + 60, y + 185);
 }
 
 function drawIngredients() {
@@ -1516,7 +1568,7 @@ function render() {
         drawCounter();
         drawCustomer();
         drawTeaMachine();
-        drawIngredients();
+        drawCashRegister();
     } else if (game.mode === 'making') {
         // Draw making mode
         drawMakingMode();
@@ -1534,8 +1586,8 @@ canvas.addEventListener('click', (e) => {
     const x = e.clientX - rect.left, y = e.clientY - rect.top;
 
     if (game.mode === 'serving') {
-        // Check if clicked on tea machine
-        if (x >= 100 && x <= 250 && y >= 370 && y <= 590) {
+        // Check if clicked on tea machine (centered, enlarged)
+        if (x >= 500 && x <= 700 && y >= 360 && y <= 640) {
             game.mode = 'making';
             canvas.style.cursor = 'grab';
             return;
