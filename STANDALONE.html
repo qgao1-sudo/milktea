@@ -274,6 +274,18 @@ poster1Image.onerror = () => {
     console.error('Failed to load poster1 image');
 };
 
+// Load wallpaper image
+const wallpaperImage = new Image();
+wallpaperImage.src = '墙纸.jpg';
+let wallpaperLoaded = false;
+wallpaperImage.onload = () => {
+    wallpaperLoaded = true;
+    console.log('Wallpaper image loaded successfully');
+};
+wallpaperImage.onerror = () => {
+    console.error('Failed to load wallpaper image');
+};
+
 // Load cup images for different stages
 const cupImages = {
     empty: new Image(),
@@ -850,11 +862,17 @@ function shouldHideLayers() {
 
 function drawBackground() {
     // Customer area background (upper section - behind counter)
-    const customerGradient = ctx.createLinearGradient(0, 0, 0, 250);
-    customerGradient.addColorStop(0, '#FFE5CC');
-    customerGradient.addColorStop(1, '#FFD4A3');
-    ctx.fillStyle = customerGradient;
-    ctx.fillRect(0, 0, 1200, 250);
+    // Draw wallpaper if loaded, otherwise use gradient fallback
+    if (wallpaperLoaded) {
+        ctx.drawImage(wallpaperImage, 0, 0, 1200, 250);
+    } else {
+        // Fallback gradient if wallpaper not loaded
+        const customerGradient = ctx.createLinearGradient(0, 0, 0, 250);
+        customerGradient.addColorStop(0, '#FFE5CC');
+        customerGradient.addColorStop(1, '#FFD4A3');
+        ctx.fillStyle = customerGradient;
+        ctx.fillRect(0, 0, 1200, 250);
+    }
 
     // Menu board on back wall
     ctx.fillStyle = '#2c3e50';
