@@ -262,6 +262,18 @@ teaMachineImage.onerror = () => {
     console.error('Failed to load tea machine image');
 };
 
+// Load poster image
+const poster1Image = new Image();
+poster1Image.src = 'poster1.png';
+let poster1Loaded = false;
+poster1Image.onload = () => {
+    poster1Loaded = true;
+    console.log('Poster 1 image loaded successfully');
+};
+poster1Image.onerror = () => {
+    console.error('Failed to load poster1 image');
+};
+
 // Load cup images for different stages
 const cupImages = {
     empty: new Image(),
@@ -885,18 +897,23 @@ function drawBackground() {
     ctx.font = '12px Arial';
     ctx.fillText('Fruit Series', 995, 170);
 
-    // Decorative Poster 3 - Special Offer
-    ctx.fillStyle = '#9370DB';
-    ctx.fillRect(300, 40, 140, 160);
-    ctx.fillStyle = '#DDA0DD';
-    ctx.fillRect(310, 50, 120, 140);
-    ctx.font = '60px Arial';
-    ctx.fillText('⭐', 345, 110);
-    ctx.fillStyle = '#2c3e50';
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText('SPECIAL', 330, 150);
-    ctx.font = '12px Arial';
-    ctx.fillText('Today Only!', 335, 170);
+    // Decorative Poster 1 - Custom poster image
+    if (poster1Loaded) {
+        ctx.drawImage(poster1Image, 300, 40, 140, 160);
+    } else {
+        // Fallback if image not loaded
+        ctx.fillStyle = '#9370DB';
+        ctx.fillRect(300, 40, 140, 160);
+        ctx.fillStyle = '#DDA0DD';
+        ctx.fillRect(310, 50, 120, 140);
+        ctx.font = '60px Arial';
+        ctx.fillText('⭐', 345, 110);
+        ctx.fillStyle = '#2c3e50';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText('SPECIAL', 330, 150);
+        ctx.font = '12px Arial';
+        ctx.fillText('Today Only!', 335, 170);
+    }
 
     // Work area background (lower section - player side)
     const workGradient = ctx.createLinearGradient(0, 350, 0, 700);
