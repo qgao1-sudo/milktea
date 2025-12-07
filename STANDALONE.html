@@ -12,11 +12,8 @@
         }
 
         body {
-            background: #000;
             font-family: 'Press Start 2P', 'Courier New', monospace;
             overflow: hidden;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
             margin: 0;
             padding: 0;
         }
@@ -24,20 +21,17 @@
         #gameContainer {
             width: 100vw;
             height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             padding: 0;
             margin: 0;
+            overflow: hidden;
         }
 
         #gameCanvas {
             background: #87CEEB;
             cursor: pointer;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
             display: block;
+            width: 100vw;
+            height: 100vh;
         }
 
         .ui-overlay {
