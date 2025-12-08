@@ -1619,7 +1619,11 @@ function render() {
 
 canvas.addEventListener('click', (e) => {
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    // Scale click coordinates from display size to canvas size (1200x700)
+    const scaleX = 1200 / rect.width;
+    const scaleY = 700 / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
 
     if (game.mode === 'serving') {
         // Check if clicked on tea machine (centered, enlarged)
