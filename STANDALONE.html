@@ -308,7 +308,11 @@ const cupImages = {
     mango: new Image(),
     mangoMilk: new Image(),
     mangoMilkCream: new Image(),
-    mangoMilkCreamIceCream: new Image()
+    mangoMilkCreamIceCream: new Image(),
+    // Passion fruit series
+    passionFruit: new Image(),
+    passionFruitJasmine: new Image(),
+    passionFruitJasminePearl: new Image()
 };
 
 cupImages.empty.src = '微信图片_20251202200937_7_1.png';
@@ -335,6 +339,10 @@ cupImages.mango.src = '芒果.png';
 cupImages.mangoMilk.src = '芒果牛奶.png';
 cupImages.mangoMilkCream.src = '芒果牛奶奶油.jpg';
 cupImages.mangoMilkCreamIceCream.src = '杨枝甘露.png';
+// Passion fruit series
+cupImages.passionFruit.src = '百香果.png';
+cupImages.passionFruitJasmine.src = '百香果茉莉.png';
+cupImages.passionFruitJasminePearl.src = '百香果茉莉珍珠.png';
 
 let cupImagesLoaded = 0;
 const totalCupImages = Object.keys(cupImages).length;
@@ -738,6 +746,24 @@ function getCurrentCupImage() {
         }
     }
 
+    // Check for passion fruit series
+    const hasPassionFruit = drink.toppings.includes('passion-fruit');
+    const hasPearl = drink.toppings.includes('pearl');
+
+    if (hasPassionFruit) {
+        // Passion fruit series
+        if (hasPassionFruit && hasJasmineTea && hasPearl) {
+            // Stage 3: passion fruit + jasmine tea + pearl
+            return cupImages.passionFruitJasminePearl;
+        } else if (hasPassionFruit && hasJasmineTea) {
+            // Stage 2: passion fruit + jasmine tea
+            return cupImages.passionFruitJasmine;
+        } else if (hasPassionFruit) {
+            // Stage 1: passion fruit only
+            return cupImages.passionFruit;
+        }
+    }
+
     // Empty cup
     return cupImages.empty;
 }
@@ -854,6 +880,25 @@ function shouldHideLayers() {
         } else if (hasMango && hasMilk) {
             return true;
         } else if (hasMango) {
+            return true;
+        }
+    }
+
+    // Check for passion fruit series
+    const hasPassionFruit = drink.toppings.includes('passion-fruit');
+    const hasJasmineTea = drink.base === 'jasmine-tea';
+    const hasPearl = drink.toppings.includes('pearl');
+
+    // Hide layers for the passion fruit-based sequence:
+    // 1. Passion fruit only
+    // 2. Passion fruit + jasmine tea
+    // 3. Passion fruit + jasmine tea + pearl
+    if (hasPassionFruit) {
+        if (hasPassionFruit && hasJasmineTea && hasPearl) {
+            return true;
+        } else if (hasPassionFruit && hasJasmineTea) {
+            return true;
+        } else if (hasPassionFruit) {
             return true;
         }
     }
