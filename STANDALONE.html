@@ -912,7 +912,13 @@ function shouldHideLayers() {
     return false;
 }
 
+let drawBackgroundCalled = false;
 function drawBackground() {
+    if (!drawBackgroundCalled) {
+        console.log('drawBackground called - wallpaperLoaded:', wallpaperLoaded);
+        drawBackgroundCalled = true;
+    }
+
     // Customer area background (upper section - behind counter)
     // Draw wallpaper if loaded, otherwise use gradient fallback
     if (wallpaperLoaded) {
@@ -1647,10 +1653,20 @@ let renderCount = 0;
 function render() {
     if (renderCount === 0) {
         console.log('First render - Canvas:', canvas.width, 'x', canvas.height, 'Mode:', game.mode);
+        console.log('Context:', ctx ? 'OK' : 'NULL');
     }
     renderCount++;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Test: Draw a simple red rectangle to verify canvas is working
+    if (renderCount <= 5) {
+        ctx.fillStyle = 'red';
+        ctx.fillRect(100, 100, 200, 200);
+        ctx.fillStyle = 'white';
+        ctx.font = '20px Arial';
+        ctx.fillText('TEST RENDER ' + renderCount, 150, 200);
+    }
 
     // Update customer animation
     updateCustomer();
