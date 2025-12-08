@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Test</title>
+    <style>
+        body { margin: 0; padding: 0; background: black; }
+        canvas { background: blue; display: block; margin: 20px auto; }
+    </style>
+</head>
+<body>
+    <canvas id="test" width="800" height="600"></canvas>
+    <script>
+        console.log('Script started');
+        const canvas = document.getElementById('test');
+        const ctx = canvas.getContext('2d');
+        console.log('Canvas:', canvas.width, 'x', canvas.height);
+        console.log('Context:', ctx);
+
+        // Draw red square
+        ctx.fillStyle = 'red';
+        ctx.fillRect(100, 100, 200, 200);
+        console.log('Red square drawn');
+
+        // Draw text
+        ctx.fillStyle = 'white';
+        ctx.font = '30px Arial';
+        ctx.fillText('CANVAS WORKS!', 150, 400);
+        console.log('Text drawn');
+    </script>
+</body>
+</html>
