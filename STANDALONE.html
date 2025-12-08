@@ -1637,7 +1637,13 @@ function updateCustomer() {
     }
 }
 
+let renderCount = 0;
 function render() {
+    if (renderCount === 0) {
+        console.log('First render - Canvas:', canvas.width, 'x', canvas.height, 'Mode:', game.mode);
+    }
+    renderCount++;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Update customer animation
@@ -1812,7 +1818,11 @@ function updateUI() {
     document.getElementById('served').textContent = game.served;
 }
 
-spawnCustomer(); updateUI(); render();
+console.log('Game initializing...');
+spawnCustomer();
+updateUI();
+render();
+console.log('Game started - Mode:', game.mode, 'Customer:', game.currentCustomer?.name);
     </script>
 </body>
 </html>
