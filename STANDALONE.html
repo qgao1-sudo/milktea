@@ -274,6 +274,18 @@ stickyNoteImage.onerror = () => {
     console.error('Failed to load sticky note image');
 };
 
+// Load making mode background image
+const makingBgImage = new Image();
+makingBgImage.src = '背景.jpg';
+let makingBgLoaded = false;
+makingBgImage.onload = () => {
+    makingBgLoaded = true;
+    console.log('Making mode background image loaded successfully');
+};
+makingBgImage.onerror = () => {
+    console.error('Failed to load making mode background image');
+};
+
 // Load cup images for different stages
 const cupImages = {
     empty: new Image(),
@@ -1321,8 +1333,14 @@ function drawIngredients() {
 
 function drawMakingMode() {
     // Background
-    ctx.fillStyle = '#E8D5B7';
-    ctx.fillRect(0, 0, 1200, 700);
+    if (makingBgLoaded) {
+        // Draw the background image
+        ctx.drawImage(makingBgImage, 0, 0, 1200, 700);
+    } else {
+        // Fallback: solid color background
+        ctx.fillStyle = '#E8D5B7';
+        ctx.fillRect(0, 0, 1200, 700);
+    }
 
     // Title
     ctx.fillStyle = '#2c3e50';
