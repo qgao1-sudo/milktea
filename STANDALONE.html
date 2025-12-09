@@ -298,6 +298,27 @@ wallpaperImage.onerror = () => {
     console.error('Failed to load wallpaper image');
 };
 
+// Load poster images for serving mode
+const posterImages = {
+    poster1: new Image(),
+    poster2: new Image(),
+    poster3: new Image()
+};
+posterImages.poster1.src = '海报1.jpg';
+posterImages.poster2.src = '海报2.jpg';
+posterImages.poster3.src = '海报3.jpg';
+
+let posterImagesLoaded = 0;
+Object.keys(posterImages).forEach(key => {
+    posterImages[key].onload = () => {
+        posterImagesLoaded++;
+        console.log(`Poster image ${key} loaded`);
+    };
+    posterImages[key].onerror = () => {
+        console.error(`Failed to load poster image: ${key}`);
+    };
+});
+
 // Load fruit box images for making mode
 const fruitBoxImages = {
     strawberry: new Image(),
@@ -1006,44 +1027,59 @@ function drawBackground() {
     ctx.fillText('Orange Drink', 60, 175);
     ctx.fillText('.......... $4.5', 60, 190);
 
-    // Decorative Poster 1 - Bubble Tea
-    ctx.fillStyle = '#FF69B4';
-    ctx.fillRect(800, 40, 140, 160);
-    ctx.fillStyle = '#FFB6C1';
-    ctx.fillRect(810, 50, 120, 140);
-    ctx.font = '60px Arial';
-    ctx.fillText('🧋', 845, 110);
-    ctx.fillStyle = '#2c3e50';
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText('GLORIA', 830, 150);
-    ctx.font = '12px Arial';
-    ctx.fillText('Milk Tea', 840, 170);
+    // Poster 1 (left)
+    if (posterImages.poster1 && posterImages.poster1.complete) {
+        ctx.drawImage(posterImages.poster1, 300, 40, 140, 160);
+    } else {
+        // Fallback: draw decorative poster
+        ctx.fillStyle = '#9370DB';
+        ctx.fillRect(300, 40, 140, 160);
+        ctx.fillStyle = '#DDA0DD';
+        ctx.fillRect(310, 50, 120, 140);
+        ctx.font = '60px Arial';
+        ctx.fillText('⭐', 345, 110);
+        ctx.fillStyle = '#2c3e50';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText('SPECIAL', 330, 150);
+        ctx.font = '12px Arial';
+        ctx.fillText('Today Only!', 335, 170);
+    }
 
-    // Decorative Poster 2 - Fruit Tea
-    ctx.fillStyle = '#FFA500';
-    ctx.fillRect(970, 40, 140, 160);
-    ctx.fillStyle = '#FFE4B5';
-    ctx.fillRect(980, 50, 120, 140);
-    ctx.font = '50px Arial';
-    ctx.fillText('🍓🥭', 995, 110);
-    ctx.fillStyle = '#2c3e50';
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText('FRESH', 1010, 150);
-    ctx.font = '12px Arial';
-    ctx.fillText('Fruit Series', 995, 170);
+    // Poster 2 (middle)
+    if (posterImages.poster2 && posterImages.poster2.complete) {
+        ctx.drawImage(posterImages.poster2, 800, 40, 140, 160);
+    } else {
+        // Fallback: draw decorative poster
+        ctx.fillStyle = '#FF69B4';
+        ctx.fillRect(800, 40, 140, 160);
+        ctx.fillStyle = '#FFB6C1';
+        ctx.fillRect(810, 50, 120, 140);
+        ctx.font = '60px Arial';
+        ctx.fillText('🧋', 845, 110);
+        ctx.fillStyle = '#2c3e50';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText('GLORIA', 830, 150);
+        ctx.font = '12px Arial';
+        ctx.fillText('Milk Tea', 840, 170);
+    }
 
-    // Decorative Poster 3 - Special Offer
-    ctx.fillStyle = '#9370DB';
-    ctx.fillRect(300, 40, 140, 160);
-    ctx.fillStyle = '#DDA0DD';
-    ctx.fillRect(310, 50, 120, 140);
-    ctx.font = '60px Arial';
-    ctx.fillText('⭐', 345, 110);
-    ctx.fillStyle = '#2c3e50';
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText('SPECIAL', 330, 150);
-    ctx.font = '12px Arial';
-    ctx.fillText('Today Only!', 335, 170);
+    // Poster 3 (right)
+    if (posterImages.poster3 && posterImages.poster3.complete) {
+        ctx.drawImage(posterImages.poster3, 970, 40, 140, 160);
+    } else {
+        // Fallback: draw decorative poster
+        ctx.fillStyle = '#FFA500';
+        ctx.fillRect(970, 40, 140, 160);
+        ctx.fillStyle = '#FFE4B5';
+        ctx.fillRect(980, 50, 120, 140);
+        ctx.font = '50px Arial';
+        ctx.fillText('🍓🥭', 995, 110);
+        ctx.fillStyle = '#2c3e50';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText('FRESH', 1010, 150);
+        ctx.font = '12px Arial';
+        ctx.fillText('Fruit Series', 995, 170);
+    }
 
     // Work area background (lower section - player side)
     const workGradient = ctx.createLinearGradient(0, 350, 0, 700);
