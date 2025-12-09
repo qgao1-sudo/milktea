@@ -1373,7 +1373,7 @@ function drawMakingMode() {
 
         // Center the text content on the sticky note
         const centerX = noteX + noteWidth / 2;
-        const startY = noteY + 60;
+        const startY = noteY + 80;
 
         // Recipe title (centered)
         ctx.fillStyle = '#2c3e50';
@@ -1381,9 +1381,9 @@ function drawMakingMode() {
         ctx.textAlign = 'center';
         ctx.fillText('📝 Recipe', centerX, startY);
 
-        // Customer name and order (centered)
+        // Customer name and order (centered, black color)
         ctx.font = 'bold 14px Arial';
-        ctx.fillStyle = game.currentCustomer.color;
+        ctx.fillStyle = '#2c3e50';
         ctx.fillText(`${game.currentCustomer.name}'s order:`, centerX, startY + 35);
 
         // Recipe content (centered)
