@@ -262,6 +262,18 @@ teaMachineImage.onerror = () => {
     console.error('Failed to load tea machine image');
 };
 
+// Load sticky note image
+const stickyNoteImage = new Image();
+stickyNoteImage.src = '便签纸.jpg';
+let stickyNoteLoaded = false;
+stickyNoteImage.onload = () => {
+    stickyNoteLoaded = true;
+    console.log('Sticky note image loaded successfully');
+};
+stickyNoteImage.onerror = () => {
+    console.error('Failed to load sticky note image');
+};
+
 // Load cup images for different stages
 const cupImages = {
     empty: new Image(),
@@ -291,7 +303,11 @@ const cupImages = {
     // Passion fruit series
     passionFruit: new Image(),
     passionFruitJasmine: new Image(),
-    passionFruitJasminePearl: new Image()
+    passionFruitJasminePearl: new Image(),
+    // Lychee series
+    lychee: new Image(),
+    // Kiwi series
+    kiwi: new Image()
 };
 
 cupImages.empty.src = '微信图片_20251202200937_7_1.png';
@@ -322,6 +338,10 @@ cupImages.mangoMilkCreamIceCream.src = '杨枝甘露.png';
 cupImages.passionFruit.src = '百香果.png';
 cupImages.passionFruitJasmine.src = '百香果茉莉.png';
 cupImages.passionFruitJasminePearl.src = '百香果茉莉珍珠.png';
+// Lychee series
+cupImages.lychee.src = '哈密瓜.png';
+// Kiwi series
+cupImages.kiwi.src = '猕猴桃.png';
 
 let cupImagesLoaded = 0;
 const totalCupImages = Object.keys(cupImages).length;
@@ -739,6 +759,18 @@ function getCurrentCupImage() {
         }
     }
 
+    // Check for lychee
+    const hasLychee = drink.toppings.includes('lychee');
+    if (hasLychee) {
+        return cupImages.lychee;
+    }
+
+    // Check for kiwi
+    const hasKiwi = drink.toppings.includes('kiwi');
+    if (hasKiwi) {
+        return cupImages.kiwi;
+    }
+
     // Empty cup
     return cupImages.empty;
 }
@@ -875,6 +907,18 @@ function shouldHideLayers() {
         } else if (hasPassionFruit) {
             return true;
         }
+    }
+
+    // Check for lychee
+    const hasLychee = drink.toppings.includes('lychee');
+    if (hasLychee) {
+        return true;
+    }
+
+    // Check for kiwi
+    const hasKiwi = drink.toppings.includes('kiwi');
+    if (hasKiwi) {
+        return true;
     }
 
     return false;
@@ -1290,35 +1334,62 @@ function drawMakingMode() {
         const noteX = 50, noteY = 100;
         const noteWidth = 250, noteHeight = 300;
 
-        // Sticky note background (yellow)
-        ctx.fillStyle = '#FFEB3B';
-        ctx.fillRect(noteX, noteY, noteWidth, noteHeight);
+        // Draw sticky note image if loaded
+        if (stickyNoteLoaded) {
+            // Draw the sticky note image
+            ctx.drawImage(stickyNoteImage, noteX, noteY, noteWidth, noteHeight);
 
-        // Sticky note shadow
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-        ctx.fillRect(noteX + 3, noteY + 3, noteWidth, noteHeight);
-        ctx.fillStyle = '#FFEB3B';
-        ctx.fillRect(noteX, noteY, noteWidth, noteHeight);
+            // Draw pushpin on top of the sticky note
+            const pinX = noteX + noteWidth / 2;
+            const pinY = noteY + 10;
 
-        // Sticky note border
-        ctx.strokeStyle = '#FDD835';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(noteX, noteY, noteWidth, noteHeight);
+            // Pushpin circle (metal part)
+            ctx.fillStyle = '#C0C0C0';
+            ctx.beginPath();
+            ctx.arc(pinX, pinY, 8, 0, Math.PI * 2);
+            ctx.fill();
 
-        // Recipe title
+            // Pushpin highlight
+            ctx.fillStyle = '#E8E8E8';
+            ctx.beginPath();
+            ctx.arc(pinX - 2, pinY - 2, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Pushpin shadow
+            ctx.fillStyle = '#808080';
+            ctx.beginPath();
+            ctx.arc(pinX + 1, pinY + 1, 2, 0, Math.PI * 2);
+            ctx.fill();
+        } else {
+            // Fallback: draw yellow sticky note if image not loaded
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(noteX + 3, noteY + 3, noteWidth, noteHeight);
+            ctx.fillStyle = '#FFEB3B';
+            ctx.fillRect(noteX, noteY, noteWidth, noteHeight);
+            ctx.strokeStyle = '#FDD835';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(noteX, noteY, noteWidth, noteHeight);
+        }
+
+        // Center the text content on the sticky note
+        const centerX = noteX + noteWidth / 2;
+        const startY = noteY + 60;
+
+        // Recipe title (centered)
         ctx.fillStyle = '#2c3e50';
         ctx.font = 'bold 18px Arial';
-        ctx.fillText('📝 Recipe', noteX + 80, noteY + 30);
+        ctx.textAlign = 'center';
+        ctx.fillText('📝 Recipe', centerX, startY);
 
-        // Customer name and order
+        // Customer name and order (centered)
         ctx.font = 'bold 14px Arial';
         ctx.fillStyle = game.currentCustomer.color;
-        ctx.fillText(`${game.currentCustomer.name}'s order:`, noteX + 10, noteY + 60);
+        ctx.fillText(`${game.currentCustomer.name}'s order:`, centerX, startY + 35);
 
-        // Recipe content
+        // Recipe content (centered)
         ctx.fillStyle = '#2c3e50';
         ctx.font = '11px Arial';
-        let recipeY = noteY + 85;
+        let recipeY = startY + 60;
         let stepNum = 1;
 
         // Add recipe steps based on recipe order
@@ -1328,17 +1399,20 @@ function drawMakingMode() {
         if (order.recipe && order.recipe.length > 0) {
             order.recipe.forEach(ingredient => {
                 const ingName = ingredientDB[ingredient].name;
-                ctx.fillText(`${stepNum}. Add ${ingName.toLowerCase()}`, noteX + 15, recipeY);
+                ctx.fillText(`${stepNum}. Add ${ingName.toLowerCase()}`, centerX, recipeY);
                 recipeY += 18;
                 stepNum++;
             });
         }
 
-        // Reminder
+        // Reminder (centered)
         recipeY += 10;
         ctx.font = 'italic 10px Arial';
         ctx.fillStyle = '#666';
-        ctx.fillText('Follow the order carefully!', noteX + 15, recipeY);
+        ctx.fillText('Follow the order carefully!', centerX, recipeY);
+
+        // Reset text alignment to default
+        ctx.textAlign = 'left';
     }
 
     // Large cup in center
