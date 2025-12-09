@@ -290,17 +290,11 @@ makingBgImage.onerror = () => {
 const fruitBoxImages = {
     strawberry: new Image(),
     mango: new Image(),
-    lychee: new Image(),
-    'passion-fruit': new Image(),
-    kiwi: new Image(),
-    blueberry: new Image()
+    lychee: new Image()
 };
 fruitBoxImages.strawberry.src = '草莓盒子.png';
 fruitBoxImages.mango.src = '芒果盒子.png';
 fruitBoxImages.lychee.src = '哈密瓜盒子.png';
-fruitBoxImages['passion-fruit'].src = '百香果盒子.png';
-fruitBoxImages.kiwi.src = '猕猴桃盒子.png';
-fruitBoxImages.blueberry.src = '蓝莓盒子.png';
 
 let fruitBoxImagesLoaded = 0;
 Object.keys(fruitBoxImages).forEach(key => {
@@ -1453,7 +1447,7 @@ function drawMakingMode() {
 
         // Reminder (centered)
         recipeY += 10;
-        ctx.font = 'bold italic 14px Arial';
+        ctx.font = 'bold italic 12px Arial';
         ctx.fillStyle = '#666';
         ctx.fillText('Follow the order carefully!', centerX, recipeY);
 
@@ -1568,7 +1562,7 @@ function drawMakingMode() {
             ctx.strokeRect(x, y, boxWidth, boxHeight);
 
             // Emoji or image
-            if ((ing.id === 'strawberry' || ing.id === 'mango' || ing.id === 'lychee' || ing.id === 'passion-fruit' || ing.id === 'kiwi' || ing.id === 'blueberry') && fruitBoxImages[ing.id] && fruitBoxImages[ing.id].complete) {
+            if ((ing.id === 'strawberry' || ing.id === 'mango' || ing.id === 'lychee') && fruitBoxImages[ing.id] && fruitBoxImages[ing.id].complete) {
                 // Draw fruit box image instead of emoji
                 ctx.drawImage(fruitBoxImages[ing.id], x, y, boxWidth, boxHeight);
             } else {
