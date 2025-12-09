@@ -338,7 +338,9 @@ const fruitBoxImages = {
     lychee: new Image(),
     'passion-fruit': new Image(),
     kiwi: new Image(),
-    blueberry: new Image()
+    blueberry: new Image(),
+    lemon: new Image(),
+    orange: new Image()
 };
 fruitBoxImages.strawberry.src = '草莓盒子.png';
 fruitBoxImages.mango.src = '芒果盒子.png';
@@ -346,6 +348,8 @@ fruitBoxImages.lychee.src = '哈密瓜盒子.png';
 fruitBoxImages['passion-fruit'].src = '百香果盒子.png';
 fruitBoxImages.kiwi.src = '猕猴桃盒子.png';
 fruitBoxImages.blueberry.src = '蓝莓盒子.png';
+fruitBoxImages.lemon.src = '柠檬盒子1.png';
+fruitBoxImages.orange.src = '橙子盒子.png';
 
 let fruitBoxImagesLoaded = 0;
 Object.keys(fruitBoxImages).forEach(key => {
@@ -355,6 +359,25 @@ Object.keys(fruitBoxImages).forEach(key => {
     };
     fruitBoxImages[key].onerror = () => {
         console.error(`Failed to load fruit box image: ${key}`);
+    };
+});
+
+// Load sauce images for making mode
+const sauceImages = {
+    chocolate: new Image(),
+    honey: new Image()
+};
+sauceImages.chocolate.src = '巧克力酱.png';
+sauceImages.honey.src = '蜂蜜.png';
+
+let sauceImagesLoaded = 0;
+Object.keys(sauceImages).forEach(key => {
+    sauceImages[key].onload = () => {
+        sauceImagesLoaded++;
+        console.log(`Sauce image ${key} loaded`);
+    };
+    sauceImages[key].onerror = () => {
+        console.error(`Failed to load sauce image: ${key}`);
     };
 });
 
@@ -1116,31 +1139,32 @@ function drawBackground() {
     }
 
     // Work area background (lower section - player side)
-    const workGradient = ctx.createLinearGradient(0, 350, 0, 700);
-    workGradient.addColorStop(0, '#E8D5B7');
-    workGradient.addColorStop(1, '#C4A77D');
-    ctx.fillStyle = workGradient;
-    ctx.fillRect(0, 350, 1200, 350);
+    // Use desk surface image if loaded, otherwise use gradient as fallback
+    if (deskSurfaceLoaded) {
+        ctx.drawImage(deskSurfaceImage, 0, 350, 1200, 350);
+    } else {
+        // Fallback: gradient background
+        const workGradient = ctx.createLinearGradient(0, 350, 0, 700);
+        workGradient.addColorStop(0, '#E8D5B7');
+        workGradient.addColorStop(1, '#C4A77D');
+        ctx.fillStyle = workGradient;
+        ctx.fillRect(0, 350, 1200, 350);
+    }
 }
 
 function drawCounter() {
     // Wooden counter - horizontal divider between customer area and work area
-    // Counter top surface - use desk surface image if loaded
-    if (deskSurfaceLoaded) {
-        ctx.drawImage(deskSurfaceImage, 0, 250, 1200, 100);
-    } else {
-        // Fallback: solid color
-        ctx.fillStyle = '#A0522D';
-        ctx.fillRect(0, 250, 1200, 100);
-
-        // Counter top highlight
-        ctx.fillStyle = '#D2691E';
-        ctx.fillRect(0, 250, 1200, 15);
-    }
+    // Counter top surface
+    ctx.fillStyle = '#A0522D';
+    ctx.fillRect(0, 250, 1200, 100);
 
     // Counter front edge (darker)
     ctx.fillStyle = '#8B4513';
     ctx.fillRect(0, 330, 1200, 20);
+
+    // Counter top highlight
+    ctx.fillStyle = '#D2691E';
+    ctx.fillRect(0, 250, 1200, 15);
 
     // Counter wood grain effect (simple lines)
     ctx.strokeStyle = 'rgba(139, 69, 19, 0.3)';
@@ -1662,9 +1686,12 @@ function drawMakingMode() {
             ctx.strokeRect(x, y, boxWidth, boxHeight);
 
             // Emoji or image
-            if ((ing.id === 'strawberry' || ing.id === 'mango' || ing.id === 'lychee' || ing.id === 'passion-fruit' || ing.id === 'kiwi' || ing.id === 'blueberry') && fruitBoxImages[ing.id] && fruitBoxImages[ing.id].complete) {
+            if ((ing.id === 'strawberry' || ing.id === 'mango' || ing.id === 'lychee' || ing.id === 'passion-fruit' || ing.id === 'kiwi' || ing.id === 'blueberry' || ing.id === 'lemon' || ing.id === 'orange') && fruitBoxImages[ing.id] && fruitBoxImages[ing.id].complete) {
                 // Draw fruit box image instead of emoji
                 ctx.drawImage(fruitBoxImages[ing.id], x, y, boxWidth, boxHeight);
+            } else if ((ing.id === 'chocolate' || ing.id === 'honey') && sauceImages[ing.id] && sauceImages[ing.id].complete) {
+                // Draw sauce image instead of emoji
+                ctx.drawImage(sauceImages[ing.id], x, y, boxWidth, boxHeight);
             } else {
                 // Draw emoji as fallback
                 ctx.font = '36px Arial';
