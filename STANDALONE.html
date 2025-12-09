@@ -1490,9 +1490,9 @@ function drawMakingMode() {
     }
 
     // Ingredient options - categorized display
-    const startX = 750, startY = 80;
-    const boxWidth = 60, boxHeight = 60;
-    const spacingX = 70, spacingY = 70;
+    const startX = 820, startY = 80;
+    const boxWidth = 80, boxHeight = 80;
+    const spacingX = 95, spacingY = 95;
 
     let currentY = startY;
 
@@ -1534,14 +1534,14 @@ function drawMakingMode() {
             ctx.strokeRect(x, y, boxWidth, boxHeight);
 
             // Emoji
-            ctx.font = '28px Arial';
-            ctx.fillText(ing.emoji, x + 8, y + 38);
+            ctx.font = '36px Arial';
+            ctx.fillText(ing.emoji, x + 14, y + 50);
 
             // Name
             ctx.fillStyle = '#2c3e50';
-            ctx.font = '8px Arial';
+            ctx.font = '10px Arial';
             const nameWidth = ctx.measureText(ing.name).width;
-            ctx.fillText(ing.name, x + (boxWidth - nameWidth) / 2, y + 53);
+            ctx.fillText(ing.name, x + (boxWidth - nameWidth) / 2, y + 70);
         });
 
         currentY += Math.ceil(items.length / 3) * spacingY + 15;
@@ -1747,9 +1747,9 @@ canvas.addEventListener('click', (e) => {
         }
 
         // Check if clicked on ingredients (categorized layout)
-        const startX = 750, startY = 80;
-        const boxWidth = 60, boxHeight = 60;
-        const spacingX = 70, spacingY = 70;
+        const startX = 820, startY = 80;
+        const boxWidth = 80, boxHeight = 80;
+        const spacingX = 95, spacingY = 95;
 
         let currentY = startY;
 
