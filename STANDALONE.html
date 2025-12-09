@@ -1139,16 +1139,13 @@ function drawBackground() {
     }
 
     // Work area background (lower section - player side)
-    // Use desk surface image if loaded, otherwise use gradient as fallback
+    // Fill with counter color first to cover transparent areas in desk image
+    ctx.fillStyle = '#A0522D';
+    ctx.fillRect(0, 350, 1200, 350);
+
+    // Draw desk surface image on top if loaded
     if (deskSurfaceLoaded) {
         ctx.drawImage(deskSurfaceImage, 0, 350, 1200, 350);
-    } else {
-        // Fallback: gradient background
-        const workGradient = ctx.createLinearGradient(0, 350, 0, 700);
-        workGradient.addColorStop(0, '#E8D5B7');
-        workGradient.addColorStop(1, '#C4A77D');
-        ctx.fillStyle = workGradient;
-        ctx.fillRect(0, 350, 1200, 350);
     }
 }
 
@@ -1299,9 +1296,9 @@ function drawDrinkCup() {
 }
 
 function drawTeaMachine() {
-    // Tea brewing machine in the center - enlarged
-    const x = 500; // Center position
-    const y = 360;
+    // Tea brewing machine - moved left and up towards customer
+    const x = 400; // Moved left
+    const y = 300; // Moved up towards customer
     const width = 200; // Larger size
     const height = 280; // Larger size
 
@@ -1867,7 +1864,6 @@ function render() {
         drawCounter();
         drawCustomer();
         drawTeaMachine();
-        drawCashRegister();
     } else if (game.mode === 'making') {
         // Draw making mode
         drawMakingMode();
@@ -1885,8 +1881,8 @@ canvas.addEventListener('click', (e) => {
     const x = e.clientX - rect.left, y = e.clientY - rect.top;
 
     if (game.mode === 'serving') {
-        // Check if clicked on tea machine (centered, enlarged)
-        if (x >= 500 && x <= 700 && y >= 360 && y <= 640) {
+        // Check if clicked on tea machine (moved left and up)
+        if (x >= 400 && x <= 600 && y >= 300 && y <= 580) {
             game.mode = 'making';
             game.ingredientScrollOffset = 0; // Reset scroll when entering making mode
             canvas.style.cursor = 'grab';
