@@ -1876,7 +1876,11 @@ canvas.addEventListener('click', (e) => {
                         game.currentDrink.base = ing.id;
                     } else if (ingData.type === 'milk' && !game.currentDrink.milk) {
                         game.currentDrink.milk = ing.id;
-                    } else if ((ingData.type === 'topping' || ingData.type === 'fruit') && game.currentDrink.toppings.length < 5) {
+                    } else if (ingData.type === 'fruit') {
+                        // For fruits: remove all existing fruits first, then add the new one
+                        game.currentDrink.toppings = game.currentDrink.toppings.filter(t => ingredientDB[t].type !== 'fruit');
+                        game.currentDrink.toppings.push(ing.id);
+                    } else if (ingData.type === 'topping' && game.currentDrink.toppings.length < 5) {
                         game.currentDrink.toppings.push(ing.id);
                     }
                 }
