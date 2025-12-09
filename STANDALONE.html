@@ -286,6 +286,18 @@ makingBgImage.onerror = () => {
     console.error('Failed to load making mode background image');
 };
 
+// Load wallpaper image for serving mode
+const wallpaperImage = new Image();
+wallpaperImage.src = '墙纸.jpg';
+let wallpaperLoaded = false;
+wallpaperImage.onload = () => {
+    wallpaperLoaded = true;
+    console.log('Wallpaper image loaded successfully');
+};
+wallpaperImage.onerror = () => {
+    console.error('Failed to load wallpaper image');
+};
+
 // Load fruit box images for making mode
 const fruitBoxImages = {
     strawberry: new Image(),
@@ -966,11 +978,18 @@ function shouldHideLayers() {
 
 function drawBackground() {
     // Customer area background (upper section - behind counter)
-    const customerGradient = ctx.createLinearGradient(0, 0, 0, 250);
-    customerGradient.addColorStop(0, '#FFE5CC');
-    customerGradient.addColorStop(1, '#FFD4A3');
-    ctx.fillStyle = customerGradient;
-    ctx.fillRect(0, 0, 1200, 250);
+    // Draw wallpaper image if loaded, otherwise use gradient as fallback
+    if (wallpaperLoaded) {
+        // Draw wallpaper image to fill the upper wall area
+        ctx.drawImage(wallpaperImage, 0, 0, 1200, 250);
+    } else {
+        // Fallback: gradient background
+        const customerGradient = ctx.createLinearGradient(0, 0, 0, 250);
+        customerGradient.addColorStop(0, '#FFE5CC');
+        customerGradient.addColorStop(1, '#FFD4A3');
+        ctx.fillStyle = customerGradient;
+        ctx.fillRect(0, 0, 1200, 250);
+    }
 
     // Menu board on back wall
     ctx.fillStyle = '#2c3e50';
