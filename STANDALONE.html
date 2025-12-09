@@ -298,6 +298,18 @@ wallpaperImage.onerror = () => {
     console.error('Failed to load wallpaper image');
 };
 
+// Load desk surface image for counter
+const deskSurfaceImage = new Image();
+deskSurfaceImage.src = '桌面.png';
+let deskSurfaceLoaded = false;
+deskSurfaceImage.onload = () => {
+    deskSurfaceLoaded = true;
+    console.log('Desk surface image loaded successfully');
+};
+deskSurfaceImage.onerror = () => {
+    console.error('Failed to load desk surface image');
+};
+
 // Load poster images for serving mode
 const posterImages = {
     poster1: new Image(),
@@ -456,7 +468,10 @@ const customerImages = {
     angelinaFront: new Image(),
     sunwooWalking1: new Image(),
     sunwooWalking2: new Image(),
-    sunwooFront: new Image()
+    sunwooFront: new Image(),
+    anneWalking1: new Image(),
+    anneWalking2: new Image(),
+    anneFront: new Image()
 };
 
 // Jenny images
@@ -495,6 +510,10 @@ customerImages.angelinaFront.src = 'angi站.png';
 customerImages.sunwooWalking1.src = 'sunwoo走路1.png';
 customerImages.sunwooWalking2.src = 'sunwoo走路2.png';
 customerImages.sunwooFront.src = 'sunwoo站立.png';
+// Anne images
+customerImages.anneWalking1.src = 'anne走路1.png';
+customerImages.anneWalking2.src = 'anne走路2.png';
+customerImages.anneFront.src = 'anne站立.png';
 
 let customerImagesLoaded = 0;
 const totalCustomerImages = Object.keys(customerImages).length;
@@ -665,6 +684,21 @@ const customers = [
         hasImage: true,
         walkingImages: [customerImages.sunwooWalking1, customerImages.sunwooWalking2],
         frontImage: customerImages.sunwooFront
+    },
+    {
+        name: "Anne",
+        sprite: "👩",
+        color: "#FFB6D9",
+        order: {
+            text: "Mango Milk Tea sounds yummy!",
+            base: null,
+            milk: "fresh-milk",
+            toppings: ["mango", "cream", "ice-cream"],
+            recipe: ["mango", "fresh-milk", "cream", "ice-cream"]
+        },
+        hasImage: true,
+        walkingImages: [customerImages.anneWalking1, customerImages.anneWalking2],
+        frontImage: customerImages.anneFront
     }
 ];
 
@@ -1091,17 +1125,22 @@ function drawBackground() {
 
 function drawCounter() {
     // Wooden counter - horizontal divider between customer area and work area
-    // Counter top surface
-    ctx.fillStyle = '#A0522D';
-    ctx.fillRect(0, 250, 1200, 100);
+    // Counter top surface - use desk surface image if loaded
+    if (deskSurfaceLoaded) {
+        ctx.drawImage(deskSurfaceImage, 0, 250, 1200, 100);
+    } else {
+        // Fallback: solid color
+        ctx.fillStyle = '#A0522D';
+        ctx.fillRect(0, 250, 1200, 100);
+
+        // Counter top highlight
+        ctx.fillStyle = '#D2691E';
+        ctx.fillRect(0, 250, 1200, 15);
+    }
 
     // Counter front edge (darker)
     ctx.fillStyle = '#8B4513';
     ctx.fillRect(0, 330, 1200, 20);
-
-    // Counter top highlight
-    ctx.fillStyle = '#D2691E';
-    ctx.fillRect(0, 250, 1200, 15);
 
     // Counter wood grain effect (simple lines)
     ctx.strokeStyle = 'rgba(139, 69, 19, 0.3)';
