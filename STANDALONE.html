@@ -1347,6 +1347,12 @@ function drawTeaMachine() {
         ctx.fillStyle = '#666';
         ctx.fillRect(x + 45, y + 150, 30, 30);
     }
+
+    // Instruction text to the right of the machine
+    ctx.fillStyle = '#2c3e50';
+    ctx.font = 'bold 18px Arial';
+    ctx.fillText('Click the coffee machine', x + width + 30, y + height / 2 - 10);
+    ctx.fillText('to start making drinks', x + width + 30, y + height / 2 + 20);
 }
 
 function drawCashRegister() {
