@@ -381,6 +381,25 @@ Object.keys(sauceImages).forEach(key => {
     };
 });
 
+// Load tea images for making mode
+const teaImages = {
+    'black-tea': new Image(),
+    'green-tea': new Image()
+};
+teaImages['black-tea'].src = '红茶.png';
+teaImages['green-tea'].src = '绿茶.png';
+
+let teaImagesLoaded = 0;
+Object.keys(teaImages).forEach(key => {
+    teaImages[key].onload = () => {
+        teaImagesLoaded++;
+        console.log(`Tea image ${key} loaded`);
+    };
+    teaImages[key].onerror = () => {
+        console.error(`Failed to load tea image: ${key}`);
+    };
+});
+
 // Load cup images for different stages
 const cupImages = {
     empty: new Image(),
@@ -732,7 +751,7 @@ const ingredientDB = {
     "jasmine-tea": { name: "Jasmine Tea", color: "#F0E68C", emoji: "🌸", x: 480, y: 380, type: "base", category: "Drinks", onTable: true },
     "fresh-milk": { name: "Fresh Milk", color: "#FFFFFF", emoji: "🥛", x: 580, y: 380, type: "milk", category: "Drinks", onTable: true },
     "oat-milk": { name: "Oat Milk", color: "#F5DEB3", emoji: "🌾", x: 680, y: 380, type: "milk", category: "Drinks", onTable: true },
-    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 780, y: 380, type: "topping", onTable: true },
+    "pearl": { name: "Pearls", color: "#000000", emoji: "⚫", x: 780, y: 380, type: "topping", category: "Sauces", onTable: true },
     "pudding": { name: "Pudding", color: "#FFE4B5", emoji: "🍮", x: 880, y: 380, type: "topping", onTable: true },
     "ice-cream": { name: "Ice Cream", color: "#FFF8DC", emoji: "🍦", x: 980, y: 380, type: "topping", category: "Drinks", onTable: true },
     "chocolate": { name: "Chocolate", color: "#8B4513", emoji: "🍫", x: 1080, y: 380, type: "topping", category: "Sauces", onTable: true },
@@ -1695,6 +1714,9 @@ function drawMakingMode() {
             } else if ((ing.id === 'chocolate' || ing.id === 'honey') && sauceImages[ing.id] && sauceImages[ing.id].complete) {
                 // Draw sauce image instead of emoji
                 ctx.drawImage(sauceImages[ing.id], x, y, boxWidth, boxHeight);
+            } else if ((ing.id === 'black-tea' || ing.id === 'green-tea') && teaImages[ing.id] && teaImages[ing.id].complete) {
+                // Draw tea image instead of emoji
+                ctx.drawImage(teaImages[ing.id], x, y, boxWidth, boxHeight);
             } else {
                 // Draw emoji as fallback
                 ctx.font = '36px Arial';
