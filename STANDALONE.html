@@ -436,7 +436,17 @@ const cupImages = {
     kiwi: new Image(),
     // Chocolate series
     chocolate: new Image(),
-    chocolateWater: new Image()
+    chocolateWater: new Image(),
+    // Strawberry-Mango series
+    strawberryMango: new Image(),
+    // Jasmine tea water
+    jasmineWater: new Image(),
+    // Green tea water
+    greenTeaWater: new Image(),
+    // Honey
+    honeyOnly: new Image(),
+    // Cream
+    creamOnly: new Image()
 };
 
 cupImages.empty.src = '微信图片_20251202200937_7_1.png';
@@ -474,6 +484,16 @@ cupImages.kiwi.src = '猕猴桃.png';
 // Chocolate series
 cupImages.chocolate.src = '巧克力.png';
 cupImages.chocolateWater.src = '巧克力水.png';
+// Strawberry-Mango series
+cupImages.strawberryMango.src = '草莓芒果碎.png';
+// Jasmine tea water
+cupImages.jasmineWater.src = '茉莉水.png';
+// Green tea water
+cupImages.greenTeaWater.src = '绿茶水.png';
+// Honey
+cupImages.honeyOnly.src = '蜂蜜.png';
+// Cream
+cupImages.creamOnly.src = '奶油.png';
 
 let cupImagesLoaded = 0;
 const totalCupImages = Object.keys(cupImages).length;
@@ -941,6 +961,35 @@ function getCurrentCupImage() {
         }
     }
 
+    // Check for strawberry + mango combination
+    const hasStrawberry = drink.toppings.includes('strawberry');
+    const hasMango = drink.toppings.includes('mango');
+    if (hasStrawberry && hasMango) {
+        return cupImages.strawberryMango;
+    }
+
+    // Check for jasmine tea water (jasmine tea base only, no milk, no toppings)
+    if (drink.base === 'jasmine-tea' && drink.milk === null && drink.toppings.length === 0) {
+        return cupImages.jasmineWater;
+    }
+
+    // Check for green tea water (green tea base only, no milk, no toppings)
+    if (drink.base === 'green-tea' && drink.milk === null && drink.toppings.length === 0) {
+        return cupImages.greenTeaWater;
+    }
+
+    // Check for honey only (no base, no milk, only honey topping)
+    const hasOnlyHoney = drink.toppings.length === 1 && drink.toppings.includes('honey') && drink.base === null && drink.milk === null;
+    if (hasOnlyHoney) {
+        return cupImages.honeyOnly;
+    }
+
+    // Check for cream only (no base, no milk, only cream topping)
+    const hasOnlyCream = drink.toppings.length === 1 && drink.toppings.includes('cream') && drink.base === null && drink.milk === null;
+    if (hasOnlyCream) {
+        return cupImages.creamOnly;
+    }
+
     // Empty cup
     return cupImages.empty;
 }
@@ -1099,6 +1148,35 @@ function shouldHideLayers() {
     // 1. Chocolate only
     // 2. Chocolate + any liquid (milk or tea)
     if (hasChocolateSauce) {
+        return true;
+    }
+
+    // Check for strawberry + mango combination
+    const hasStrawberry = drink.toppings.includes('strawberry');
+    const hasMango = drink.toppings.includes('mango');
+    if (hasStrawberry && hasMango) {
+        return true;
+    }
+
+    // Check for jasmine tea water only
+    if (drink.base === 'jasmine-tea' && drink.milk === null && drink.toppings.length === 0) {
+        return true;
+    }
+
+    // Check for green tea water only
+    if (drink.base === 'green-tea' && drink.milk === null && drink.toppings.length === 0) {
+        return true;
+    }
+
+    // Check for honey only
+    const hasOnlyHoney = drink.toppings.length === 1 && drink.toppings.includes('honey') && drink.base === null && drink.milk === null;
+    if (hasOnlyHoney) {
+        return true;
+    }
+
+    // Check for cream only
+    const hasOnlyCream = drink.toppings.length === 1 && drink.toppings.includes('cream') && drink.base === null && drink.milk === null;
+    if (hasOnlyCream) {
         return true;
     }
 
