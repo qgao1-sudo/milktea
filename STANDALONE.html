@@ -439,11 +439,7 @@ const cupImages = {
     chocolateWater: new Image(),
     // Cream and pearl only
     creamOnly: new Image(),
-    pearlOnly: new Image(),
-    // Ice cream and tea only
-    iceCreamOnly: new Image(),
-    blackTeaOnly: new Image(),
-    greenTeaOnly: new Image()
+    pearlOnly: new Image()
 };
 
 cupImages.empty.src = '微信图片_20251202200937_7_1.png';
@@ -484,10 +480,6 @@ cupImages.chocolateWater.src = '巧克力水.png';
 // Cream and pearl only
 cupImages.creamOnly.src = '奶油杯子.png';
 cupImages.pearlOnly.src = '珍珠杯子.png';
-// Ice cream and tea only
-cupImages.iceCreamOnly.src = '杯子冰淇淋.png';
-cupImages.blackTeaOnly.src = '杯子红茶.png';
-cupImages.greenTeaOnly.src = '杯子绿茶.png';
 
 let cupImagesLoaded = 0;
 const totalCupImages = Object.keys(cupImages).length;
@@ -967,25 +959,6 @@ function getCurrentCupImage() {
         return cupImages.pearlOnly;
     }
 
-    // Check for ice cream only
-    if (hasIceCream && drink.toppings.length === 1 && !drink.base && !drink.milk) {
-        // Only ice cream, nothing else
-        return cupImages.iceCreamOnly;
-    }
-
-    // Check for black tea only
-    const hasBlackTea = drink.base === 'black-tea';
-    if (hasBlackTea && drink.toppings.length === 0 && !drink.milk) {
-        // Only black tea, nothing else
-        return cupImages.blackTeaOnly;
-    }
-
-    // Check for green tea only
-    if (hasGreenTea && drink.toppings.length === 0 && !drink.milk) {
-        // Only green tea, nothing else
-        return cupImages.greenTeaOnly;
-    }
-
     // Empty cup
     return cupImages.empty;
 }
@@ -1154,22 +1127,6 @@ function shouldHideLayers() {
 
     // Check for pearl only
     if (hasPearl && drink.toppings.length === 1 && !drink.base && !drink.milk) {
-        return true;
-    }
-
-    // Check for ice cream only
-    if (hasIceCream && drink.toppings.length === 1 && !drink.base && !drink.milk) {
-        return true;
-    }
-
-    // Check for black tea only
-    const hasBlackTea = drink.base === 'black-tea';
-    if (hasBlackTea && drink.toppings.length === 0 && !drink.milk) {
-        return true;
-    }
-
-    // Check for green tea only (hasGreenTea already defined earlier)
-    if (hasGreenTea && drink.toppings.length === 0 && !drink.milk) {
         return true;
     }
 
