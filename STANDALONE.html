@@ -310,6 +310,29 @@ deskSurfaceImage.onerror = () => {
     console.error('Failed to load desk surface image');
 };
 
+// Load button images for making mode
+const greenButtonImage = new Image();
+greenButtonImage.src = '绿色按钮.png';
+let greenButtonLoaded = false;
+greenButtonImage.onload = () => {
+    greenButtonLoaded = true;
+    console.log('Green button image loaded successfully');
+};
+greenButtonImage.onerror = () => {
+    console.error('Failed to load green button image');
+};
+
+const redButtonImage = new Image();
+redButtonImage.src = '红色按钮.png';
+let redButtonLoaded = false;
+redButtonImage.onload = () => {
+    redButtonLoaded = true;
+    console.log('Red button image loaded successfully');
+};
+redButtonImage.onerror = () => {
+    console.error('Failed to load red button image');
+};
+
 // Load poster images for serving mode
 const posterImages = {
     poster1: new Image(),
@@ -1843,15 +1866,25 @@ function drawMakingMode() {
     ctx.restore();
 
     // Complete button - moved left
-    ctx.fillStyle = '#2ecc71';
-    ctx.fillRect(300, 520, 200, 60);
+    if (greenButtonLoaded) {
+        ctx.drawImage(greenButtonImage, 300, 520, 200, 60);
+    } else {
+        // Fallback if image not loaded
+        ctx.fillStyle = '#2ecc71';
+        ctx.fillRect(300, 520, 200, 60);
+    }
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 24px Arial';
     ctx.fillText('✅ Complete', 330, 560);
 
     // Reset button - next to Complete
-    ctx.fillStyle = '#e74c3c';
-    ctx.fillRect(520, 520, 200, 60);
+    if (redButtonLoaded) {
+        ctx.drawImage(redButtonImage, 520, 520, 200, 60);
+    } else {
+        // Fallback if image not loaded
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(520, 520, 200, 60);
+    }
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 24px Arial';
     ctx.fillText('🔄 Reset', 570, 560);
