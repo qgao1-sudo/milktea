@@ -584,7 +584,7 @@ const game = {
     currentCustomer: null,
     customerX: -100, // Customer position for walking animation
     customerY: 220,
-    customerTargetX: 600, // Target position at counter
+    customerTargetX: 700, // Target position at counter - moved closer to register
     customerState: 'none', // 'walking', 'arrived', 'none'
     customerWalkFrame: 0, // Animation frame for walking (0 or 1)
     customerFrameCounter: 0, // Counter for frame switching
@@ -1233,9 +1233,9 @@ function drawCustomer() {
 
         // Draw customer image if loaded
         if (currentImage && currentImage.complete) {
-            // Draw image centered on position
-            const imgWidth = 120;
-            const imgHeight = 180;
+            // Draw image centered on position - enlarged
+            const imgWidth = 160;
+            const imgHeight = 240;
             ctx.drawImage(currentImage, x - imgWidth / 2, y - imgHeight / 2, imgWidth, imgHeight);
         } else {
             // Fallback to emoji if image not loaded
@@ -1257,18 +1257,18 @@ function drawCustomer() {
 
 // Helper function to draw emoji-based customer
 function drawCustomerEmoji(x, y) {
-    // Upper body (torso visible above counter)
+    // Upper body (torso visible above counter) - enlarged
     ctx.fillStyle = game.currentCustomer.color;
-    ctx.fillRect(x - 50, y + 50, 100, 100);
+    ctx.fillRect(x - 65, y + 65, 130, 130);
 
-    // Head
+    // Head - enlarged
     ctx.beginPath();
-    ctx.arc(x, y, 60, 0, Math.PI * 2);
+    ctx.arc(x, y, 80, 0, Math.PI * 2);
     ctx.fill();
 
-    // Face sprite - large and clear
-    ctx.font = '90px Arial';
-    ctx.fillText(game.currentCustomer.sprite, x - 45, y + 30);
+    // Face sprite - larger and clearer
+    ctx.font = '120px Arial';
+    ctx.fillText(game.currentCustomer.sprite, x - 60, y + 40);
 }
 
 function drawDrinkCup() {
@@ -1334,10 +1334,10 @@ function drawDrinkCup() {
 
 function drawTeaMachine() {
     // Tea brewing machine - moved left and up towards customer
-    const x = 400; // Moved left
+    const x = 250; // Moved further left
     const y = 300; // Moved up towards customer
-    const width = 200; // Larger size
-    const height = 280; // Larger size
+    const width = 250; // Enlarged
+    const height = 350; // Enlarged
 
     if (teaMachineLoaded) {
         // Draw the tea machine image
