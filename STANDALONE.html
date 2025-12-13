@@ -437,6 +437,9 @@ const cupImages = {
     // Chocolate series
     chocolate: new Image(),
     chocolateWater: new Image(),
+    // Chocolate + fruit combinations
+    chocolateStrawberry: new Image(),
+    chocolateMango: new Image(),
     // Cream and pearl only
     creamOnly: new Image(),
     pearlOnly: new Image(),
@@ -481,6 +484,9 @@ cupImages.kiwi.src = '猕猴桃.png';
 // Chocolate series
 cupImages.chocolate.src = '巧克力.png';
 cupImages.chocolateWater.src = '巧克力水.png';
+// Chocolate + fruit combinations
+cupImages.chocolateStrawberry.src = '巧克力草莓.png';
+cupImages.chocolateMango.src = '巧克力芒果.png';
 // Cream and pearl only
 cupImages.creamOnly.src = '奶油杯子.png';
 cupImages.pearlOnly.src = '珍珠杯子.png';
@@ -940,10 +946,22 @@ function getCurrentCupImage() {
         return cupImages.kiwi;
     }
 
-    // Check for chocolate series
+    // Check for chocolate + fruit combinations
     const hasChocolateSauce = drink.toppings.includes('chocolate');
+    const hasStrawberryTopping = drink.toppings.includes('strawberry');
+    const hasMangoTopping = drink.toppings.includes('mango');
     const hasAnyLiquid = drink.milk !== null || drink.base !== null;
 
+    // Check for chocolate + fruit combinations (only these 2 ingredients, no liquid)
+    if (hasChocolateSauce && !hasAnyLiquid && drink.toppings.length === 2) {
+        if (hasStrawberryTopping) {
+            return cupImages.chocolateStrawberry;
+        } else if (hasMangoTopping) {
+            return cupImages.chocolateMango;
+        }
+    }
+
+    // Check for chocolate series (without specific fruits)
     if (hasChocolateSauce) {
         // Chocolate series:
         // 1. Chocolate only -> 巧克力.png
