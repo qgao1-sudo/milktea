@@ -2022,6 +2022,9 @@ canvas.addEventListener('click', (e) => {
             game.mode = 'making';
             game.ingredientScrollOffset = 0; // Reset scroll when entering making mode
             canvas.style.cursor = 'grab';
+            // Hide thought bubble when entering making mode
+            const bubble = document.getElementById('thoughtBubble');
+            bubble.style.display = 'none';
             return;
         }
 
