@@ -1234,8 +1234,8 @@ function drawCustomer() {
         // Draw customer image if loaded
         if (currentImage && currentImage.complete) {
             // Draw image centered on position - enlarged
-            const imgWidth = 160;
-            const imgHeight = 240;
+            const imgWidth = 200;
+            const imgHeight = 300;
             ctx.drawImage(currentImage, x - imgWidth / 2, y - imgHeight / 2, imgWidth, imgHeight);
         } else {
             // Fallback to emoji if image not loaded
@@ -1257,18 +1257,18 @@ function drawCustomer() {
 
 // Helper function to draw emoji-based customer
 function drawCustomerEmoji(x, y) {
-    // Upper body (torso visible above counter) - enlarged
+    // Upper body (torso visible above counter) - enlarged more
     ctx.fillStyle = game.currentCustomer.color;
-    ctx.fillRect(x - 65, y + 65, 130, 130);
+    ctx.fillRect(x - 80, y + 80, 160, 160);
 
-    // Head - enlarged
+    // Head - enlarged more
     ctx.beginPath();
-    ctx.arc(x, y, 80, 0, Math.PI * 2);
+    ctx.arc(x, y, 100, 0, Math.PI * 2);
     ctx.fill();
 
     // Face sprite - larger and clearer
-    ctx.font = '120px Arial';
-    ctx.fillText(game.currentCustomer.sprite, x - 60, y + 40);
+    ctx.font = '150px Arial';
+    ctx.fillText(game.currentCustomer.sprite, x - 75, y + 50);
 }
 
 function drawDrinkCup() {
@@ -1334,8 +1334,8 @@ function drawDrinkCup() {
 
 function drawTeaMachine() {
     // Tea brewing machine - moved left and up towards customer
-    const x = 250; // Moved further left
-    const y = 300; // Moved up towards customer
+    const x = 150; // Moved further left
+    const y = 250; // Moved up towards customer
     const width = 250; // Enlarged
     const height = 350; // Enlarged
 
