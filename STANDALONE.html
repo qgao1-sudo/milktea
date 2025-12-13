@@ -436,7 +436,10 @@ const cupImages = {
     kiwi: new Image(),
     // Chocolate series
     chocolate: new Image(),
-    chocolateWater: new Image()
+    chocolateWater: new Image(),
+    // Cream and pearl only
+    creamOnly: new Image(),
+    pearlOnly: new Image()
 };
 
 cupImages.empty.src = '微信图片_20251202200937_7_1.png';
@@ -474,6 +477,9 @@ cupImages.kiwi.src = '猕猴桃.png';
 // Chocolate series
 cupImages.chocolate.src = '巧克力.png';
 cupImages.chocolateWater.src = '巧克力水.png';
+// Cream and pearl only
+cupImages.creamOnly.src = '奶油杯子.png';
+cupImages.pearlOnly.src = '珍珠杯子.png';
 
 let cupImagesLoaded = 0;
 const totalCupImages = Object.keys(cupImages).length;
@@ -941,6 +947,18 @@ function getCurrentCupImage() {
         }
     }
 
+    // Check for cream only
+    if (hasCream && drink.toppings.length === 1 && !drink.base && !drink.milk) {
+        // Only cream, nothing else
+        return cupImages.creamOnly;
+    }
+
+    // Check for pearl only
+    if (hasPearl && drink.toppings.length === 1 && !drink.base && !drink.milk) {
+        // Only pearl, nothing else
+        return cupImages.pearlOnly;
+    }
+
     // Empty cup
     return cupImages.empty;
 }
@@ -1099,6 +1117,16 @@ function shouldHideLayers() {
     // 1. Chocolate only
     // 2. Chocolate + any liquid (milk or tea)
     if (hasChocolateSauce) {
+        return true;
+    }
+
+    // Check for cream only
+    if (hasCream && drink.toppings.length === 1 && !drink.base && !drink.milk) {
+        return true;
+    }
+
+    // Check for pearl only
+    if (hasPearl && drink.toppings.length === 1 && !drink.base && !drink.milk) {
         return true;
     }
 
