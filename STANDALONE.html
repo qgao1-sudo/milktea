@@ -1748,8 +1748,8 @@ function drawMakingMode() {
 
     // Ingredient options - categorized display
     const startX = 820, startY = 80;
-    const boxWidth = 80, boxHeight = 80;
-    const spacingX = 95, spacingY = 95;
+    const boxWidth = 100, boxHeight = 100;
+    const spacingX = 120, spacingY = 130;
 
     // Create a clipping region for ingredients to enable scrolling
     ctx.save();
@@ -1807,16 +1807,16 @@ function drawMakingMode() {
                 // Draw tea image instead of emoji
                 ctx.drawImage(teaImages[ing.id], x, y, boxWidth, boxHeight);
             } else {
-                // Draw emoji as fallback
-                ctx.font = '36px Arial';
-                ctx.fillText(ing.emoji, x + 14, y + 50);
+                // Draw emoji as fallback - centered in larger box
+                ctx.font = '48px Arial';
+                ctx.fillText(ing.emoji, x + 18, y + 62);
             }
 
-            // Name
+            // Name - below the box
             ctx.fillStyle = '#2c3e50';
-            ctx.font = '10px Arial';
+            ctx.font = 'bold 12px Arial';
             const nameWidth = ctx.measureText(ing.name).width;
-            ctx.fillText(ing.name, x + (boxWidth - nameWidth) / 2, y + 70);
+            ctx.fillText(ing.name, x + (boxWidth - nameWidth) / 2, y + boxHeight + 15);
         });
 
         currentY += Math.ceil(items.length / 3) * spacingY + 15;
@@ -2026,8 +2026,8 @@ canvas.addEventListener('click', (e) => {
 
         // Check if clicked on ingredients (categorized layout)
         const startX = 820, startY = 80;
-        const boxWidth = 80, boxHeight = 80;
-        const spacingX = 95, spacingY = 95;
+        const boxWidth = 100, boxHeight = 100;
+        const spacingX = 120, spacingY = 130;
 
         let currentY = startY - game.ingredientScrollOffset;
 
