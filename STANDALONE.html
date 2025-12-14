@@ -2191,6 +2191,10 @@ canvas.addEventListener('click', (e) => {
         const boxWidth = 100, boxHeight = 100;
         const spacingX = 120, spacingY = 130;
 
+        // Clipping region bounds (same as in drawing)
+        const clipTop = startY - 30;
+        const clipBottom = clipTop + 660;
+
         let currentY = startY - game.ingredientScrollOffset;
 
         // Group ingredients by category
@@ -2210,6 +2214,11 @@ canvas.addEventListener('click', (e) => {
             items.forEach((ing, i) => {
                 const ingX = startX + (i % 3) * spacingX;
                 const ingY = currentY + Math.floor(i / 3) * spacingY;
+
+                // Only check click if ingredient is visible in clipping region
+                if (ingY + boxHeight < clipTop || ingY > clipBottom) {
+                    return; // Skip ingredients outside visible area
+                }
 
                 if (x >= ingX && x <= ingX + boxWidth && y >= ingY && y <= ingY + boxHeight) {
                     const ingData = ingredientDB[ing.id];
