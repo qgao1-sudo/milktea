@@ -1795,7 +1795,7 @@ function drawMakingMode() {
     // Create a clipping region for ingredients to enable scrolling
     ctx.save();
     ctx.beginPath();
-    ctx.rect(startX - 10, startY - 30, 400, 620);
+    ctx.rect(startX - 10, startY - 30, 400, 660);
     ctx.clip();
 
     let currentY = startY - game.ingredientScrollOffset;
@@ -2010,12 +2010,14 @@ function updateCustomer() {
             game.customerX = game.customerTargetX;
             game.customerState = 'arrived';
 
-            // Show thought bubble when arrived
-            const bubble = document.getElementById('thoughtBubble');
-            bubble.style.display = 'block';
-            bubble.style.left = (game.customerX + 150) + 'px';
-            bubble.style.top = '20px';
-            bubble.innerHTML = `<strong>${game.currentCustomer.name}:</strong><br>"${game.currentCustomer.order.text}"`;
+            // Show thought bubble when arrived (but only in serving mode, NOT in making mode)
+            if (game.mode === 'serving') {
+                const bubble = document.getElementById('thoughtBubble');
+                bubble.style.display = 'block';
+                bubble.style.left = (game.customerX + 150) + 'px';
+                bubble.style.top = '20px';
+                bubble.innerHTML = `<strong>${game.currentCustomer.name}:</strong><br>"${game.currentCustomer.order.text}"`;
+            }
         }
     }
 }
