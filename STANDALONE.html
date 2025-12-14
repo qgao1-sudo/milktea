@@ -423,6 +423,27 @@ Object.keys(teaImages).forEach(key => {
     };
 });
 
+// Load emoji images for specific ingredients
+const emojiImages = {
+    'jasmine-tea': new Image(),
+    'cream': new Image(),
+    'honey': new Image()
+};
+emojiImages['jasmine-tea'].src = 'emoji茉莉花茶.png';
+emojiImages['cream'].src = 'emoji奶油.png';
+emojiImages['honey'].src = 'emoji蜂蜜.png';
+
+let emojiImagesLoaded = 0;
+Object.keys(emojiImages).forEach(key => {
+    emojiImages[key].onload = () => {
+        emojiImagesLoaded++;
+        console.log(`Emoji image ${key} loaded`);
+    };
+    emojiImages[key].onerror = () => {
+        console.error(`Failed to load emoji image: ${key}`);
+    };
+});
+
 // Load cup images for different stages
 const cupImages = {
     empty: new Image(),
@@ -1841,12 +1862,15 @@ function drawMakingMode() {
             if ((ing.id === 'strawberry' || ing.id === 'mango' || ing.id === 'lychee' || ing.id === 'passion-fruit' || ing.id === 'kiwi' || ing.id === 'blueberry' || ing.id === 'lemon' || ing.id === 'orange') && fruitBoxImages[ing.id] && fruitBoxImages[ing.id].complete) {
                 // Draw fruit box image instead of emoji
                 ctx.drawImage(fruitBoxImages[ing.id], x, y, boxWidth, boxHeight);
-            } else if ((ing.id === 'chocolate' || ing.id === 'honey') && sauceImages[ing.id] && sauceImages[ing.id].complete) {
+            } else if (ing.id === 'chocolate' && sauceImages[ing.id] && sauceImages[ing.id].complete) {
                 // Draw sauce image instead of emoji
                 ctx.drawImage(sauceImages[ing.id], x, y, boxWidth, boxHeight);
             } else if ((ing.id === 'black-tea' || ing.id === 'green-tea') && teaImages[ing.id] && teaImages[ing.id].complete) {
                 // Draw tea image instead of emoji
                 ctx.drawImage(teaImages[ing.id], x, y, boxWidth, boxHeight);
+            } else if (emojiImages[ing.id] && emojiImages[ing.id].complete) {
+                // Draw emoji image for jasmine-tea, cream, honey
+                ctx.drawImage(emojiImages[ing.id], x, y, boxWidth, boxHeight);
             } else {
                 // Draw emoji as fallback - centered in larger box
                 ctx.font = '48px Arial';
