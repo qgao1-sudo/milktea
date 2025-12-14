@@ -2221,13 +2221,7 @@ canvas.addEventListener('click', (e) => {
                         // Allow clicking milk multiple times (will replace if different)
                         game.currentDrink.milk = ing.id;
                     } else if (ingData.type === 'fruit') {
-                        // For fruits: remove all OTHER fruits (keeping same fruit), then add the new one
-                        const otherFruits = game.currentDrink.toppings.filter(t => ingredientDB[t].type === 'fruit' && t !== ing.id);
-                        if (otherFruits.length > 0) {
-                            // If there are other fruits, remove all fruits first
-                            game.currentDrink.toppings = game.currentDrink.toppings.filter(t => ingredientDB[t].type !== 'fruit');
-                        }
-                        // Add the new fruit (allow multiple of the same fruit)
+                        // Allow unlimited fruit clicks - no deletion, just add
                         game.currentDrink.toppings.push(ing.id);
                     } else if (ingData.type === 'topping') {
                         // No limit on toppings - can add as many as needed
