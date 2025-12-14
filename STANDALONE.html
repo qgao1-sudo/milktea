@@ -2212,7 +2212,8 @@ canvas.addEventListener('click', (e) => {
                         }
                         // Add the new fruit (allow multiple of the same fruit)
                         game.currentDrink.toppings.push(ing.id);
-                    } else if (ingData.type === 'topping' && game.currentDrink.toppings.length < 5) {
+                    } else if (ingData.type === 'topping') {
+                        // No limit on toppings - can add as many as needed
                         game.currentDrink.toppings.push(ing.id);
                     }
                 }
