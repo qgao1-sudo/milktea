@@ -1073,15 +1073,15 @@ function getCurrentCupImage() {
         }
     }
 
-    // Check for lychee - if has lychee, show lychee cup
+    // Check for lychee only
     const hasLychee = drink.toppings.includes('lychee');
-    if (hasLychee) {
+    if (hasLychee && toppingsExactlyMatch(drink.toppings, ['lychee'])) {
         return cupImages.lychee;
     }
 
-    // Check for kiwi - if has kiwi, show kiwi cup
+    // Check for kiwi only
     const hasKiwi = drink.toppings.includes('kiwi');
-    if (hasKiwi) {
+    if (hasKiwi && toppingsExactlyMatch(drink.toppings, ['kiwi'])) {
         return cupImages.kiwi;
     }
 
@@ -1121,29 +1121,29 @@ function getCurrentCupImage() {
         }
     }
 
-    // Check for cream - if has cream, show cream cup
-    if (hasCream) {
+    // Check for cream only
+    if (hasCream && toppingsExactlyMatch(drink.toppings, ['cream'])) {
         return cupImages.creamOnly;
     }
 
-    // Check for pearl - if has pearl, show pearl cup
-    if (hasPearl) {
+    // Check for pearl only
+    if (hasPearl && toppingsExactlyMatch(drink.toppings, ['pearl'])) {
         return cupImages.pearlOnly;
     }
 
-    // Check for ice cream - if has ice cream, show ice cream cup
-    if (hasIceCream) {
+    // Check for ice cream only
+    if (hasIceCream && toppingsExactlyMatch(drink.toppings, ['ice-cream'])) {
         return cupImages.iceCreamOnly;
     }
 
-    // Check for black tea - if has black tea, show black tea cup
+    // Check for black tea only
     const hasBlackTea = drink.base === 'black-tea';
-    if (hasBlackTea) {
+    if (hasBlackTea && drink.toppings.length === 0 && !drink.milk) {
         return cupImages.blackTeaOnly;
     }
 
-    // Check for green tea - if has green tea, show green tea cup
-    if (hasGreenTea) {
+    // Check for green tea only
+    if (hasGreenTea && drink.toppings.length === 0 && !drink.milk) {
         return cupImages.greenTeaOnly;
     }
 
