@@ -2213,19 +2213,24 @@ canvas.addEventListener('click', (e) => {
 
                 if (x >= ingX && x <= ingX + boxWidth && y >= ingY && y <= ingY + boxHeight) {
                     const ingData = ingredientDB[ing.id];
+                    console.log(`Clicked on ${ing.id} (type: ${ingData.type})`);
                     // Allow unlimited clicks on all ingredients
                     if (ingData.type === 'base') {
                         // Allow clicking base multiple times (will replace if different)
                         game.currentDrink.base = ing.id;
+                        console.log(`Base set to: ${ing.id}`);
                     } else if (ingData.type === 'milk') {
                         // Allow clicking milk multiple times (will replace if different)
                         game.currentDrink.milk = ing.id;
+                        console.log(`Milk set to: ${ing.id}`);
                     } else if (ingData.type === 'fruit') {
                         // Allow unlimited fruit clicks - no deletion, just add
                         game.currentDrink.toppings.push(ing.id);
+                        console.log(`Fruit added: ${ing.id}, total toppings: ${game.currentDrink.toppings.length}`);
                     } else if (ingData.type === 'topping') {
                         // No limit on toppings - can add as many as needed
                         game.currentDrink.toppings.push(ing.id);
+                        console.log(`Topping added: ${ing.id}, total toppings: ${game.currentDrink.toppings.length}`);
                     }
                 }
             });
