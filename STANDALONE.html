@@ -2213,11 +2213,15 @@ canvas.addEventListener('click', (e) => {
 
                 if (x >= ingX && x <= ingX + boxWidth && y >= ingY && y <= ingY + boxHeight) {
                     const ingData = ingredientDB[ing.id];
-                    // Add to drink - increased limit to 5
-                    if (ingData.type === 'base' && !game.currentDrink.base) {
+                    // No limits - allow unlimited clicks on all ingredients
+                    if (ingData.type === 'base') {
+                        // Set base field AND add to toppings for unlimited clicks
                         game.currentDrink.base = ing.id;
-                    } else if (ingData.type === 'milk' && !game.currentDrink.milk) {
+                        game.currentDrink.toppings.push(ing.id);
+                    } else if (ingData.type === 'milk') {
+                        // Set milk field AND add to toppings for unlimited clicks
                         game.currentDrink.milk = ing.id;
+                        game.currentDrink.toppings.push(ing.id);
                     } else if (ingData.type === 'fruit') {
                         // For fruits: remove all OTHER fruits (keeping same fruit), then add the new one
                         const otherFruits = game.currentDrink.toppings.filter(t => ingredientDB[t].type === 'fruit' && t !== ing.id);
