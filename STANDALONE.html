@@ -880,6 +880,17 @@ function toppingsMatchExactly(toppings, expected) {
     return toppingsCopy.every((t, i) => t === expectedCopy[i]);
 }
 
+// Helper function to check if toppings contain required ingredients (ignoring quantity)
+function toppingsContainOnly(toppings, required) {
+    // Get unique topping types
+    const uniqueToppings = [...new Set(toppings)];
+    const uniqueRequired = [...new Set(required)];
+
+    // Check if they match (order doesn't matter)
+    if (uniqueToppings.length !== uniqueRequired.length) return false;
+    return uniqueRequired.every(req => uniqueToppings.includes(req));
+}
+
 function getCurrentCupImage() {
     // Determine which cup image to show based on current drink ingredients
     const drink = game.currentDrink;
@@ -893,17 +904,17 @@ function getCurrentCupImage() {
         // Lemon series
         if (hasLemon && hasHoney && hasJasmineTea) {
             // Stage 3: lemon + honey + jasmine tea
-            if (toppingsMatchExactly(drink.toppings, ['lemon', 'honey']) && drink.base === 'jasmine-tea' && !drink.milk) {
+            if (toppingsContainOnly(drink.toppings, ['lemon', 'honey']) && drink.base === 'jasmine-tea' && !drink.milk) {
                 return cupImages.lemonHoneyJasmine;
             }
         } else if (hasLemon && hasHoney) {
             // Stage 2: lemon + honey
-            if (toppingsMatchExactly(drink.toppings, ['lemon', 'honey']) && !drink.base && !drink.milk) {
+            if (toppingsContainOnly(drink.toppings, ['lemon', 'honey']) && !drink.base && !drink.milk) {
                 return cupImages.lemonHoney;
             }
         } else if (hasLemon) {
             // Stage 1: lemon only
-            if (toppingsMatchExactly(drink.toppings, ['lemon']) && !drink.base && !drink.milk) {
+            if (toppingsContainOnly(drink.toppings, ['lemon']) && !drink.base && !drink.milk) {
                 return cupImages.lemon;
             }
         }
@@ -917,17 +928,17 @@ function getCurrentCupImage() {
         // Orange series
         if (hasOrange && hasHoney && hasGreenTea) {
             // Stage 3: orange + honey + green tea
-            if (toppingsMatchExactly(drink.toppings, ['orange', 'honey']) && drink.base === 'green-tea' && !drink.milk) {
+            if (toppingsContainOnly(drink.toppings, ['orange', 'honey']) && drink.base === 'green-tea' && !drink.milk) {
                 return cupImages.orangeHoneyGreenTea;
             }
         } else if (hasOrange && hasHoney) {
             // Stage 2: orange + honey
-            if (toppingsMatchExactly(drink.toppings, ['orange', 'honey']) && !drink.base && !drink.milk) {
+            if (toppingsContainOnly(drink.toppings, ['orange', 'honey']) && !drink.base && !drink.milk) {
                 return cupImages.orangeHoney;
             }
         } else if (hasOrange) {
             // Stage 1: orange only
-            if (toppingsMatchExactly(drink.toppings, ['orange']) && !drink.base && !drink.milk) {
+            if (toppingsContainOnly(drink.toppings, ['orange']) && !drink.base && !drink.milk) {
                 return cupImages.orange;
             }
         }
@@ -942,31 +953,31 @@ function getCurrentCupImage() {
     if (strawberryCount >= 2 && hasMilk && hasIceCream && hasChocolate) {
         // Final stage: strawberry + milk + ice cream + chocolate + strawberry
         // Must have exactly: 2 strawberry, ice-cream, chocolate
-        if (toppingsMatchExactly(drink.toppings, ['strawberry', 'strawberry', 'ice-cream', 'chocolate']) && drink.milk && !drink.base) {
+        if (toppingsContainOnly(drink.toppings, ['strawberry', 'strawberry', 'ice-cream', 'chocolate']) && drink.milk && !drink.base) {
             return cupImages.complete;
         }
     } else if (strawberryCount >= 1 && hasMilk && hasIceCream && hasChocolate) {
         // Stage 4: strawberry + milk + ice cream + chocolate
         // Must have exactly: 1 strawberry, ice-cream, chocolate
-        if (toppingsMatchExactly(drink.toppings, ['strawberry', 'ice-cream', 'chocolate']) && drink.milk && !drink.base) {
+        if (toppingsContainOnly(drink.toppings, ['strawberry', 'ice-cream', 'chocolate']) && drink.milk && !drink.base) {
             return cupImages.strawberryMilkIceCreamChocolate;
         }
     } else if (strawberryCount >= 1 && hasMilk && hasIceCream) {
         // Stage 3: strawberry + milk + ice cream
         // Must have exactly: 1 strawberry, ice-cream
-        if (toppingsMatchExactly(drink.toppings, ['strawberry', 'ice-cream']) && drink.milk && !drink.base) {
+        if (toppingsContainOnly(drink.toppings, ['strawberry', 'ice-cream']) && drink.milk && !drink.base) {
             return cupImages.strawberryMilkIceCream;
         }
     } else if (strawberryCount >= 1 && hasMilk) {
         // Stage 2: strawberry + milk
         // Must have exactly: 1 strawberry
-        if (toppingsMatchExactly(drink.toppings, ['strawberry']) && drink.milk && !drink.base) {
+        if (toppingsContainOnly(drink.toppings, ['strawberry']) && drink.milk && !drink.base) {
             return cupImages.strawberryMilk;
         }
     } else if (strawberryCount >= 1) {
         // Stage 1: strawberry only
         // Must have exactly: 1 strawberry, no milk, no base
-        if (toppingsMatchExactly(drink.toppings, ['strawberry']) && !drink.milk && !drink.base) {
+        if (toppingsContainOnly(drink.toppings, ['strawberry']) && !drink.milk && !drink.base) {
             return cupImages.strawberry;
         }
     }
@@ -979,17 +990,17 @@ function getCurrentCupImage() {
         // Blueberry series
         if (hasBlueberry && hasMilk && hasCream) {
             // Stage 3: blueberry + milk + cream
-            if (toppingsMatchExactly(drink.toppings, ['blueberry', 'cream']) && drink.milk && !drink.base) {
+            if (toppingsContainOnly(drink.toppings, ['blueberry', 'cream']) && drink.milk && !drink.base) {
                 return cupImages.blueberryMilkCream;
             }
         } else if (hasBlueberry && hasMilk) {
             // Stage 2: blueberry + milk
-            if (toppingsMatchExactly(drink.toppings, ['blueberry']) && drink.milk && !drink.base) {
+            if (toppingsContainOnly(drink.toppings, ['blueberry']) && drink.milk && !drink.base) {
                 return cupImages.blueberryMilk;
             }
         } else if (hasBlueberry) {
             // Stage 1: blueberry only
-            if (toppingsMatchExactly(drink.toppings, ['blueberry']) && !drink.milk && !drink.base) {
+            if (toppingsContainOnly(drink.toppings, ['blueberry']) && !drink.milk && !drink.base) {
                 return cupImages.blueberry;
             }
         }
@@ -1002,22 +1013,22 @@ function getCurrentCupImage() {
         // Mango series
         if (hasMango && hasMilk && hasCream && hasIceCream) {
             // Stage 4: mango + milk + cream + ice cream
-            if (toppingsMatchExactly(drink.toppings, ['mango', 'cream', 'ice-cream']) && drink.milk && !drink.base) {
+            if (toppingsContainOnly(drink.toppings, ['mango', 'cream', 'ice-cream']) && drink.milk && !drink.base) {
                 return cupImages.mangoMilkCreamIceCream;
             }
         } else if (hasMango && hasMilk && hasCream) {
             // Stage 3: mango + milk + cream
-            if (toppingsMatchExactly(drink.toppings, ['mango', 'cream']) && drink.milk && !drink.base) {
+            if (toppingsContainOnly(drink.toppings, ['mango', 'cream']) && drink.milk && !drink.base) {
                 return cupImages.mangoMilkCream;
             }
         } else if (hasMango && hasMilk) {
             // Stage 2: mango + milk
-            if (toppingsMatchExactly(drink.toppings, ['mango']) && drink.milk && !drink.base) {
+            if (toppingsContainOnly(drink.toppings, ['mango']) && drink.milk && !drink.base) {
                 return cupImages.mangoMilk;
             }
         } else if (hasMango) {
             // Stage 1: mango only
-            if (toppingsMatchExactly(drink.toppings, ['mango']) && !drink.milk && !drink.base) {
+            if (toppingsContainOnly(drink.toppings, ['mango']) && !drink.milk && !drink.base) {
                 return cupImages.mango;
             }
         }
@@ -1031,17 +1042,17 @@ function getCurrentCupImage() {
         // Passion fruit series
         if (hasPassionFruit && hasJasmineTea && hasPearl) {
             // Stage 3: passion fruit + jasmine tea + pearl
-            if (toppingsMatchExactly(drink.toppings, ['passion-fruit', 'pearl']) && drink.base === 'jasmine-tea' && !drink.milk) {
+            if (toppingsContainOnly(drink.toppings, ['passion-fruit', 'pearl']) && drink.base === 'jasmine-tea' && !drink.milk) {
                 return cupImages.passionFruitJasminePearl;
             }
         } else if (hasPassionFruit && hasJasmineTea) {
             // Stage 2: passion fruit + jasmine tea
-            if (toppingsMatchExactly(drink.toppings, ['passion-fruit']) && drink.base === 'jasmine-tea' && !drink.milk) {
+            if (toppingsContainOnly(drink.toppings, ['passion-fruit']) && drink.base === 'jasmine-tea' && !drink.milk) {
                 return cupImages.passionFruitJasmine;
             }
         } else if (hasPassionFruit) {
             // Stage 1: passion fruit only
-            if (toppingsMatchExactly(drink.toppings, ['passion-fruit']) && !drink.base && !drink.milk) {
+            if (toppingsContainOnly(drink.toppings, ['passion-fruit']) && !drink.base && !drink.milk) {
                 return cupImages.passionFruit;
             }
         }
@@ -1050,7 +1061,7 @@ function getCurrentCupImage() {
     // Check for lychee - strict matching
     const hasLychee = drink.toppings.includes('lychee');
     if (hasLychee) {
-        if (toppingsMatchExactly(drink.toppings, ['lychee']) && !drink.base && !drink.milk) {
+        if (toppingsContainOnly(drink.toppings, ['lychee']) && !drink.base && !drink.milk) {
             return cupImages.lychee;
         }
     }
@@ -1058,7 +1069,7 @@ function getCurrentCupImage() {
     // Check for kiwi - strict matching
     const hasKiwi = drink.toppings.includes('kiwi');
     if (hasKiwi) {
-        if (toppingsMatchExactly(drink.toppings, ['kiwi']) && !drink.base && !drink.milk) {
+        if (toppingsContainOnly(drink.toppings, ['kiwi']) && !drink.base && !drink.milk) {
             return cupImages.kiwi;
         }
     }
@@ -1074,15 +1085,15 @@ function getCurrentCupImage() {
 
     // Check for chocolate + fruit combinations (only these 2 ingredients, no liquid)
     if (hasChocolateSauce && !hasAnyLiquid && drink.toppings.length === 2) {
-        if (hasStrawberryTopping && toppingsMatchExactly(drink.toppings, ['chocolate', 'strawberry'])) {
+        if (hasStrawberryTopping && toppingsContainOnly(drink.toppings, ['chocolate', 'strawberry'])) {
             return cupImages.chocolateStrawberry;
-        } else if (hasMangoTopping && toppingsMatchExactly(drink.toppings, ['chocolate', 'mango'])) {
+        } else if (hasMangoTopping && toppingsContainOnly(drink.toppings, ['chocolate', 'mango'])) {
             return cupImages.chocolateMango;
-        } else if (hasLycheeTopping && toppingsMatchExactly(drink.toppings, ['chocolate', 'lychee'])) {
+        } else if (hasLycheeTopping && toppingsContainOnly(drink.toppings, ['chocolate', 'lychee'])) {
             return cupImages.chocolateLychee;
-        } else if (hasPassionFruitTopping && toppingsMatchExactly(drink.toppings, ['chocolate', 'passion-fruit'])) {
+        } else if (hasPassionFruitTopping && toppingsContainOnly(drink.toppings, ['chocolate', 'passion-fruit'])) {
             return cupImages.chocolatePassionFruit;
-        } else if (hasBlueberryTopping && toppingsMatchExactly(drink.toppings, ['chocolate', 'blueberry'])) {
+        } else if (hasBlueberryTopping && toppingsContainOnly(drink.toppings, ['chocolate', 'blueberry'])) {
             return cupImages.chocolateBlueberry;
         }
     }
@@ -1092,27 +1103,27 @@ function getCurrentCupImage() {
         // Chocolate series:
         // 1. Chocolate only -> 巧克力.png
         // 2. Chocolate + any liquid (milk or tea) -> 巧克力水.png
-        if (hasAnyLiquid && toppingsMatchExactly(drink.toppings, ['chocolate'])) {
+        if (hasAnyLiquid && toppingsContainOnly(drink.toppings, ['chocolate'])) {
             return cupImages.chocolateWater;
-        } else if (!hasAnyLiquid && toppingsMatchExactly(drink.toppings, ['chocolate'])) {
+        } else if (!hasAnyLiquid && toppingsContainOnly(drink.toppings, ['chocolate'])) {
             return cupImages.chocolate;
         }
     }
 
     // Check for cream only - strict matching
-    if (hasCream && toppingsMatchExactly(drink.toppings, ['cream']) && !drink.base && !drink.milk) {
+    if (hasCream && toppingsContainOnly(drink.toppings, ['cream']) && !drink.base && !drink.milk) {
         // Only cream, nothing else
         return cupImages.creamOnly;
     }
 
     // Check for pearl only - strict matching
-    if (hasPearl && toppingsMatchExactly(drink.toppings, ['pearl']) && !drink.base && !drink.milk) {
+    if (hasPearl && toppingsContainOnly(drink.toppings, ['pearl']) && !drink.base && !drink.milk) {
         // Only pearl, nothing else
         return cupImages.pearlOnly;
     }
 
     // Check for ice cream only - strict matching
-    if (hasIceCream && toppingsMatchExactly(drink.toppings, ['ice-cream']) && !drink.base && !drink.milk) {
+    if (hasIceCream && toppingsContainOnly(drink.toppings, ['ice-cream']) && !drink.base && !drink.milk) {
         // Only ice cream, nothing else
         return cupImages.iceCreamOnly;
     }
