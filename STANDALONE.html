@@ -493,6 +493,8 @@ const cupImages = {
     chocolateStrawberry: new Image(),
     chocolateMango: new Image(),
     chocolateLychee: new Image(),
+    chocolatePassionFruit: new Image(),
+    chocolateBlueberry: new Image(),
     // Cream and pearl only
     creamOnly: new Image(),
     pearlOnly: new Image(),
@@ -541,6 +543,8 @@ cupImages.chocolateWater.src = '巧克力水.png';
 cupImages.chocolateStrawberry.src = '巧克力草莓.png';
 cupImages.chocolateMango.src = '巧克力芒果.png';
 cupImages.chocolateLychee.src = '巧克力哈密瓜.png';
+cupImages.chocolatePassionFruit.src = '巧克力百香果.png';
+cupImages.chocolateBlueberry.src = '巧克力蓝莓.png';
 // Cream and pearl only
 cupImages.creamOnly.src = '奶油杯子.png';
 cupImages.pearlOnly.src = '珍珠杯子.png';
@@ -1064,6 +1068,8 @@ function getCurrentCupImage() {
     const hasStrawberryTopping = drink.toppings.includes('strawberry');
     const hasMangoTopping = drink.toppings.includes('mango');
     const hasLycheeTopping = drink.toppings.includes('lychee');
+    const hasPassionFruitTopping = drink.toppings.includes('passion-fruit');
+    const hasBlueberryTopping = drink.toppings.includes('blueberry');
     const hasAnyLiquid = drink.milk !== null || drink.base !== null;
 
     // Check for chocolate + fruit combinations (only these 2 ingredients, no liquid)
@@ -1074,6 +1080,10 @@ function getCurrentCupImage() {
             return cupImages.chocolateMango;
         } else if (hasLycheeTopping && toppingsMatchExactly(drink.toppings, ['chocolate', 'lychee'])) {
             return cupImages.chocolateLychee;
+        } else if (hasPassionFruitTopping && toppingsMatchExactly(drink.toppings, ['chocolate', 'passion-fruit'])) {
+            return cupImages.chocolatePassionFruit;
+        } else if (hasBlueberryTopping && toppingsMatchExactly(drink.toppings, ['chocolate', 'blueberry'])) {
+            return cupImages.chocolateBlueberry;
         }
     }
 
