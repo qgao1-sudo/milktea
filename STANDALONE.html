@@ -893,6 +893,11 @@ function toppingsContainAll(toppings, required) {
 function getCurrentCupImage() {
     // Determine which cup image to show based on current drink ingredients
     const drink = game.currentDrink;
+    console.log('getCurrentCupImage called:', {
+        toppings: drink.toppings,
+        base: drink.base,
+        milk: drink.milk
+    });
 
     // Check for lemon series first - with strict matching
     const hasLemon = drink.toppings.includes('lemon');
@@ -1057,20 +1062,16 @@ function getCurrentCupImage() {
         }
     }
 
-    // Check for lychee - strict matching
+    // Check for lychee - if has lychee, show lychee cup
     const hasLychee = drink.toppings.includes('lychee');
     if (hasLychee) {
-        if (toppingsContainAll(drink.toppings, ['lychee'])) {
-            return cupImages.lychee;
-        }
+        return cupImages.lychee;
     }
 
-    // Check for kiwi - strict matching
+    // Check for kiwi - if has kiwi, show kiwi cup
     const hasKiwi = drink.toppings.includes('kiwi');
     if (hasKiwi) {
-        if (toppingsContainAll(drink.toppings, ['kiwi'])) {
-            return cupImages.kiwi;
-        }
+        return cupImages.kiwi;
     }
 
     // Check for chocolate + fruit combinations - strict matching
@@ -1109,34 +1110,29 @@ function getCurrentCupImage() {
         }
     }
 
-    // Check for cream only - strict matching
-    if (hasCream && toppingsContainAll(drink.toppings, ['cream'])) {
-        // Only cream, nothing else
+    // Check for cream - if has cream, show cream cup
+    if (hasCream) {
         return cupImages.creamOnly;
     }
 
-    // Check for pearl only - strict matching
-    if (hasPearl && toppingsContainAll(drink.toppings, ['pearl'])) {
-        // Only pearl, nothing else
+    // Check for pearl - if has pearl, show pearl cup
+    if (hasPearl) {
         return cupImages.pearlOnly;
     }
 
-    // Check for ice cream only - strict matching
-    if (hasIceCream && toppingsContainAll(drink.toppings, ['ice-cream'])) {
-        // Only ice cream, nothing else
+    // Check for ice cream - if has ice cream, show ice cream cup
+    if (hasIceCream) {
         return cupImages.iceCreamOnly;
     }
 
-    // Check for black tea only
+    // Check for black tea - if has black tea, show black tea cup
     const hasBlackTea = drink.base === 'black-tea';
-    if (hasBlackTea && drink.toppings.length === 0) {
-        // Only black tea, nothing else
+    if (hasBlackTea) {
         return cupImages.blackTeaOnly;
     }
 
-    // Check for green tea only
-    if (hasGreenTea && drink.toppings.length === 0) {
-        // Only green tea, nothing else
+    // Check for green tea - if has green tea, show green tea cup
+    if (hasGreenTea) {
         return cupImages.greenTeaOnly;
     }
 
