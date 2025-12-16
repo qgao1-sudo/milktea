@@ -1198,16 +1198,22 @@ function getCurrentCupImage() {
                 'pearl': cupImages.pearlOnly,
                 'ice-cream': cupImages.iceCreamOnly,
                 'black-tea': cupImages.blackTeaOnly,
-                'green-tea': cupImages.greenTeaOnly
+                'green-tea': cupImages.greenTeaOnly,
+                'jasmine-tea': cupImages.empty, // Jasmine tea doesn't have a single image
+                'fresh-milk': cupImages.empty, // Milk doesn't have a single image
+                'oat-milk': cupImages.empty, // Oat milk doesn't have a single image
+                'honey': cupImages.empty // Honey doesn't have a single image (only in combos)
             };
 
             if (singleIngredientImages[currentIng]) {
+                console.log(`Returning image for ${currentIng}`);
                 return singleIngredientImages[currentIng];
             }
         }
     }
 
     // Empty cup
+    console.log('Returning empty cup - no matches found');
     return cupImages.empty;
 }
 
@@ -2313,28 +2319,32 @@ canvas.addEventListener('click', (e) => {
                 if (x >= ingX && x <= ingX + boxWidth && y >= ingY && y <= ingY + boxHeight) {
                     const ingData = ingredientDB[ing.id];
                     const clickedCategory = ingData.category;
-                    console.log(`Clicked on ${ing.id} (category: ${clickedCategory})`);
+                    console.log(`Clicked on ${ing.id} (category: ${clickedCategory}, type: ${ingData.type})`);
 
                     // Track last clicked ingredient for fallback display
                     game.lastClickedIngredient = ing.id;
 
+                    // If clicking a different category, lock previous category's selection
+                    if (game.currentSelectingCategory && game.currentSelectingCategory !== clickedCategory) {
+                        console.log(`Switching from ${game.currentSelectingCategory} to ${clickedCategory}, locking previous selection`);
+                    }
+
+                    // Update current selecting category for ALL ingredient types
+                    game.currentSelectingCategory = clickedCategory;
+
                     // Handle base and milk separately (they replace, not add to toppings)
                     if (ingData.type === 'base') {
                         game.currentDrink.base = ing.id;
+                        // Store in temp selection for category tracking
+                        game.tempCategorySelection[clickedCategory] = [ing.id];
                         console.log(`Base set to: ${ing.id}`);
                     } else if (ingData.type === 'milk') {
                         game.currentDrink.milk = ing.id;
+                        // Store in temp selection for category tracking
+                        game.tempCategorySelection[clickedCategory] = [ing.id];
                         console.log(`Milk set to: ${ing.id}`);
                     } else {
                         // For fruits and toppings
-                        // If clicking a different category, lock previous category's selection
-                        if (game.currentSelectingCategory && game.currentSelectingCategory !== clickedCategory) {
-                            console.log(`Switching from ${game.currentSelectingCategory} to ${clickedCategory}, locking previous selection`);
-                        }
-
-                        // Update current selecting category
-                        game.currentSelectingCategory = clickedCategory;
-
                         // Replace any previous selection in this category
                         game.tempCategorySelection[clickedCategory] = [ing.id];
                         console.log(`Temp selection for ${clickedCategory}: ${ing.id}`);
@@ -2342,8 +2352,14 @@ canvas.addEventListener('click', (e) => {
                         // Update toppings display to include all category selections
                         game.currentDrink.toppings = [];
                         for (let cat in game.tempCategorySelection) {
-                            game.tempCategorySelection[cat].forEach(id => {
-                                game.currentDrink.toppings.push(id);
+                            // Skip Drinks category as it contains base/milk, not toppings
+                            const catItems = game.tempCategorySelection[cat];
+                            catItems.forEach(itemId => {
+                                const itemData = ingredientDB[itemId];
+                                // Only add to toppings if it's not a base or milk
+                                if (itemData.type !== 'base' && itemData.type !== 'milk') {
+                                    game.currentDrink.toppings.push(itemId);
+                                }
                             });
                         }
                         console.log(`Total toppings:`, game.currentDrink.toppings);
@@ -2420,7 +2436,13 @@ function serveDrink() {
     }, 3000);
 }
 
-function resetDrink() { game.currentDrink = { base: null, milk: null, toppings: [], shaken: false }; }
+function resetDrink() {
+    game.currentDrink = { base: null, milk: null, toppings: [], shaken: false };
+    game.currentSelectingCategory = null;
+    game.tempCategorySelection = {};
+    game.lastClickedIngredient = null;
+    console.log('Drink reset - all selections cleared');
+}
 function closeResultModal() { document.getElementById('resultModal').classList.remove('active'); }
 function spawnCustomer() {
     // Select customer in order (rotating through the list)
