@@ -1929,17 +1929,19 @@ function drawMakingMode() {
 
         if (game.currentDrink.toppings.length > 0) {
             game.currentDrink.toppings.forEach((topping, i) => {
-                ctx.fillStyle = ingredientDB[topping].color;
-                ctx.fillRect(cupX + 10, layerY - i * 30, 130, 30);
+                if (ingredientDB[topping]) {
+                    ctx.fillStyle = ingredientDB[topping].color;
+                    ctx.fillRect(cupX + 10, layerY - i * 30, 130, 30);
+                }
             });
             layerY -= game.currentDrink.toppings.length * 30;
         }
-        if (game.currentDrink.milk) {
+        if (game.currentDrink.milk && ingredientDB[game.currentDrink.milk]) {
             ctx.fillStyle = ingredientDB[game.currentDrink.milk].color;
             ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
             layerY -= layerHeight;
         }
-        if (game.currentDrink.base) {
+        if (game.currentDrink.base && ingredientDB[game.currentDrink.base]) {
             ctx.fillStyle = ingredientDB[game.currentDrink.base].color;
             ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
         }
@@ -2126,17 +2128,19 @@ function drawFinishedDrink() {
 
         if (game.currentDrink.toppings.length > 0) {
             game.currentDrink.toppings.forEach((topping, i) => {
-                ctx.fillStyle = ingredientDB[topping].color;
-                ctx.fillRect(cupX + 10, layerY - i * 30, 130, 30);
+                if (ingredientDB[topping]) {
+                    ctx.fillStyle = ingredientDB[topping].color;
+                    ctx.fillRect(cupX + 10, layerY - i * 30, 130, 30);
+                }
             });
             layerY -= game.currentDrink.toppings.length * 30;
         }
-        if (game.currentDrink.milk) {
+        if (game.currentDrink.milk && ingredientDB[game.currentDrink.milk]) {
             ctx.fillStyle = ingredientDB[game.currentDrink.milk].color;
             ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
             layerY -= layerHeight;
         }
-        if (game.currentDrink.base) {
+        if (game.currentDrink.base && ingredientDB[game.currentDrink.base]) {
             ctx.fillStyle = ingredientDB[game.currentDrink.base].color;
             ctx.fillRect(cupX + 10, layerY - layerHeight, 130, layerHeight);
         }
@@ -2292,6 +2296,7 @@ canvas.addEventListener('click', (e) => {
         const clipBottom = clipTop + 660;
 
         let currentY = startY - game.ingredientScrollOffset;
+        let ingredientClicked = false; // Flag to track if an ingredient was clicked
 
         // Group ingredients by category
         const categories = {
@@ -2308,6 +2313,8 @@ canvas.addEventListener('click', (e) => {
             currentY += 25; // Skip category title
 
             items.forEach((ing, i) => {
+                if (ingredientClicked) return; // Skip if already clicked an ingredient
+
                 const ingX = startX + (i % 3) * spacingX;
                 const ingY = currentY + Math.floor(i / 3) * spacingY;
 
@@ -2317,6 +2324,7 @@ canvas.addEventListener('click', (e) => {
                 }
 
                 if (x >= ingX && x <= ingX + boxWidth && y >= ingY && y <= ingY + boxHeight) {
+                    ingredientClicked = true; // Mark that we clicked an ingredient
                     const ingData = ingredientDB[ing.id];
                     const clickedCategory = ingData.category;
                     console.log(`Clicked on ${ing.id} (category: ${clickedCategory}, type: ${ingData.type})`);
@@ -2369,6 +2377,11 @@ canvas.addEventListener('click', (e) => {
 
             currentY += Math.ceil(items.length / 3) * spacingY + 15;
         });
+
+        // If an ingredient was clicked, stop processing other clicks
+        if (ingredientClicked) {
+            return;
+        }
     } else if (game.mode === 'finished') {
         // Check if clicked on continue button
         if (x >= 500 && x <= 700 && y >= 590 && y <= 640) {
