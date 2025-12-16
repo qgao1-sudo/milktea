@@ -1176,31 +1176,34 @@ function getCurrentCupImage() {
         return cupImages.greenTeaOnly;
     }
 
-    // Fallback: If no combination matched, show the last clicked ingredient
-    if (game.lastClickedIngredient) {
-        const lastIng = game.lastClickedIngredient;
-        console.log(`No combination found, using fallback for: ${lastIng}`);
+    // Fallback: If no combination matched, show only the current category's ingredient
+    if (game.currentSelectingCategory && game.tempCategorySelection[game.currentSelectingCategory]) {
+        const currentCategoryIngredients = game.tempCategorySelection[game.currentSelectingCategory];
+        if (currentCategoryIngredients.length > 0) {
+            const currentIng = currentCategoryIngredients[0]; // Get the current category's ingredient
+            console.log(`No combination found, showing current category (${game.currentSelectingCategory}) ingredient: ${currentIng}`);
 
-        // Map ingredient IDs to their cup images
-        const singleIngredientImages = {
-            'strawberry': cupImages.strawberry,
-            'lemon': cupImages.lemon,
-            'orange': cupImages.orange,
-            'blueberry': cupImages.blueberry,
-            'mango': cupImages.mango,
-            'passion-fruit': cupImages.passionFruit,
-            'lychee': cupImages.lychee,
-            'kiwi': cupImages.kiwi,
-            'chocolate': cupImages.chocolate,
-            'cream': cupImages.creamOnly,
-            'pearl': cupImages.pearlOnly,
-            'ice-cream': cupImages.iceCreamOnly,
-            'black-tea': cupImages.blackTeaOnly,
-            'green-tea': cupImages.greenTeaOnly
-        };
+            // Map ingredient IDs to their cup images
+            const singleIngredientImages = {
+                'strawberry': cupImages.strawberry,
+                'lemon': cupImages.lemon,
+                'orange': cupImages.orange,
+                'blueberry': cupImages.blueberry,
+                'mango': cupImages.mango,
+                'passion-fruit': cupImages.passionFruit,
+                'lychee': cupImages.lychee,
+                'kiwi': cupImages.kiwi,
+                'chocolate': cupImages.chocolate,
+                'cream': cupImages.creamOnly,
+                'pearl': cupImages.pearlOnly,
+                'ice-cream': cupImages.iceCreamOnly,
+                'black-tea': cupImages.blackTeaOnly,
+                'green-tea': cupImages.greenTeaOnly
+            };
 
-        if (singleIngredientImages[lastIng]) {
-            return singleIngredientImages[lastIng];
+            if (singleIngredientImages[currentIng]) {
+                return singleIngredientImages[currentIng];
+            }
         }
     }
 
