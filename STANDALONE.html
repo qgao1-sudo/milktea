@@ -286,6 +286,18 @@ makingBgImage.onerror = () => {
     console.error('Failed to load making mode background image');
 };
 
+// Load finished mode background image
+const finishedBgImage = new Image();
+finishedBgImage.src = '背景图片.jpg';
+let finishedBgLoaded = false;
+finishedBgImage.onload = () => {
+    finishedBgLoaded = true;
+    console.log('Finished mode background image loaded successfully');
+};
+finishedBgImage.onerror = () => {
+    console.error('Failed to load finished mode background image');
+};
+
 // Load wallpaper image for serving mode
 const wallpaperImage = new Image();
 wallpaperImage.src = '墙纸.jpg';
@@ -2019,9 +2031,14 @@ function drawMakingMode() {
 }
 
 function drawFinishedDrink() {
-    // Background
-    ctx.fillStyle = '#E8D5B7';
-    ctx.fillRect(0, 0, 1200, 700);
+    // Background - draw background image if loaded
+    if (finishedBgLoaded) {
+        ctx.drawImage(finishedBgImage, 0, 0, 1200, 700);
+    } else {
+        // Fallback to solid color if image not loaded
+        ctx.fillStyle = '#E8D5B7';
+        ctx.fillRect(0, 0, 1200, 700);
+    }
 
     // Title
     ctx.fillStyle = '#2c3e50';
