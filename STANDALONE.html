@@ -701,7 +701,8 @@ const game = {
     draggedIngredient: null,
     ingredientScrollOffset: 0, // Scroll offset for ingredients in making mode
     currentSelectingCategory: null, // Track which category is currently being selected
-    tempCategorySelection: {} // Store temporary selection for current category
+    tempCategorySelection: {}, // Store temporary selection for current category
+    lastClickedIngredient: null // Track the last clicked ingredient for fallback display
 };
 
 const customers = [
@@ -1173,6 +1174,34 @@ function getCurrentCupImage() {
     // Check for green tea only
     if (hasGreenTea && drink.toppings.length === 0 && !drink.milk) {
         return cupImages.greenTeaOnly;
+    }
+
+    // Fallback: If no combination matched, show the last clicked ingredient
+    if (game.lastClickedIngredient) {
+        const lastIng = game.lastClickedIngredient;
+        console.log(`No combination found, using fallback for: ${lastIng}`);
+
+        // Map ingredient IDs to their cup images
+        const singleIngredientImages = {
+            'strawberry': cupImages.strawberry,
+            'lemon': cupImages.lemon,
+            'orange': cupImages.orange,
+            'blueberry': cupImages.blueberry,
+            'mango': cupImages.mango,
+            'passion-fruit': cupImages.passionFruit,
+            'lychee': cupImages.lychee,
+            'kiwi': cupImages.kiwi,
+            'chocolate': cupImages.chocolate,
+            'cream': cupImages.creamOnly,
+            'pearl': cupImages.pearlOnly,
+            'ice-cream': cupImages.iceCreamOnly,
+            'black-tea': cupImages.blackTeaOnly,
+            'green-tea': cupImages.greenTeaOnly
+        };
+
+        if (singleIngredientImages[lastIng]) {
+            return singleIngredientImages[lastIng];
+        }
     }
 
     // Empty cup
@@ -2219,6 +2248,7 @@ canvas.addEventListener('click', (e) => {
             game.ingredientScrollOffset = 0; // Reset scroll when entering making mode
             game.currentSelectingCategory = null; // Reset category selection
             game.tempCategorySelection = {}; // Clear temp selections
+            game.lastClickedIngredient = null; // Reset last clicked ingredient
             canvas.style.cursor = 'grab';
             // Hide thought bubble when entering making mode
             const bubble = document.getElementById('thoughtBubble');
@@ -2281,6 +2311,9 @@ canvas.addEventListener('click', (e) => {
                     const ingData = ingredientDB[ing.id];
                     const clickedCategory = ingData.category;
                     console.log(`Clicked on ${ing.id} (category: ${clickedCategory})`);
+
+                    // Track last clicked ingredient for fallback display
+                    game.lastClickedIngredient = ing.id;
 
                     // Handle base and milk separately (they replace, not add to toppings)
                     if (ingData.type === 'base') {
