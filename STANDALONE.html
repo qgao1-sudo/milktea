@@ -345,6 +345,18 @@ redButtonImage.onerror = () => {
     console.error('Failed to load red button image');
 };
 
+// Load blue button image for finished mode
+const blueButtonImage = new Image();
+blueButtonImage.src = '蓝色按钮.png';
+let blueButtonLoaded = false;
+blueButtonImage.onload = () => {
+    blueButtonLoaded = true;
+    console.log('Blue button image loaded successfully');
+};
+blueButtonImage.onerror = () => {
+    console.error('Failed to load blue button image');
+};
+
 // Load poster images for serving mode
 const posterImages = {
     poster1: new Image(),
@@ -2121,9 +2133,14 @@ function drawFinishedDrink() {
     ctx.font = 'bold 20px Arial';
     ctx.fillText('Your drink is ready!', boxX + 45, boxY + 40);
 
-    // Continue button
-    ctx.fillStyle = '#3498db';
-    ctx.fillRect(500, 590, 200, 50);
+    // Continue button - use blue button image
+    if (blueButtonLoaded) {
+        ctx.drawImage(blueButtonImage, 500, 590, 200, 50);
+    } else {
+        // Fallback if image not loaded
+        ctx.fillStyle = '#3498db';
+        ctx.fillRect(500, 590, 200, 50);
+    }
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 20px Arial';
     ctx.fillText('Continue →', 530, 622);
