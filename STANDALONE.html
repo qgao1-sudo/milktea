@@ -2337,18 +2337,29 @@ canvas.addEventListener('click', (e) => {
                     // Track last clicked ingredient for fallback display
                     game.lastClickedIngredient = ing.id;
 
-                    // Check if switching to a different category (not just different type in same category)
-                    if (game.currentSelectingCategory && game.currentSelectingCategory !== clickedCategory) {
-                        console.log(`Switching from ${game.currentSelectingCategory} to ${clickedCategory}, locking previous category`);
+                    // Check if switching to a different category-type combination
+                    const currentCategoryTypeKey = game.currentSelectingCategory && game.currentSelectingType
+                        ? `${game.currentSelectingCategory}-${game.currentSelectingType}`
+                        : null;
+                    const isSwitchingCategoryType = currentCategoryTypeKey && currentCategoryTypeKey !== categoryTypeKey;
+
+                    if (isSwitchingCategoryType) {
+                        console.log(`Switching from ${currentCategoryTypeKey} to ${categoryTypeKey}`);
+                        // When switching category-type, add to the new category-type
+                        if (!game.tempCategorySelection[categoryTypeKey]) {
+                            game.tempCategorySelection[categoryTypeKey] = [];
+                        }
+                        game.tempCategorySelection[categoryTypeKey].push(ing.id);
+                    } else {
+                        // Same category-type: replace the selection
+                        game.tempCategorySelection[categoryTypeKey] = [ing.id];
                     }
 
                     // Update current selecting category and type
                     game.currentSelectingCategory = clickedCategory;
                     game.currentSelectingType = clickedType;
 
-                    // Store selection using category-type key to allow different types in same category
-                    game.tempCategorySelection[categoryTypeKey] = [ing.id];
-                    console.log(`Temp selection for ${categoryTypeKey}: ${ing.id}`);
+                    console.log(`Temp selection for ${categoryTypeKey}:`, game.tempCategorySelection[categoryTypeKey]);
 
                     // Update game.currentDrink based on type
                     if (clickedType === 'base') {
