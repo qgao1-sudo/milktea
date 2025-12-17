@@ -1639,6 +1639,13 @@ function drawTeaMachine() {
     const width = 300; // Enlarged more
     const height = 420; // Enlarged more
 
+    // Draw "点击开始" text above the machine
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 24px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('点击开始', x + width / 2, y - 20);
+    ctx.textAlign = 'left'; // Reset alignment
+
     if (teaMachineLoaded) {
         // Draw the tea machine image
         ctx.drawImage(teaMachineImage, x, y, width, height);
