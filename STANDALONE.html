@@ -1639,11 +1639,11 @@ function drawTeaMachine() {
     const width = 300; // Enlarged more
     const height = 420; // Enlarged more
 
-    // Draw "点击开始" text above the machine
+    // Draw "CLICK TO START" text above the machine
     ctx.fillStyle = '#333';
-    ctx.font = 'bold 24px Arial';
+    ctx.font = 'bold 28px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('点击开始', x + width / 2, y - 20);
+    ctx.fillText('CLICK TO START', x + width / 2, y - 20);
     ctx.textAlign = 'left'; // Reset alignment
 
     if (teaMachineLoaded) {
@@ -1692,11 +1692,7 @@ function drawTeaMachine() {
         ctx.fillRect(x + 45, y + 150, 30, 30);
     }
 
-    // Instruction text to the right of the machine
-    ctx.fillStyle = '#2c3e50';
-    ctx.font = 'bold 24px Arial';
-    ctx.fillText('Click the coffee machine', x + width + 10, y + height - 80);
-    ctx.fillText('to start making drinks', x + width + 10, y + height - 50);
+    // Instruction text removed - now shown above machine
 }
 
 function drawCashRegister() {
