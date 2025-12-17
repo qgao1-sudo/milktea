@@ -1882,20 +1882,20 @@ function drawMakingMode() {
         const centerX = noteX + noteWidth / 2;
         const startY = noteY + 80;
 
-        // Recipe title (centered)
+        // Recipe title (centered) - increased from 18px to 22px
         ctx.fillStyle = '#2c3e50';
-        ctx.font = 'bold 18px Arial';
+        ctx.font = 'bold 22px Arial';
         ctx.textAlign = 'center';
         ctx.fillText('📝 Recipe', centerX, startY);
 
-        // Customer name and order (centered, black color)
-        ctx.font = 'bold 14px Arial';
+        // Customer name and order (centered, black color) - increased from 14px to 16px
+        ctx.font = 'bold 16px Arial';
         ctx.fillStyle = '#2c3e50';
         ctx.fillText(`${game.currentCustomer.name}'s order:`, centerX, startY + 35);
 
-        // Recipe content (centered)
+        // Recipe content (centered) - increased from 11px to 14px
         ctx.fillStyle = '#2c3e50';
-        ctx.font = '11px Arial';
+        ctx.font = '14px Arial';
         let recipeY = startY + 60;
         let stepNum = 1;
 
@@ -1907,14 +1907,14 @@ function drawMakingMode() {
             order.recipe.forEach(ingredient => {
                 const ingName = ingredientDB[ingredient].name;
                 ctx.fillText(`${stepNum}. Add ${ingName.toLowerCase()}`, centerX, recipeY);
-                recipeY += 18;
+                recipeY += 20; // Increased spacing from 18 to 20
                 stepNum++;
             });
         }
 
-        // Reminder (centered)
+        // Reminder (centered) - increased from 14px to 16px
         recipeY += 10;
-        ctx.font = 'bold italic 14px Arial';
+        ctx.font = 'bold italic 16px Arial';
         ctx.fillStyle = '#666';
         ctx.fillText('Follow the order carefully!', centerX, recipeY);
 
