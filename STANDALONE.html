@@ -701,7 +701,8 @@ const game = {
     draggedIngredient: null,
     ingredientScrollOffset: 0, // Scroll offset for ingredients in making mode
     currentSelectingCategory: null, // Track which category is currently being selected
-    tempCategorySelection: {}, // Store temporary selection for current category
+    currentSelectingType: null, // Track which type within category is being selected
+    tempCategorySelection: {}, // Store temporary selection for current category+type combination
     lastClickedIngredient: null // Track the last clicked ingredient for fallback display
 };
 
@@ -1176,12 +1177,13 @@ function getCurrentCupImage() {
         return cupImages.greenTeaOnly;
     }
 
-    // Fallback: If no combination matched, show only the current category's ingredient
-    if (game.currentSelectingCategory && game.tempCategorySelection[game.currentSelectingCategory]) {
-        const currentCategoryIngredients = game.tempCategorySelection[game.currentSelectingCategory];
-        if (currentCategoryIngredients.length > 0) {
-            const currentIng = currentCategoryIngredients[0]; // Get the current category's ingredient
-            console.log(`No combination found, showing current category (${game.currentSelectingCategory}) ingredient: ${currentIng}`);
+    // Fallback: If no combination matched, show only the current category-type's ingredient
+    if (game.currentSelectingCategory && game.currentSelectingType) {
+        const categoryTypeKey = `${game.currentSelectingCategory}-${game.currentSelectingType}`;
+        const currentCategoryIngredients = game.tempCategorySelection[categoryTypeKey];
+        if (currentCategoryIngredients && currentCategoryIngredients.length > 0) {
+            const currentIng = currentCategoryIngredients[0]; // Get the current category-type's ingredient
+            console.log(`No combination found, showing current category-type (${categoryTypeKey}) ingredient: ${currentIng}`);
 
             // Map ingredient IDs to their cup images
             const singleIngredientImages = {
@@ -2260,6 +2262,7 @@ canvas.addEventListener('click', (e) => {
             game.mode = 'making';
             game.ingredientScrollOffset = 0; // Reset scroll when entering making mode
             game.currentSelectingCategory = null; // Reset category selection
+            game.currentSelectingType = null; // Reset type selection
             game.tempCategorySelection = {}; // Clear temp selections
             game.lastClickedIngredient = null; // Reset last clicked ingredient
             canvas.style.cursor = 'grab';
@@ -2327,45 +2330,42 @@ canvas.addEventListener('click', (e) => {
                     ingredientClicked = true; // Mark that we clicked an ingredient
                     const ingData = ingredientDB[ing.id];
                     const clickedCategory = ingData.category;
-                    console.log(`Clicked on ${ing.id} (category: ${clickedCategory}, type: ${ingData.type})`);
+                    const clickedType = ingData.type;
+                    const categoryTypeKey = `${clickedCategory}-${clickedType}`;
+                    console.log(`Clicked on ${ing.id} (category: ${clickedCategory}, type: ${clickedType})`);
 
                     // Track last clicked ingredient for fallback display
                     game.lastClickedIngredient = ing.id;
 
-                    // If clicking a different category, lock previous category's selection
+                    // Check if switching to a different category (not just different type in same category)
                     if (game.currentSelectingCategory && game.currentSelectingCategory !== clickedCategory) {
-                        console.log(`Switching from ${game.currentSelectingCategory} to ${clickedCategory}, locking previous selection`);
+                        console.log(`Switching from ${game.currentSelectingCategory} to ${clickedCategory}, locking previous category`);
                     }
 
-                    // Update current selecting category for ALL ingredient types
+                    // Update current selecting category and type
                     game.currentSelectingCategory = clickedCategory;
+                    game.currentSelectingType = clickedType;
 
-                    // Handle base and milk separately (they replace, not add to toppings)
-                    if (ingData.type === 'base') {
+                    // Store selection using category-type key to allow different types in same category
+                    game.tempCategorySelection[categoryTypeKey] = [ing.id];
+                    console.log(`Temp selection for ${categoryTypeKey}: ${ing.id}`);
+
+                    // Update game.currentDrink based on type
+                    if (clickedType === 'base') {
                         game.currentDrink.base = ing.id;
-                        // Store in temp selection for category tracking
-                        game.tempCategorySelection[clickedCategory] = [ing.id];
                         console.log(`Base set to: ${ing.id}`);
-                    } else if (ingData.type === 'milk') {
+                    } else if (clickedType === 'milk') {
                         game.currentDrink.milk = ing.id;
-                        // Store in temp selection for category tracking
-                        game.tempCategorySelection[clickedCategory] = [ing.id];
                         console.log(`Milk set to: ${ing.id}`);
                     } else {
-                        // For fruits and toppings
-                        // Replace any previous selection in this category
-                        game.tempCategorySelection[clickedCategory] = [ing.id];
-                        console.log(`Temp selection for ${clickedCategory}: ${ing.id}`);
-
-                        // Update toppings display to include all category selections
+                        // For fruits and toppings, rebuild toppings array from all selections
                         game.currentDrink.toppings = [];
-                        for (let cat in game.tempCategorySelection) {
-                            // Skip Drinks category as it contains base/milk, not toppings
-                            const catItems = game.tempCategorySelection[cat];
-                            catItems.forEach(itemId => {
+                        for (let key in game.tempCategorySelection) {
+                            const items = game.tempCategorySelection[key];
+                            items.forEach(itemId => {
                                 const itemData = ingredientDB[itemId];
                                 // Only add to toppings if it's not a base or milk
-                                if (itemData.type !== 'base' && itemData.type !== 'milk') {
+                                if (itemData && itemData.type !== 'base' && itemData.type !== 'milk') {
                                     game.currentDrink.toppings.push(itemId);
                                 }
                             });
@@ -2452,6 +2452,7 @@ function serveDrink() {
 function resetDrink() {
     game.currentDrink = { base: null, milk: null, toppings: [], shaken: false };
     game.currentSelectingCategory = null;
+    game.currentSelectingType = null;
     game.tempCategorySelection = {};
     game.lastClickedIngredient = null;
     console.log('Drink reset - all selections cleared');
